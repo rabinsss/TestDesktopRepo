@@ -1,0 +1,71 @@
+OBJECT Table 411 IC Dimension
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Code,Name;
+    OnDelete=VAR
+               ICDimValue@1000 : Record 412;
+             BEGIN
+               ICDimValue.SETRANGE("Dimension Code",Code);
+               ICDimValue.DELETEALL;
+             END;
+
+    CaptionML=[ENU=IC Dimension;
+               ESM=Dimensi¢n IC;
+               FRC=Dimension IC;
+               ENC=IC Dimension];
+    LookupPageID=Page602;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code20        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Name                ;Text30        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+    { 3   ;   ;Blocked             ;Boolean       ;CaptionML=[ENU=Blocked;
+                                                              ESM=Bloqueado;
+                                                              FRC=Bloqu‚;
+                                                              ENC=Blocked] }
+    { 4   ;   ;Map-to Dimension Code;Code20       ;TableRelation=Dimension;
+                                                   OnValidate=BEGIN
+                                                                IF "Map-to Dimension Code" <> xRec."Map-to Dimension Code" THEN BEGIN
+                                                                  ICDimensionValue.SETRANGE("Dimension Code",Code);
+                                                                  ICDimensionValue.MODIFYALL("Map-to Dimension Code","Map-to Dimension Code");
+                                                                  ICDimensionValue.MODIFYALL("Map-to Dimension Value Code",'');
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Map-to Dimension Code;
+                                                              ESM=C¢digo dimensi¢n de asignaci¢n;
+                                                              FRC=Code de dimension de correspondance;
+                                                              ENC=Map-to Dimension Code] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;Code,Name,Blocked,Map-to Dimension Code  }
+  }
+  CODE
+  {
+    VAR
+      ICDimensionValue@1000 : Record 412;
+
+    BEGIN
+    END.
+  }
+}
+

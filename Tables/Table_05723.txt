@@ -1,0 +1,52 @@
+OBJECT Table 5723 Product Group
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Product Group;
+               ESM=Grupo producto;
+               FRC=Groupe produits;
+               ENC=Product Group];
+    LookupPageID=Page5731;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Item Category Code  ;Code10        ;TableRelation="Item Category".Code;
+                                                   CaptionML=[ENU=Item Category Code;
+                                                              ESM=C¢d. categor¡a producto;
+                                                              FRC=Code cat‚gorie;
+                                                              ENC=Item Category Code] }
+    { 2   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code] }
+    { 3   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 7300;   ;Warehouse Class Code;Code10        ;TableRelation="Warehouse Class";
+                                                   CaptionML=[ENU=Warehouse Class Code;
+                                                              ESM=C¢d. clase almac‚n;
+                                                              FRC=Code classe magasin;
+                                                              ENC=Warehouse Class Code] }
+  }
+  KEYS
+  {
+    {    ;Item Category Code,Code                 ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

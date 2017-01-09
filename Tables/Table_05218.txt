@@ -1,0 +1,64 @@
+OBJECT Table 5218 Human Resources Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Human Resources Setup;
+               ESM=Config. recursos humanos;
+               FRC=Config. ressources humaines;
+               ENC=Human Resources Setup];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=[ENU=Primary Key;
+                                                              ESM=Clave primaria;
+                                                              FRC=Cl‚ primaire;
+                                                              ENC=Primary Key] }
+    { 2   ;   ;Employee Nos.       ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Employee Nos.;
+                                                              ESM=N§ serie empleados;
+                                                              FRC=Nø employ‚s;
+                                                              ENC=Employee Nos.] }
+    { 3   ;   ;Base Unit of Measure;Code10        ;TableRelation="Human Resource Unit of Measure";
+                                                   OnValidate=VAR
+                                                                ResUnitOfMeasure@1000 : Record 205;
+                                                              BEGIN
+                                                                IF "Base Unit of Measure" <> xRec."Base Unit of Measure" THEN BEGIN
+                                                                  IF EmployeeAbsence.FINDFIRST THEN
+                                                                    ERROR(Text001,FIELDCAPTION("Base Unit of Measure"),EmployeeAbsence.TABLECAPTION);
+                                                                END;
+
+                                                                HumanResUnitOfMeasure.GET("Base Unit of Measure");
+                                                                ResUnitOfMeasure.TESTFIELD("Qty. per Unit of Measure",1);
+                                                                ResUnitOfMeasure.TESTFIELD("Related to Base Unit of Meas.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Base Unit of Measure;
+                                                              ESM=Unidad medida base;
+                                                              FRC=Unit‚ de mesure de base;
+                                                              ENC=Base Unit of Measure] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      EmployeeAbsence@1001 : Record 5207;
+      HumanResUnitOfMeasure@1000 : Record 5220;
+      Text001@1002 : TextConst 'ENU=You cannot change %1 because there are %2.;ESM=No puede cambiar el valor de %1 porque hay %2.;FRC=Vous ne pouvez pas modifier %1, car il y a des %2.;ENC=You cannot change %1 because there are %2.';
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,100 @@
+OBJECT Table 8623 Config. Package
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    OnDelete=VAR
+               ConfigPackageTable@1000 : Record 8613;
+               ConfigLine@1001 : Record 8622;
+             BEGIN
+               ConfigPackageTable.SETRANGE("Package Code",Code);
+               ConfigPackageTable.DELETEALL(TRUE);
+
+               ConfigLine.SETRANGE("Package Code",Code);
+               ConfigLine.MODIFYALL("Package Code",'');
+             END;
+
+    CaptionML=[ENU=Config. Package;
+               ESM=Paquete de configuraci¢n;
+               FRC=Package config.;
+               ENC=Config. Package];
+    LookupPageID=Page8615;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code20        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Package Name        ;Text50        ;CaptionML=[ENU=Package Name;
+                                                              ESM=Nombre de paquete;
+                                                              FRC=Nom package;
+                                                              ENC=Package Name] }
+    { 4   ;   ;Language ID         ;Integer       ;TableRelation="Windows Language";
+                                                   CaptionML=[ENU=Language ID;
+                                                              ESM=Id. idioma;
+                                                              FRC=Code de langue;
+                                                              ENC=Language ID] }
+    { 5   ;   ;No. of Tables       ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Config. Package Table" WHERE (Package Code=FIELD(Code)));
+                                                   CaptionML=[ENU=No. of Tables;
+                                                              ESM=N§ tablas;
+                                                              FRC=Nombre de tables;
+                                                              ENC=No. of Tables];
+                                                   Editable=No }
+    { 6   ;   ;Product Version     ;Text80        ;CaptionML=[ENU=Product Version;
+                                                              ESM=Versi¢n de producto;
+                                                              FRC=Version produit;
+                                                              ENC=Product Version] }
+    { 11  ;   ;Exclude Config. Tables;Boolean     ;CaptionML=[ENU=Exclude Config. Tables;
+                                                              ESM=Excluir tablas de configuraci¢n;
+                                                              FRC=Exclure tables config.;
+                                                              ENC=Exclude Config. Tables] }
+    { 12  ;   ;Processing Order    ;Integer       ;OnValidate=VAR
+                                                                ConfigPackageTable@1000 : Record 8613;
+                                                              BEGIN
+                                                                ConfigPackageTable.SETRANGE("Package Code",Code);
+                                                                ConfigPackageTable.MODIFYALL("Package Processing Order","Processing Order");
+                                                              END;
+
+                                                   CaptionML=[ENU=Processing Order;
+                                                              ESM=Pedido de procesamiento;
+                                                              FRC=Traitement des commandes;
+                                                              ENC=Processing Order] }
+    { 13  ;   ;No. of Records      ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Config. Package Record" WHERE (Package Code=FIELD(Code)));
+                                                   CaptionML=[ENU=No. of Records;
+                                                              ESM=N§ registros;
+                                                              FRC=Nbre d'enregistrements;
+                                                              ENC=No. of Records];
+                                                   Editable=No }
+    { 16  ;   ;No. of Errors       ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Config. Package Error" WHERE (Package Code=FIELD(Code)));
+                                                   CaptionML=[ENU=No. of Errors;
+                                                              ESM=N§ errores;
+                                                              FRC=Nombre erreurs;
+                                                              ENC=No. of Errors];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+    {    ;Processing Order                         }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

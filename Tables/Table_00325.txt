@@ -1,0 +1,303 @@
+OBJECT Table 325 VAT Posting Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00,NAVNA9.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               IF "VAT %" = 0 THEN
+                 "VAT %" := GetVATPtc;
+             END;
+
+    CaptionML=[ENU=Tax Posting Setup;
+               ESM=Config. grupos registro IVA;
+               FRC=Configuration report de taxe;
+               ENC=Tax Posting Setup];
+    LookupPageID=Page472;
+    DrillDownPageID=Page472;
+  }
+  FIELDS
+  {
+    { 1   ;   ;VAT Bus. Posting Group;Code10      ;TableRelation="VAT Business Posting Group";
+                                                   CaptionML=[ENU=Tax Bus. Posting Group;
+                                                              ESM=Grupo registro IVA neg.;
+                                                              FRC=Groupe de reports de TVA de l'entreprise;
+                                                              ENC=Tax Bus. Posting Group] }
+    { 2   ;   ;VAT Prod. Posting Group;Code10     ;TableRelation="VAT Product Posting Group";
+                                                   CaptionML=[ENU=Tax Prod. Posting Group;
+                                                              ESM=Grupo registro IVA prod.;
+                                                              FRC=Groupe de report de produit taxe;
+                                                              ENC=Tax Prod. Posting Group] }
+    { 3   ;   ;VAT Calculation Type;Option        ;CaptionML=[ENU=Tax Calculation Type;
+                                                              ESM=Tipo c lculo IVA;
+                                                              FRC=Type de calcul taxe;
+                                                              ENC=Tax Calculation Type];
+                                                   OptionCaptionML=[ENU=Normal VAT,Reverse Charge VAT,Full VAT,Sales Tax;
+                                                                    ESM=Normal,Reversi¢n,Total,Impto. venta;
+                                                                    FRC=TVA normale,Frais renvers‚s TVA,TVA complŠte,Taxe de vente;
+                                                                    ENC=Normal VAT,Reverse Charge VAT,Full VAT,Sales Tax];
+                                                   OptionString=Normal VAT,Reverse Charge VAT,Full VAT,Sales Tax }
+    { 4   ;   ;VAT %               ;Decimal       ;OnValidate=BEGIN
+                                                                TestNotSalesTax(FIELDCAPTION("VAT %"));
+                                                                CheckVATIdentifier;
+                                                              END;
+
+                                                   CaptionML=[ENU=Tax %;
+                                                              ESM=Porcentaje IVA;
+                                                              FRC=% TVA;
+                                                              ENC=Tax %];
+                                                   DecimalPlaces=0:5;
+                                                   MinValue=0;
+                                                   MaxValue=100 }
+    { 5   ;   ;Unrealized VAT Type ;Option        ;OnValidate=BEGIN
+                                                                TestNotSalesTax(FIELDCAPTION("Unrealized VAT Type"));
+
+                                                                IF "Unrealized VAT Type" > 0 THEN BEGIN
+                                                                  GLSetup.GET;
+                                                                  IF NOT GLSetup."Unrealized VAT" AND NOT GLSetup."Prepayment Unrealized VAT" THEN
+                                                                    GLSetup.TESTFIELD("Unrealized VAT",TRUE)
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Unrealized Tax Type;
+                                                              ESM=Tipo IVA no realizado;
+                                                              FRC=Type de taxe non-mat‚rialis‚e;
+                                                              ENC=Unrealized Tax Type];
+                                                   OptionCaptionML=[ENU=" ,Percentage,First,Last,First (Fully Paid),Last (Fully Paid),Cash Basis";
+                                                                    ESM=" ,Porcentual,Inicial,Final,Inicial (pago completo),Final (pago completo),Basado en cobros";
+                                                                    FRC=" ,Pourcentage,Premier,Dernier,Premier (pay‚ complet),Dernier (pay‚ complet),Base encaisse";
+                                                                    ENC=" ,Percentage,First,Last,First (Fully Paid),Last (Fully Paid),Cash Basis"];
+                                                   OptionString=[ ,Percentage,First,Last,First (Fully Paid),Last (Fully Paid),Cash Basis] }
+    { 6   ;   ;Adjust for Payment Discount;Boolean;OnValidate=BEGIN
+                                                                TestNotSalesTax(FIELDCAPTION("Adjust for Payment Discount"));
+
+                                                                IF "Adjust for Payment Discount" THEN BEGIN
+                                                                  GLSetup.GET;
+                                                                  GLSetup.TESTFIELD("Adjust for Payment Disc.",TRUE);
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Adjust for Payment Discount;
+                                                              ESM=Ajuste para dto. p.p.;
+                                                              FRC=Ajust. pour escompte paiement;
+                                                              ENC=Adjust for Payment Discount] }
+    { 7   ;   ;Sales VAT Account   ;Code20        ;TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                TestNotSalesTax(FIELDCAPTION("Sales VAT Account"));
+
+                                                                CheckGLAcc("Sales VAT Account");
+                                                              END;
+
+                                                   CaptionML=[ENU=Sales VAT Account;
+                                                              ESM=Cta. IVA por pagar;
+                                                              FRC=Compte ventes TVA;
+                                                              ENC=Sales VAT Account] }
+    { 8   ;   ;Sales VAT Unreal. Account;Code20   ;TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                TestNotSalesTax(FIELDCAPTION("Sales VAT Unreal. Account"));
+
+                                                                CheckGLAcc("Sales VAT Unreal. Account");
+                                                              END;
+
+                                                   CaptionML=[ENU=Sales VAT Unreal. Account;
+                                                              ESM=Cta. IVA por pagar no realizado;
+                                                              FRC=Cpte TVA ventes non r‚alis‚es;
+                                                              ENC=Sales VAT Unreal. Account] }
+    { 9   ;   ;Purchase VAT Account;Code20        ;TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                TestNotSalesTax(FIELDCAPTION("Purchase VAT Account"));
+
+                                                                CheckGLAcc("Purchase VAT Account");
+                                                              END;
+
+                                                   CaptionML=[ENU=Purchase VAT Account;
+                                                              ESM=Cta. IVA acreditable;
+                                                              FRC=Compte TVA achat;
+                                                              ENC=Purchase VAT Account] }
+    { 10  ;   ;Purch. VAT Unreal. Account;Code20  ;TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                TestNotSalesTax(FIELDCAPTION("Purch. VAT Unreal. Account"));
+
+                                                                CheckGLAcc("Purch. VAT Unreal. Account");
+                                                              END;
+
+                                                   CaptionML=[ENU=Purch. VAT Unreal. Account;
+                                                              ESM=Cta. IVA acreditable no realizado;
+                                                              FRC=Cpte TVA achats non r‚al.;
+                                                              ENC=Purch. VAT Unreal. Account] }
+    { 11  ;   ;Reverse Chrg. VAT Acc.;Code20      ;TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                TestNotSalesTax(FIELDCAPTION("Reverse Chrg. VAT Acc."));
+
+                                                                CheckGLAcc("Reverse Chrg. VAT Acc.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Reverse Chrg. VAT Acc.;
+                                                              ESM=Cta. reversi¢n IVA;
+                                                              FRC=Compte frais renvers‚s TVA.;
+                                                              ENC=Reverse Chrg. VAT Acc.] }
+    { 12  ;   ;Reverse Chrg. VAT Unreal. Acc.;Code20;
+                                                   TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                TestNotSalesTax(FIELDCAPTION("Reverse Chrg. VAT Unreal. Acc."));
+
+                                                                CheckGLAcc("Reverse Chrg. VAT Unreal. Acc.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Reverse Chrg. VAT Unreal. Acc.;
+                                                              ESM=Cta. reversi¢n IVA no realiz.;
+                                                              FRC=Cpte frais renv. TVA non r‚al.;
+                                                              ENC=Reverse Chrg. VAT Unreal. Acc.] }
+    { 13  ;   ;VAT Identifier      ;Code10        ;OnValidate=BEGIN
+                                                                "VAT %" := GetVATPtc;
+                                                              END;
+
+                                                   CaptionML=[ENU=Tax Identifier;
+                                                              ESM=Identific. IVA;
+                                                              FRC=Identificateur de TVA;
+                                                              ENC=Tax Identifier] }
+    { 14  ;   ;EU Service          ;Boolean       ;CaptionML=[ENU=EU Service;
+                                                              ESM=Servicio a UE;
+                                                              FRC=Service UE;
+                                                              ENC=EU Service] }
+    { 15  ;   ;VAT Clause Code     ;Code10        ;TableRelation="VAT Clause";
+                                                   OnValidate=BEGIN
+                                                                CheckVATClauseCode;
+                                                              END;
+
+                                                   CaptionML=[ENU=Tax Clause Code;
+                                                              ESM=C¢digo de cl usula de IVA;
+                                                              FRC=Code clause TVA;
+                                                              ENC=Tax Clause Code] }
+    { 16  ;   ;Certificate of Supply Required;Boolean;
+                                                   CaptionML=[ENU=Certificate of Supply Required;
+                                                              ESM=Certificado de suministro obligatorio;
+                                                              FRC=Certificat d'approvisionnement requis;
+                                                              ENC=Certificate of Supply Required] }
+    { 17  ;   ;Tax Category        ;Code10        ;CaptionML=[ENU=Tax Category;
+                                                              ESM=Categor¡a de impuesto;
+                                                              FRC=Cat‚gorie de taxe;
+                                                              ENC=Tax Category] }
+  }
+  KEYS
+  {
+    {    ;VAT Bus. Posting Group,VAT Prod. Posting Group;
+                                                   Clustered=Yes }
+    {    ;VAT Prod. Posting Group,VAT Bus. Posting Group }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=%1 must be entered on the tax jurisdiction line when %2 is %3.;ESM=Se debe indicar %1 en l¡nea jurisdicci¢n impuesto cuando %2 es %3.;FRC=%1 doit ˆtre entr‚ sur la ligne de juridiction fiscale lorsque %2 est %3.;ENC=%1 must be entered on the tax jurisdiction line when %2 is %3.';
+      Text001@1001 : TextConst 'ENU="%1 = %2 has already been used for %3 = %4 in %5 for %6 = %7 and %8 = %9.";ESM="%1 = %2 ya ha sido utilizado por %3 = %4 en %5 para %6 = %7 y %8 = %9.";FRC="%1 = %2 a d‚j… ‚t‚ utilis‚ pour %3 = %4 dans %5, pour %6 = %7 et %8 = %9.";ENC="%1 = %2 has already been used for %3 = %4 in %5 for %6 = %7 and %8 = %9."';
+      GLSetup@1002 : Record 98;
+      DuplicateEntryErr@1003 : TextConst 'ENU=Another entry with the same %1 in the same %2 has a different %3 assigned. Use the same %3 or remove it.;ESM=Otra entrada con el mismo %1 en el mismo %2 tiene un %3 diferente asignado. Use el mismo %3 o qu¡telo.;FRC=Une autre ‚criture portant le mˆme %1 dans le mˆme %2 s''est vue attribuer un %3 diff‚rent. Utilisez le mˆme %3 ou supprimez-le.;ENC=Another entry with the same %1 in the same %2 has a different %3 assigned. Use the same %3 or remove it.';
+
+    LOCAL PROCEDURE CheckGLAcc@2(AccNo@1000 : Code[20]);
+    VAR
+      GLAcc@1001 : Record 15;
+    BEGIN
+      IF AccNo <> '' THEN BEGIN
+        GLAcc.GET(AccNo);
+        GLAcc.CheckGLAcc;
+      END;
+    END;
+
+    LOCAL PROCEDURE TestNotSalesTax@1(FromFieldName@1000 : Text[100]);
+    BEGIN
+      IF "VAT Calculation Type" = "VAT Calculation Type"::"Sales Tax" THEN
+        ERROR(
+          Text000,
+          FromFieldName,FIELDCAPTION("VAT Calculation Type"),
+          "VAT Calculation Type");
+    END;
+
+    LOCAL PROCEDURE CheckVATIdentifier@14();
+    VAR
+      VATPostingSetup@1000 : Record 325;
+    BEGIN
+      VATPostingSetup.SETRANGE("VAT Bus. Posting Group","VAT Bus. Posting Group");
+      VATPostingSetup.SETFILTER("VAT Prod. Posting Group",'<>%1',"VAT Prod. Posting Group");
+      VATPostingSetup.SETFILTER("VAT %",'<>%1',"VAT %");
+      VATPostingSetup.SETRANGE("VAT Identifier","VAT Identifier");
+      IF VATPostingSetup.FINDFIRST THEN
+        ERROR(
+          Text001,
+          FIELDCAPTION("VAT Identifier"),VATPostingSetup."VAT Identifier",
+          FIELDCAPTION("VAT %"),VATPostingSetup."VAT %",TABLECAPTION,
+          FIELDCAPTION("VAT Bus. Posting Group"),VATPostingSetup."VAT Bus. Posting Group",
+          FIELDCAPTION("VAT Prod. Posting Group"),VATPostingSetup."VAT Prod. Posting Group");
+    END;
+
+    LOCAL PROCEDURE CheckVATClauseCode@11();
+    VAR
+      VATPostingSetup@1000 : Record 325;
+    BEGIN
+      IF "VAT Clause Code" = '' THEN
+        EXIT;
+      VATPostingSetup.SETRANGE("VAT Bus. Posting Group","VAT Bus. Posting Group");
+      VATPostingSetup.SETFILTER("VAT Prod. Posting Group",'<>%1',"VAT Prod. Posting Group");
+      VATPostingSetup.SETRANGE("VAT Identifier","VAT Identifier");
+      VATPostingSetup.SETFILTER("VAT Clause Code",'<>%1',"VAT Clause Code");
+      IF VATPostingSetup.FINDFIRST THEN
+        ERROR(
+          DuplicateEntryErr,
+          FIELDCAPTION("VAT Identifier"),
+          FIELDCAPTION("VAT Bus. Posting Group"),
+          FIELDCAPTION("VAT Clause Code"));
+    END;
+
+    LOCAL PROCEDURE GetVATPtc@3() : Decimal;
+    VAR
+      VATPostingSetup@1000 : Record 325;
+    BEGIN
+      VATPostingSetup.SETRANGE("VAT Bus. Posting Group","VAT Bus. Posting Group");
+      VATPostingSetup.SETFILTER("VAT Prod. Posting Group",'<>%1',"VAT Prod. Posting Group");
+      VATPostingSetup.SETRANGE("VAT Identifier","VAT Identifier");
+      IF NOT VATPostingSetup.FINDFIRST THEN
+        VATPostingSetup."VAT %" := "VAT %";
+      EXIT(VATPostingSetup."VAT %");
+    END;
+
+    PROCEDURE GetSalesAccount@4(Unrealized@1000 : Boolean) : Code[20];
+    BEGIN
+      IF Unrealized THEN BEGIN
+        TESTFIELD("Sales VAT Unreal. Account");
+        EXIT("Sales VAT Unreal. Account");
+      END;
+      TESTFIELD("Sales VAT Account");
+      EXIT("Sales VAT Account");
+    END;
+
+    PROCEDURE GetPurchAccount@5(Unrealized@1000 : Boolean) : Code[20];
+    BEGIN
+      IF Unrealized THEN BEGIN
+        TESTFIELD("Purch. VAT Unreal. Account");
+        EXIT("Purch. VAT Unreal. Account");
+      END;
+      TESTFIELD("Purchase VAT Account");
+      EXIT("Purchase VAT Account");
+    END;
+
+    PROCEDURE GetRevChargeAccount@6(Unrealized@1000 : Boolean) : Code[20];
+    BEGIN
+      IF Unrealized THEN BEGIN
+        TESTFIELD("Reverse Chrg. VAT Unreal. Acc.");
+        EXIT("Reverse Chrg. VAT Unreal. Acc.");
+      END;
+      TESTFIELD("Reverse Chrg. VAT Acc.");
+      EXIT("Reverse Chrg. VAT Acc.");
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

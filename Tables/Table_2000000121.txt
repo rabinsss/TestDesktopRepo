@@ -1,0 +1,65 @@
+OBJECT Table 2000000121 User Property
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=User Property;
+               ESM=Propiedad usuario;
+               FRC=Propri‚t‚ utilisateur;
+               ENC=User Property];
+  }
+  FIELDS
+  {
+    { 1   ;   ;User Security ID    ;GUID          ;TableRelation=User."User Security ID";
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User Security ID;
+                                                              ESM=Id. de seguridad de usuario;
+                                                              FRC=Code s‚curit‚ utilisateur;
+                                                              ENC=User Security ID] }
+    { 2   ;   ;Password            ;Text80        ;CaptionML=[ENU=Password;
+                                                              ESM=Contrase¤a;
+                                                              FRC=Mot de passeÿ;
+                                                              ENC=Password] }
+    { 3   ;   ;Name Identifier     ;Text250       ;CaptionML=[ENU=Name Identifier;
+                                                              ESM=Identificador nombre;
+                                                              FRC=Identificateur nom;
+                                                              ENC=Name Identifier] }
+    { 4   ;   ;Authentication Key  ;Text80        ;CaptionML=[ENU=Authentication Key;
+                                                              ESM=Clave autenticaci¢n;
+                                                              FRC=Cl‚ d'authentification;
+                                                              ENC=Authentication Key] }
+    { 5   ;   ;WebServices Key     ;Text80        ;CaptionML=[ENU=WebServices Key;
+                                                              ESM=Clave servicios web;
+                                                              FRC=Cl‚ services web;
+                                                              ENC=WebServices Key] }
+    { 6   ;   ;WebServices Key Expiry Date;DateTime;
+                                                   CaptionML=[ENU=WebServices Key Expiry Date;
+                                                              ESM=Fecha expiraci¢n servicios web;
+                                                              FRC=Date d'exp. cl‚ services web;
+                                                              ENC=WebServices Key Expiry Date] }
+    { 7   ;   ;Authentication Object ID;Text80    ;CaptionML=[ENU=Authentication Object ID;
+                                                              ESM=Id. de objeto de autenticaci¢n;
+                                                              FRC=Code objet authentification;
+                                                              ENC=Authentication Object ID] }
+  }
+  KEYS
+  {
+    {    ;User Security ID                        ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

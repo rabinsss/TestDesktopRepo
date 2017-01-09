@@ -1,0 +1,75 @@
+OBJECT Table 5123 Inter. Log Entry Comment Line
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    OnModify=BEGIN
+               "Last Date Modified" := TODAY;
+             END;
+
+    CaptionML=[ENU=Inter. Log Entry Comment Line;
+               ESM=L¡n. coment. mov. log. inter.;
+               FRC=Ligne comment ‚cr. interaction;
+               ENC=Inter. Log Entry Comment Line];
+    LookupPageID=Page5188;
+    DrillDownPageID=Page5188;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;TableRelation="Interaction Log Entry"."Entry No.";
+                                                   CaptionML=[ENU=Entry No.;
+                                                              ESM=N§ mov.;
+                                                              FRC=Nø ‚criture;
+                                                              ENC=Entry No.] }
+    { 4   ;   ;Line No.            ;Integer       ;CaptionML=[ENU=Line No.;
+                                                              ESM=N§ l¡nea;
+                                                              FRC=Nø ligne;
+                                                              ENC=Line No.] }
+    { 5   ;   ;Date                ;Date          ;CaptionML=[ENU=Date;
+                                                              ESM=Fecha;
+                                                              FRC=Date;
+                                                              ENC=Date] }
+    { 6   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code] }
+    { 7   ;   ;Comment             ;Text80        ;CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment] }
+    { 8   ;   ;Last Date Modified  ;Date          ;CaptionML=[ENU=Last Date Modified;
+                                                              ESM=Fecha £lt. modificaci¢n;
+                                                              FRC=Date derniŠre modification;
+                                                              ENC=Last Date Modified];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Entry No.,Line No.                      ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE SetUpNewLine@1();
+    VAR
+      InteractionCommentLine@1000 : Record 5123;
+    BEGIN
+      InteractionCommentLine.SETRANGE("Entry No.","Entry No.");
+      InteractionCommentLine.SETRANGE(Date,WORKDATE);
+      IF NOT InteractionCommentLine.FINDFIRST THEN
+        Date := WORKDATE;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,38 @@
+OBJECT Table 2000000006 Company
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/07/06;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Company;
+               ESM=Empresa;
+               FRC=Compagnie;
+               ENC=Company];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Name                ;Text30        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+  }
+  KEYS
+  {
+    {    ;Name                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

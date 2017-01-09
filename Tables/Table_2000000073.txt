@@ -1,0 +1,86 @@
+OBJECT Table 2000000073 User Personalization
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=User Personalization;
+               ESM=Personalizaci¢n usuario;
+               FRC=Personnalisation utilisateur;
+               ENC=User Personalization];
+  }
+  FIELDS
+  {
+    { 3   ;   ;User SID            ;GUID          ;TableRelation=User."User Security ID";
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User SID;
+                                                              ESM=SID Usuario;
+                                                              FRC=SID utilisateur;
+                                                              ENC=User SID] }
+    { 6   ;   ;User ID             ;Code50        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(User."User Name" WHERE (User Security ID=FIELD(User SID)));
+                                                   CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 9   ;   ;Profile ID          ;Code30        ;TableRelation=Profile."Profile ID";
+                                                   CaptionML=[ENU=Profile ID;
+                                                              ESM=Id. perfil;
+                                                              FRC=Code profil;
+                                                              ENC=Profile ID] }
+    { 12  ;   ;Language ID         ;Integer       ;CaptionML=[ENU=Language ID;
+                                                              ESM=Id. idioma;
+                                                              FRC=Code de langue;
+                                                              ENC=Language ID] }
+    { 15  ;   ;Company             ;Text30        ;TableRelation=Company.Name;
+                                                   CaptionML=[ENU=Company;
+                                                              ESM=Empresa;
+                                                              FRC=Compagnie;
+                                                              ENC=Company] }
+    { 18  ;   ;Debugger Break On Error;Boolean    ;InitValue=Yes;
+                                                   CaptionML=[ENU=Debugger Break On Error;
+                                                              ESM=Inter. depurador en error;
+                                                              FRC=Arrˆt d‚bogueur sur erreur;
+                                                              ENC=Debugger Break On Error] }
+    { 21  ;   ;Debugger Break On Rec Changes;Boolean;
+                                                   CaptionML=[ENU=Debugger Break On Rec Changes;
+                                                              ESM=Inter. depur. en cambios reg.;
+                                                              FRC=Arrˆt d‚bogueur sur modif enr.;
+                                                              ENC=Debugger Break On Rec Changes] }
+    { 24  ;   ;Debugger Skip System Triggers;Boolean;
+                                                   InitValue=Yes;
+                                                   CaptionML=[ENU=Debugger Skip System Triggers;
+                                                              ESM=Omitir dep. en desenc. sis.;
+                                                              FRC=D‚bogueur ignore d‚clench syst;
+                                                              ENC=Debugger Skip System Triggers] }
+    { 27  ;   ;Locale ID           ;Integer       ;CaptionML=[ENU=Locale ID;
+                                                              ESM=Id. configuraci¢n regional;
+                                                              FRC=Code des paramŠtres r‚gionaux;
+                                                              ENC=Locale ID] }
+    { 30  ;   ;Time Zone           ;Text180       ;CaptionML=[ENU=Time Zone;
+                                                              ESM=Zona horaria;
+                                                              FRC=Fuseau horaire;
+                                                              ENC=Time Zone] }
+  }
+  KEYS
+  {
+    {    ;User SID                                ;Clustered=Yes }
+    {    ;Profile ID                               }
+    {    ;Company                                  }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

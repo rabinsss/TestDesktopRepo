@@ -1,0 +1,143 @@
+OBJECT Table 322 Tax Detail
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/14/09;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00,NAVNA6.00.01;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               TaxJurisdiction.GET("Tax Jurisdiction Code");
+               "Calculate Tax on Tax" := TaxJurisdiction."Calculate Tax on Tax";
+               IF "Tax Type" <> "Tax Type"::"Excise Tax" THEN BEGIN
+                 PrepareForCheckTaxType(Rec);
+                 IF TaxDetailTemp.COUNT > 0 THEN
+                   IF NOT CheckTaxType(Rec) THEN
+                     ERROR(Text001);
+               END;
+             END;
+
+    OnRename=BEGIN
+               TaxJurisdiction.GET("Tax Jurisdiction Code");
+               "Calculate Tax on Tax" := TaxJurisdiction."Calculate Tax on Tax";
+               IF "Tax Type" <> "Tax Type"::"Excise Tax" THEN BEGIN
+                 PrepareForCheckTaxType(Rec);
+                 IF TaxDetailTemp.GET(xRec."Tax Jurisdiction Code",xRec."Tax Group Code",xRec."Tax Type",xRec."Effective Date") THEN
+                   TaxDetailTemp.DELETE;
+                 IF TaxDetailTemp.COUNT > 0 THEN
+                   IF NOT CheckTaxType(Rec) THEN
+                     ERROR(Text001);
+               END;
+             END;
+
+    CaptionML=[ENU=Tax Detail;
+               ESM=Detalle impuesto;
+               FRC=D‚tail fiscal;
+               ENC=Tax Detail];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Tax Jurisdiction Code;Code10       ;TableRelation="Tax Jurisdiction";
+                                                   CaptionML=[ENU=Tax Jurisdiction Code;
+                                                              ESM=C¢d. jurisdicci¢n fiscal;
+                                                              FRC=Code de juridiction fiscale;
+                                                              ENC=Tax Jurisdiction Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Tax Group Code      ;Code10        ;TableRelation="Tax Group";
+                                                   CaptionML=[ENU=Tax Group Code;
+                                                              ESM=C¢d. grupo impuesto;
+                                                              FRC=Code groupe fiscal;
+                                                              ENC=Tax Group Code] }
+    { 3   ;   ;Tax Type            ;Option        ;CaptionML=[ENU=Tax Type;
+                                                              ESM=Tipo impto.;
+                                                              FRC=Type de taxe;
+                                                              ENC=Tax Type];
+                                                   OptionCaptionML=[ENU=Sales and Use Tax,Excise Tax,Sales Tax Only,Use Tax Only;
+                                                                    ESM=Impuesto de las ventas y sobre servicios,Impto. consumo,S¢lo impuesto de las ventas,S¢lo impto. sobre servicios;
+                                                                    FRC=Taxe de vente et de service,Taxe d'accise,Taxe de vente uniquement,Taxe de service uniquement;
+                                                                    ENC=Sales and Use Tax,Excise Tax,Sales Tax Only,Use Tax Only];
+                                                   OptionString=Sales and Use Tax,Excise Tax,Sales Tax Only,Use Tax Only;
+                                                   NotBlank=No }
+    { 4   ;   ;Maximum Amount/Qty. ;Decimal       ;CaptionML=[ENU=Maximum Amount/Qty.;
+                                                              ESM=Importe/Cdad. m xima;
+                                                              FRC=Montant/quantit‚ maximum;
+                                                              ENC=Maximum Amount/Qty.];
+                                                   DecimalPlaces=2:2;
+                                                   MinValue=0 }
+    { 5   ;   ;Tax Below Maximum   ;Decimal       ;CaptionML=[ENU=Tax Below Maximum;
+                                                              ESM=Impto. inferior al m ximo;
+                                                              FRC=Taxe inf‚rieure maximum;
+                                                              ENC=Tax Below Maximum];
+                                                   DecimalPlaces=2:4;
+                                                   MinValue=0 }
+    { 6   ;   ;Tax Above Maximum   ;Decimal       ;CaptionML=[ENU=Tax Above Maximum;
+                                                              ESM=Impto. superior al m ximo;
+                                                              FRC=Taxe sup‚rieure maximum;
+                                                              ENC=Tax Above Maximum];
+                                                   DecimalPlaces=2:4;
+                                                   MinValue=0 }
+    { 7   ;   ;Effective Date      ;Date          ;CaptionML=[ENU=Effective Date;
+                                                              ESM=Fecha efectividad;
+                                                              FRC=Date d'entr‚e en vigueur;
+                                                              ENC=Effective Date] }
+    { 8   ;   ;Calculate Tax on Tax;Boolean       ;CaptionML=[ENU=Calculate Tax on Tax;
+                                                              ESM=Calcula impto. en impto.;
+                                                              FRC=Calculer taxe sur taxe;
+                                                              ENC=Calculate Tax on Tax];
+                                                   Editable=No }
+    { 10010;  ;Expense/Capitalize  ;Boolean       ;CaptionML=[ENU=Expense/Capitalize;
+                                                              ESM=Gastar/Capitalizar;
+                                                              FRC=D‚pense/Capitaliser;
+                                                              ENC=Expense/Capitalize] }
+  }
+  KEYS
+  {
+    {    ;Tax Jurisdiction Code,Tax Group Code,Tax Type,Effective Date;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      TaxJurisdiction@1000 : Record 320;
+      Text001@1020000 : TextConst 'ENU=A tax detail already exists with the same tax jurisdiction, tax group, and tax type.;ESM=Ya existe un detalle de impuesto con la misma jurisdicci¢n, grupo y tipo de impuesto.;FRC=Il existe d‚j… un d‚tail fiscal pr‚sentant une juridiction fiscale, un groupe fiscal et un type de taxe identiques.;ENC=A tax detail already exists with the same tax jurisdiction, tax group, and tax type.';
+      TaxDetailTemp@1020001 : TEMPORARY Record 322;
+      TaxDetail@1020002 : Record 322;
+
+    PROCEDURE CheckTaxType@1020000(TaxDetailRec@1020000 : Record 322) : Boolean;
+    BEGIN
+      IF TaxDetailRec."Tax Type" = TaxDetailRec."Tax Type"::"Sales and Use Tax" THEN
+        TaxDetailTemp.SETFILTER("Tax Type",'%1|%2',TaxDetailRec."Tax Type"::"Sales Tax Only",
+          TaxDetailRec."Tax Type"::"Use Tax Only")
+      ELSE
+        TaxDetailTemp.SETRANGE("Tax Type",TaxDetailRec."Tax Type"::"Sales and Use Tax");
+      IF TaxDetailTemp.FINDFIRST THEN
+        EXIT(FALSE)
+      ELSE
+        EXIT(TRUE);
+    END;
+
+    PROCEDURE PrepareForCheckTaxType@1020001(TaxDetailRec@1020000 : Record 322);
+    BEGIN
+      TaxDetailTemp.RESET;
+      TaxDetailTemp.DELETEALL;
+      TaxDetail.SETRANGE("Tax Jurisdiction Code",TaxDetailRec."Tax Jurisdiction Code");
+      TaxDetail.SETRANGE("Tax Group Code",TaxDetailRec."Tax Group Code");
+      TaxDetail.SETRANGE("Effective Date",TaxDetailRec."Effective Date");
+      IF TaxDetail.FINDSET THEN
+        REPEAT
+          TaxDetailTemp.INIT;
+          TaxDetailTemp := TaxDetail;
+          TaxDetailTemp.INSERT;
+        UNTIL TaxDetail.NEXT = 0;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

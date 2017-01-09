@@ -1,0 +1,46 @@
+OBJECT Table 2000000078 Chart
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Chart;
+               ESM=Gr fico;
+               FRC=Graphique;
+               ENC=Chart];
+  }
+  FIELDS
+  {
+    { 3   ;   ;ID                  ;Code20        ;CaptionML=[ENU=ID;
+                                                              ESM=ID;
+                                                              FRC=ID;
+                                                              ENC=ID] }
+    { 6   ;   ;Name                ;Text30        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+    { 9   ;   ;BLOB                ;BLOB          ;CaptionML=[ENU=BLOB;
+                                                              ESM=BLOB;
+                                                              FRC=Grand objet binaire;
+                                                              ENC=BLOB] }
+  }
+  KEYS
+  {
+    {    ;ID                                      ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

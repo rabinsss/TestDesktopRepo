@@ -1,0 +1,44 @@
+OBJECT Table 286 Territory
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Territory;
+               ESM=Territorio;
+               FRC=Territoire;
+               ENC=Territory];
+    LookupPageID=Page429;
+    DrillDownPageID=Page429;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Name                ;Text50        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

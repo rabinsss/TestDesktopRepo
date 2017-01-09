@@ -1,0 +1,79 @@
+OBJECT Table 2000000072 Profile
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Profile;
+               ESM=Perfil;
+               FRC=Profil;
+               ENC=Profile];
+  }
+  FIELDS
+  {
+    { 3   ;   ;Profile ID          ;Code30        ;CaptionML=[ENU=Profile ID;
+                                                              ESM=Id. perfil;
+                                                              FRC=Code profil;
+                                                              ENC=Profile ID] }
+    { 12  ;   ;Description         ;Text250       ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 15  ;   ;Role Center ID      ;Integer       ;TableRelation=AllObj."Object ID" WHERE (Object Type=CONST(Page));
+                                                   CaptionML=[ENU=Role Center ID;
+                                                              ESM=Id.  rea de tareas;
+                                                              FRC=Code Tableau de bord;
+                                                              ENC=Role Centre ID] }
+    { 18  ;   ;Default Role Center ;Boolean       ;CaptionML=[ENU=Default Role Center;
+                                                              ESM=µrea de tareas predeterminada;
+                                                              FRC=Tableau de bord par d‚faut;
+                                                              ENC=Default Role Centre] }
+    { 21  ;   ;Use Comments        ;Boolean       ;CaptionML=[ENU=Use Comments;
+                                                              ESM=Usar comentarios;
+                                                              FRC=Utiliser les commentaires;
+                                                              ENC=Use Comments] }
+    { 24  ;   ;Use Notes           ;Boolean       ;CaptionML=[ENU=Use Notes;
+                                                              ESM=Usar notas;
+                                                              FRC=Utiliser les notes;
+                                                              ENC=Use Notes] }
+    { 27  ;   ;Use Record Notes    ;Boolean       ;CaptionML=[ENU=Use Record Notes;
+                                                              ESM=Usar notas del registro;
+                                                              FRC=Utiliser notes enregistrement;
+                                                              ENC=Use Record Notes] }
+    { 30  ;   ;Record Notebook     ;Text250       ;CaptionML=[ENU=Record Notebook;
+                                                              ESM=Registrar bloc de notas;
+                                                              FRC=Enregistrer le bloc-notes;
+                                                              ENC=Record Notebook] }
+    { 33  ;   ;Use Page Notes      ;Boolean       ;CaptionML=[ENU=Use Page Notes;
+                                                              ESM=Usar notas de la p gina;
+                                                              FRC=Utiliser les notes de pages;
+                                                              ENC=Use Page Notes] }
+    { 36  ;   ;Page Notebook       ;Text250       ;CaptionML=[ENU=Page Notebook;
+                                                              ESM=P gina de bloc de notas;
+                                                              FRC=Bloc-notes de page;
+                                                              ENC=Page Notebook] }
+    { 39  ;   ;Disable Personalization;Boolean    ;CaptionML=[ENU=Disable Personalization;
+                                                              ESM=Deshabilitar personalizaci¢n;
+                                                              FRC=D‚sactiver la personnalisation;
+                                                              ENC=Disable Personalization] }
+  }
+  KEYS
+  {
+    {    ;Profile ID                              ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

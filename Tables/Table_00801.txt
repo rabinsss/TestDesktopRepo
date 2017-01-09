@@ -1,0 +1,112 @@
+OBJECT Table 801 Online Map Parameter Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               TESTFIELD(Code);
+             END;
+
+    CaptionML=[ENU=Online Map Parameter Setup;
+               ESM=Config. par metros Online Map;
+               FRC=Configuration des paramŠtres Online Map;
+               ENC=Online Map Parameter Setup];
+    LookupPageID=Page804;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Name                ;Text30        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+    { 3   ;   ;Map Service         ;Text250       ;CaptionML=[ENU=Map Service;
+                                                              ESM=Servicio de mapas;
+                                                              FRC=Service cartographie;
+                                                              ENC=Map Service] }
+    { 4   ;   ;Directions Service  ;Text250       ;OnValidate=VAR
+                                                                i@1000 : Integer;
+                                                                ParmPos@1001 : Integer;
+                                                                RemainingURL@1002 : Text[250];
+                                                              BEGIN
+                                                                FOR i := 1 TO 6 DO BEGIN
+                                                                  ParmPos := STRPOS("Directions Service",STRSUBSTNO('{%1}',i));
+                                                                  IF ParmPos > 1 THEN BEGIN
+                                                                    RemainingURL := COPYSTR("Directions Service",ParmPos + 3);
+                                                                    ParmPos := STRPOS(RemainingURL,STRSUBSTNO('{%1}',i));
+                                                                    IF NOT (ParmPos > 1) THEN
+                                                                      ERROR(Text002,i);
+                                                                    RemainingURL := COPYSTR(RemainingURL,ParmPos + 3);
+                                                                    IF STRPOS(RemainingURL,STRSUBSTNO('{%1}',i)) > 1 THEN
+                                                                      ERROR(Text002,i);
+                                                                  END;
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Directions Service;
+                                                              ESM=Servicio de indicaciones;
+                                                              FRC=Service itin‚raires;
+                                                              ENC=Directions Service] }
+    { 5   ;   ;Comment             ;Text250       ;CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment] }
+    { 6   ;   ;URL Encode Non-ASCII Chars;Boolean ;CaptionML=[ENU=URL Encode Non-ASCII Chars;
+                                                              ESM=Codificaci¢n URL sin caracteres ASCII;
+                                                              FRC=Car. non ASCII codage URL;
+                                                              ENC=URL Encode Non-ASCII Chars] }
+    { 7   ;   ;Miles/Kilometers Option List;Text250;
+                                                   CaptionML=[ENU=Miles/Kilometers Option List;
+                                                              ESM=Lista opciones millas/kil¢metros;
+                                                              FRC=Liste d'options Miles/kilomŠtres;
+                                                              ENC=Miles/Kilometres Option List] }
+    { 8   ;   ;Quickest/Shortest Option List;Text250;
+                                                   CaptionML=[ENU=Quickest/Shortest Option List;
+                                                              ESM=Lista opciones m s r pida/m s corta;
+                                                              FRC=Liste d'options Le plus rapide/le plus court;
+                                                              ENC=Quickest/Shortest Option List] }
+    { 9   ;   ;Directions from Location Serv.;Text250;
+                                                   CaptionML=[ENU=Directions from Location Serv.;
+                                                              ESM=Indicaciones del Servicio de ubicaci¢n;
+                                                              FRC=Serv. itin‚raires depuis une position;
+                                                              ENC=Directions from Location Serv.] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;Code,Name                                }
+  }
+  CODE
+  {
+    VAR
+      Text001@1000 : TextConst 'ENU=Inserting default values will delete your current setup.\Do you wish to continue?;ESM=Al insertar los valores predeterminados se eliminar  la configuraci¢n actual.\¨Desea continuar?;FRC=L''insertion de valeurs par d‚faut va supprimer la configuration actuelle.\Voulez-vous continuerÿ?;ENC=Inserting default values will delete your current setup.\Do you wish to continue?';
+      Text002@1001 : TextConst 'ENU=Address parameters must only occur twice in the Directions URL. Validate the use of {%1}.;ESM=Los par metros de direcci¢n deben producirse solo dos veces en la direcci¢n URL de direcciones. Valide el uso de {%1}.;FRC=Les paramŠtres d''adresse ne doivent apparaŒtre que deux fois dans l''URL d''itin‚raires. Validez l''utilisation de {%1}.;ENC=Address parameters must only occur twice in the Directions URL. Validate the use of {%1}.';
+
+    PROCEDURE InsertDefaults@1();
+    VAR
+      OnlineMapParameterSetup@1001 : Record 801;
+      OnlineMapMgt@1000 : Codeunit 802;
+    BEGIN
+      IF NOT OnlineMapParameterSetup.ISEMPTY THEN
+        IF NOT CONFIRM(Text001,FALSE) THEN
+          EXIT;
+      OnlineMapMgt.SetupDefault;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

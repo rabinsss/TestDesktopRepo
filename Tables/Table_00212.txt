@@ -1,0 +1,140 @@
+OBJECT Table 212 Job Posting Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Job Posting Buffer;
+               ESM=Mem. inter. proyecto;
+               FRC=Tampon report projet;
+               ENC=Job Posting Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Job No.             ;Code20        ;TableRelation=Job;
+                                                   CaptionML=[ENU=Job No.;
+                                                              ESM=N§ proyecto;
+                                                              FRC=Nø projet;
+                                                              ENC=Job No.] }
+    { 2   ;   ;Entry Type          ;Option        ;CaptionML=[ENU=Entry Type;
+                                                              ESM=Tipo movimiento;
+                                                              FRC=Type d'‚criture;
+                                                              ENC=Entry Type];
+                                                   OptionCaptionML=[ENU=Usage,Sale;
+                                                                    ESM=Uso,Venta;
+                                                                    FRC=Utilisation,Vente;
+                                                                    ENC=Usage,Sale];
+                                                   OptionString=Usage,Sale }
+    { 3   ;   ;Posting Group Type  ;Option        ;CaptionML=[ENU=Posting Group Type;
+                                                              ESM=Tipo Gr. Contable;
+                                                              FRC=Type paramŠtre report;
+                                                              ENC=Posting Group Type];
+                                                   OptionCaptionML=[ENU=Resource,Item,G/L Account;
+                                                                    ESM=Recurso,Producto,Cuenta;
+                                                                    FRC=Ressource,Article,Compte (GL);
+                                                                    ENC=Resource,Item,G/L Account];
+                                                   OptionString=Resource,Item,G/L Account }
+    { 4   ;   ;No.                 ;Code20        ;CaptionML=[ENU=No.;
+                                                              ESM=N§;
+                                                              FRC=Nø;
+                                                              ENC=No.] }
+    { 5   ;   ;Posting Group       ;Code10        ;TableRelation="Job Posting Group";
+                                                   CaptionML=[ENU=Posting Group;
+                                                              ESM=Grupo contable;
+                                                              FRC=ParamŠtre report;
+                                                              ENC=Posting Group] }
+    { 6   ;   ;Global Dimension 1 Code;Code20     ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(1));
+                                                   CaptionML=[ENU=Global Dimension 1 Code;
+                                                              ESM=C¢d. dimensi¢n global 1;
+                                                              FRC=Code de dimension principal 1;
+                                                              ENC=Global Dimension 1 Code];
+                                                   CaptionClass='1,1,1' }
+    { 7   ;   ;Global Dimension 2 Code;Code20     ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(2));
+                                                   CaptionML=[ENU=Global Dimension 2 Code;
+                                                              ESM=C¢d. dimensi¢n global 2;
+                                                              FRC=Code de dimension principal 2;
+                                                              ENC=Global Dimension 2 Code];
+                                                   CaptionClass='1,1,2' }
+    { 8   ;   ;Unit of Measure Code;Code10        ;CaptionML=[ENU=Unit of Measure Code;
+                                                              ESM=C¢d. unidad medida;
+                                                              FRC=Code unit‚ de mesure;
+                                                              ENC=Unit of Measure Code] }
+    { 9   ;   ;Work Type Code      ;Code10        ;TableRelation="Work Type";
+                                                   CaptionML=[ENU=Work Type Code;
+                                                              ESM=C¢d. tipo trabajo;
+                                                              FRC=Code type travail;
+                                                              ENC=Work Type Code] }
+    { 20  ;   ;Amount              ;Decimal       ;CaptionML=[ENU=Amount;
+                                                              ESM=Importe;
+                                                              FRC=Montant;
+                                                              ENC=Amount];
+                                                   AutoFormatType=1 }
+    { 21  ;   ;Quantity            ;Decimal       ;CaptionML=[ENU=Quantity;
+                                                              ESM=Cantidad;
+                                                              FRC=Quantit‚;
+                                                              ENC=Quantity];
+                                                   DecimalPlaces=0:5 }
+    { 22  ;   ;Total Cost          ;Decimal       ;CaptionML=[ENU=Total Cost;
+                                                              ESM=Costo total;
+                                                              FRC=Co–t total;
+                                                              ENC=Total Cost];
+                                                   AutoFormatType=1 }
+    { 23  ;   ;Total Price         ;Decimal       ;CaptionML=[ENU=Total Price;
+                                                              ESM=Precio total;
+                                                              FRC=Prix total;
+                                                              ENC=Total Price];
+                                                   AutoFormatType=1 }
+    { 24  ;   ;Applies-to ID       ;Code50        ;CaptionML=[ENU=Applies-to ID;
+                                                              ESM=Liq. por id.;
+                                                              FRC=Code affect‚ …;
+                                                              ENC=Applies-to ID] }
+    { 25  ;   ;Gen. Bus. Posting Group;Code10     ;TableRelation="Gen. Business Posting Group";
+                                                   CaptionML=[ENU=Gen. Bus. Posting Group;
+                                                              ESM=Grupo contable negocio;
+                                                              FRC=Groupe de report de march‚;
+                                                              ENC=Gen. Bus. Posting Group] }
+    { 26  ;   ;Gen. Prod. Posting Group;Code10    ;TableRelation="Gen. Product Posting Group";
+                                                   CaptionML=[ENU=Gen. Prod. Posting Group;
+                                                              ESM=Grupo contable producto;
+                                                              FRC=Groupe de report de produit;
+                                                              ENC=Gen. Prod. Posting Group] }
+    { 27  ;   ;Additional-Currency Amount;Decimal ;CaptionML=[ENU=Additional-Currency Amount;
+                                                              ESM=Importe divisa-adicional;
+                                                              FRC=Montant devise add.;
+                                                              ENC=Additional-Currency Amount];
+                                                   AutoFormatType=1 }
+    { 28  ;   ;Dimension Entry No. ;Integer       ;CaptionML=[ENU=Dimension Entry No.;
+                                                              ESM=N§ mov. dimensi¢n;
+                                                              FRC=Nø d'‚criture de dimension;
+                                                              ENC=Dimension Entry No.] }
+    { 29  ;   ;Variant Code        ;Code10        ;CaptionML=[ENU=Variant Code;
+                                                              ESM=C¢d. variante;
+                                                              FRC=Code variante;
+                                                              ENC=Variant Code] }
+    { 480 ;   ;Dimension Set ID    ;Integer       ;TableRelation="Dimension Set Entry";
+                                                   CaptionML=[ENU=Dimension Set ID;
+                                                              ESM=Id. grupo dimensiones;
+                                                              FRC=Code ensemble de dimensions;
+                                                              ENC=Dimension Set ID];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Job No.,Entry Type,Posting Group Type,No.,Variant Code,Posting Group,Gen. Bus. Posting Group,Gen. Prod. Posting Group,Unit of Measure Code,Work Type Code,Dimension Entry No.;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

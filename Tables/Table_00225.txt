@@ -1,0 +1,140 @@
+OBJECT Table 225 Post Code
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=ZIP Code;
+               ESM=C¢digo postal;
+               FRC=Code postal;
+               ENC=Postal/ZIP Code];
+    LookupPageID=Page367;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code20        ;OnValidate=VAR
+                                                                PostCode@1000 : Record 225;
+                                                              BEGIN
+                                                                PostCode.SETCURRENTKEY("Search City");
+                                                                PostCode.SETRANGE("Search City","Search City");
+                                                                PostCode.SETRANGE(Code,Code);
+                                                                IF PostCode.FINDFIRST THEN
+                                                                  ERROR(Text000,FIELDCAPTION(Code),Code);
+                                                              END;
+
+                                                   CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;City                ;Text30        ;OnValidate=VAR
+                                                                PostCode@1000 : Record 225;
+                                                              BEGIN
+                                                                TESTFIELD(Code);
+                                                                "Search City" := City;
+                                                                IF xRec."Search City" <> "Search City" THEN BEGIN
+                                                                  PostCode.SETCURRENTKEY("Search City");
+                                                                  PostCode.SETRANGE("Search City","Search City");
+                                                                  PostCode.SETRANGE(Code,Code);
+                                                                  IF PostCode.FINDFIRST THEN
+                                                                    ERROR(Text000,FIELDCAPTION(City),City);
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=City;
+                                                              ESM=Municipio/Ciudad;
+                                                              FRC=Ville;
+                                                              ENC=City];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Search City         ;Code30        ;CaptionML=[ENU=Search City;
+                                                              ESM=Buscar Municipio/Ciudad;
+                                                              FRC=Rechercher une ville;
+                                                              ENC=Search City] }
+    { 4   ;   ;Country/Region Code ;Code10        ;TableRelation=Country/Region;
+                                                   CaptionML=[ENU=Country/Region Code;
+                                                              ESM=C¢d. pa¡s/regi¢n;
+                                                              FRC=Code pays/r‚gion;
+                                                              ENC=Country/Region Code] }
+    { 5   ;   ;County              ;Text30        ;CaptionML=[ENU=State;
+                                                              ESM=Provincia;
+                                                              FRC=Comt‚;
+                                                              ENC=Province/State] }
+  }
+  KEYS
+  {
+    {    ;Code,City                               ;Clustered=Yes }
+    {    ;City,Code                                }
+    {    ;Search City                              }
+    {    ;Country/Region Code                      }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;Code,City,Search City,Country/Region Code,County }
+    { 2   ;Brick               ;Code,City,County,Country/Region Code     }
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=%1 %2 already exists.;ESM=Ya existe %1 %2.;FRC=%1 %2 existe d‚j….;ENC=%1 %2 already exists.';
+
+    PROCEDURE ValidateCity@5(VAR City@1000 : Text[30];VAR PostCode@1001 : Code[20];VAR County@1006 : Text[30];VAR CountryCode@1005 : Code[10];UseDialog@1007 : Boolean);
+    VAR
+      PostCodeRec@1002 : Record 225;
+      PostCodeRec2@1004 : Record 225;
+      SearchCity@1003 : Code[30];
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF City <> '' THEN BEGIN
+        SearchCity := City;
+        PostCodeRec.SETCURRENTKEY("Search City");
+        IF STRPOS(SearchCity,'*') = STRLEN(SearchCity) THEN
+          PostCodeRec.SETFILTER("Search City",SearchCity)
+        ELSE
+          PostCodeRec.SETRANGE("Search City",SearchCity);
+        IF NOT PostCodeRec.FINDFIRST THEN
+          EXIT;
+        PostCodeRec2.COPY(PostCodeRec);
+        IF UseDialog AND (PostCodeRec2.NEXT = 1) THEN
+          IF PAGE.RUNMODAL(PAGE::"Post Codes",PostCodeRec,PostCodeRec.Code) <> ACTION::LookupOK THEN
+            EXIT;
+        PostCode := PostCodeRec.Code;
+        City := PostCodeRec.City;
+        CountryCode := PostCodeRec."Country/Region Code";
+        County := PostCodeRec.County;
+      END;
+    END;
+
+    PROCEDURE ValidatePostCode@6(VAR City@1001 : Text[30];VAR PostCode@1000 : Code[20];VAR County@1005 : Text[30];VAR CountryCode@1006 : Code[10];UseDialog@1004 : Boolean);
+    VAR
+      PostCodeRec@1002 : Record 225;
+      PostCodeRec2@1003 : Record 225;
+    BEGIN
+      IF PostCode <> '' THEN BEGIN
+        IF STRPOS(PostCode,'*') = STRLEN(PostCode) THEN
+          PostCodeRec.SETFILTER(Code,PostCode)
+        ELSE
+          PostCodeRec.SETRANGE(Code,PostCode);
+        IF NOT PostCodeRec.FINDFIRST THEN
+          EXIT;
+        PostCodeRec2.COPY(PostCodeRec);
+        IF UseDialog AND (PostCodeRec2.NEXT = 1) AND GUIALLOWED THEN
+          IF PAGE.RUNMODAL(PAGE::"Post Codes",PostCodeRec,PostCodeRec.Code) <> ACTION::LookupOK THEN
+            EXIT;
+        PostCode := PostCodeRec.Code;
+        City := PostCodeRec.City;
+        CountryCode := PostCodeRec."Country/Region Code";
+        County := PostCodeRec.County;
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

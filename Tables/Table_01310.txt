@@ -1,0 +1,45 @@
+OBJECT Table 1310 Mini Chart Definition
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/09/14;
+    Time=12:00:00 PM;
+    Version List=NAVW18.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Mini Chart Definition;
+               ESM=Definici¢n de minigr fico;
+               FRC=D‚finition mini graphique;
+               ENC=Mini Chart Definition];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code Unit ID        ;Integer       ;CaptionML=[ENU=Code Unit ID;
+                                                              ESM=Id. unidad de c¢digo;
+                                                              FRC=Code unit‚ de code;
+                                                              ENC=Code Unit ID] }
+    { 2   ;   ;Chart Name          ;Text60        ;CaptionML=[ENU=Chart Name;
+                                                              ESM=Nombre del gr fico;
+                                                              FRC=Nom graphique;
+                                                              ENC=Chart Name] }
+    { 3   ;   ;Enabled             ;Boolean       ;CaptionML=[ENU=Enabled;
+                                                              ESM=Activado;
+                                                              FRC=Activ‚;
+                                                              ENC=Enabled] }
+  }
+  KEYS
+  {
+    {    ;Code Unit ID,Chart Name                 ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,87 @@
+OBJECT Table 2000000120 User
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=User;
+               ESM=Usuario;
+               FRC=Utilisateur;
+               ENC=User];
+  }
+  FIELDS
+  {
+    { 1   ;   ;User Security ID    ;GUID          ;CaptionML=[ENU=User Security ID;
+                                                              ESM=Id. de seguridad de usuario;
+                                                              FRC=Code s‚curit‚ utilisateur;
+                                                              ENC=User Security ID] }
+    { 2   ;   ;User Name           ;Code50        ;CaptionML=[ENU=User Name;
+                                                              ESM=Nombre usuario;
+                                                              FRC=Nom utilisateur;
+                                                              ENC=User Name] }
+    { 3   ;   ;Full Name           ;Text80        ;CaptionML=[ENU=Full Name;
+                                                              ESM=Nombre completo;
+                                                              FRC=Nom complet;
+                                                              ENC=Full Name] }
+    { 4   ;   ;State               ;Option        ;CaptionML=[ENU=State;
+                                                              ESM=Estado;
+                                                              FRC=Province;
+                                                              ENC=Province/State];
+                                                   OptionCaptionML=[ENU=Enabled,Disabled;
+                                                                    ESM=Activado,Desactivado;
+                                                                    FRC=Activ‚,D‚sactiv‚;
+                                                                    ENC=Enabled,Disabled];
+                                                   OptionString=Enabled,Disabled }
+    { 5   ;   ;Expiry Date         ;DateTime      ;CaptionML=[ENU=Expiry Date;
+                                                              ESM=Fecha de expiraci¢n;
+                                                              FRC=Date d'expiration;
+                                                              ENC=Expiry Date] }
+    { 7   ;   ;Windows Security ID ;Text119       ;CaptionML=[ENU=Windows Security ID;
+                                                              ESM=Id. seguridad Windows;
+                                                              FRC=Code de s‚curit‚ Windows;
+                                                              ENC=Windows Security ID] }
+    { 8   ;   ;Change Password     ;Boolean       ;CaptionML=[ENU=Change Password;
+                                                              ESM=Cambiar contrase¤a;
+                                                              FRC=Changer le mot de passe;
+                                                              ENC=Change Password] }
+    { 10  ;   ;License Type        ;Option        ;CaptionML=[ENU=License Type;
+                                                              ESM=Tipo de licencia;
+                                                              FRC=Type licence;
+                                                              ENC=License Type];
+                                                   OptionCaptionML=[ENU=Full User,Limited User,Device Only User,Windows Group,External User;
+                                                                    ESM=Usuario completo,Usuario limitado,Usuario solo dispositivo,Grupo Windows,Usuario externo;
+                                                                    FRC=Utilisateur complet,Utilisateur limit‚,Utilisateur avec p‚riph‚rique uniquement,Groupe Windows,Utilisateur externe;
+                                                                    ENC=Full User,Limited User,Device Only User,Windows Group,External User];
+                                                   OptionString=Full User,Limited User,Device Only User,Windows Group,External User }
+    { 11  ;   ;Authentication Email;Text250       ;CaptionML=[ENU=Authentication Email;
+                                                              ESM=Direcci¢n correo elec. autent.;
+                                                              FRC=Adresse de courriel pour l'authentification;
+                                                              ENC=Authentication Email] }
+    { 14  ;   ;Contact Email       ;Text250       ;CaptionML=[ENU=Contact Email;
+                                                              ESM=Correo electr¢nico de contacto;
+                                                              FRC=Courriel de contact;
+                                                              ENC=Contact Email] }
+  }
+  KEYS
+  {
+    {    ;User Security ID                        ;Clustered=Yes }
+    {    ;User Name                                }
+    {    ;Windows Security ID                      }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;User Name                                }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

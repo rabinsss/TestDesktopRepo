@@ -1,0 +1,374 @@
+OBJECT Table 5079 Marketing Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    Permissions=TableData 1261=rimd;
+    CaptionML=[ENU=Marketing Setup;
+               ESM=Configuraci¢n de marketing;
+               FRC=Configuration du marketing;
+               ENC=Marketing Setup];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=[ENU=Primary Key;
+                                                              ESM=Clave primaria;
+                                                              FRC=Cl‚ primaire;
+                                                              ENC=Primary Key] }
+    { 2   ;   ;Contact Nos.        ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Contact Nos.;
+                                                              ESM=N§ serie contacto;
+                                                              FRC=Nø contact;
+                                                              ENC=Contact Nos.] }
+    { 3   ;   ;Campaign Nos.       ;Code10        ;TableRelation="No. Series";
+                                                   AccessByPermission=TableData 5071=R;
+                                                   CaptionML=[ENU=Campaign Nos.;
+                                                              ESM=N§ serie campa¤a;
+                                                              FRC=Nø promotion;
+                                                              ENC=Campaign Nos.] }
+    { 4   ;   ;Segment Nos.        ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Segment Nos.;
+                                                              ESM=N§ serie segmento;
+                                                              FRC=Nø segment;
+                                                              ENC=Segment Nos.] }
+    { 5   ;   ;To-do Nos.          ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=To-do Nos.;
+                                                              ESM=N§ serie tarea;
+                                                              FRC=Nø tƒche;
+                                                              ENC=To-do Nos.] }
+    { 6   ;   ;Opportunity Nos.    ;Code10        ;TableRelation="No. Series";
+                                                   AccessByPermission=TableData 5090=R;
+                                                   CaptionML=[ENU=Opportunity Nos.;
+                                                              ESM=N§ serie oportunidad;
+                                                              FRC=Nø opportunit‚;
+                                                              ENC=Opportunity Nos.] }
+    { 7   ;   ;Bus. Rel. Code for Customers;Code10;TableRelation="Business Relation";
+                                                   CaptionML=[ENU=Bus. Rel. Code for Customers;
+                                                              ESM=C¢d. relac. negocio para clie.;
+                                                              FRC=Code rel. com. client;
+                                                              ENC=Bus. Rel. Code for Customers] }
+    { 8   ;   ;Bus. Rel. Code for Vendors;Code10  ;TableRelation="Business Relation";
+                                                   CaptionML=[ENU=Bus. Rel. Code for Vendors;
+                                                              ESM=C¢d. relac. negocio para prov.;
+                                                              FRC=Code rel. com. fournisseur;
+                                                              ENC=Bus. Rel. Code for Vendors] }
+    { 9   ;   ;Bus. Rel. Code for Bank Accs.;Code10;
+                                                   TableRelation="Business Relation";
+                                                   CaptionML=[ENU=Bus. Rel. Code for Bank Accs.;
+                                                              ESM=C¢d. relac. negocio para banco;
+                                                              FRC=Code rel. com. cpte bancaire;
+                                                              ENC=Bus. Rel. Code for Bank Accs.] }
+    { 22  ;   ;Inherit Salesperson Code;Boolean   ;InitValue=Yes;
+                                                   CaptionML=[ENU=Inherit Salesperson Code;
+                                                              ESM=Hereda c¢d. vendedor;
+                                                              FRC=H‚riter le code repr‚sentant;
+                                                              ENC=Inherit Salesperson Code] }
+    { 23  ;   ;Inherit Territory Code;Boolean     ;InitValue=Yes;
+                                                   CaptionML=[ENU=Inherit Territory Code;
+                                                              ESM=Hereda c¢d. territorio;
+                                                              FRC=Copier code secteur;
+                                                              ENC=Inherit Territory Code] }
+    { 24  ;   ;Inherit Country/Region Code;Boolean;InitValue=Yes;
+                                                   CaptionML=[ENU=Inherit Country/Region Code;
+                                                              ESM=Heredar c¢d. pa¡s/regi¢n;
+                                                              FRC=Copier code pays/r‚gion;
+                                                              ENC=Inherit Country/Region Code] }
+    { 25  ;   ;Inherit Language Code;Boolean      ;InitValue=Yes;
+                                                   CaptionML=[ENU=Inherit Language Code;
+                                                              ESM=Hereda c¢d. idioma;
+                                                              FRC=Copier code langue;
+                                                              ENC=Inherit Language Code] }
+    { 26  ;   ;Inherit Address Details;Boolean    ;InitValue=Yes;
+                                                   CaptionML=[ENU=Inherit Address Details;
+                                                              ESM=Hereda detalles direcci¢n;
+                                                              FRC=Copier info. adresse;
+                                                              ENC=Inherit Address Details] }
+    { 27  ;   ;Inherit Communication Details;Boolean;
+                                                   InitValue=Yes;
+                                                   CaptionML=[ENU=Inherit Communication Details;
+                                                              ESM=Hereda detalles comunicaci¢n;
+                                                              FRC=Copier info. communication;
+                                                              ENC=Inherit Communication Details] }
+    { 28  ;   ;Default Salesperson Code;Code10    ;TableRelation=Salesperson/Purchaser;
+                                                   CaptionML=[ENU=Default Salesperson Code;
+                                                              ESM=C¢d. vendedor gen‚rico;
+                                                              FRC=Code repr‚sentant par d‚faut;
+                                                              ENC=Default Salesperson Code] }
+    { 29  ;   ;Default Territory Code;Code10      ;TableRelation=Territory;
+                                                   CaptionML=[ENU=Default Territory Code;
+                                                              ESM=C¢d. territorio gen‚r.;
+                                                              FRC=Code secteur par d‚faut;
+                                                              ENC=Default Territory Code] }
+    { 30  ;   ;Default Country/Region Code;Code10 ;TableRelation=Country/Region;
+                                                   CaptionML=[ENU=Default Country/Region Code;
+                                                              ESM=C¢digo pa¡s/regi¢n predet.;
+                                                              FRC=Code pays/r‚gion par d‚faut;
+                                                              ENC=Default Country/Region Code] }
+    { 31  ;   ;Default Language Code;Code10       ;TableRelation=Language;
+                                                   CaptionML=[ENU=Default Language Code;
+                                                              ESM=C¢d. idioma gen‚rico;
+                                                              FRC=Code langue par d‚faut;
+                                                              ENC=Default Language Code] }
+    { 33  ;   ;Default Sales Cycle Code;Code10    ;TableRelation="Sales Cycle";
+                                                   CaptionML=[ENU=Default Sales Cycle Code;
+                                                              ESM=C¢d. ciclo ventas gen‚r.;
+                                                              FRC=Code cycle vente par d‚faut;
+                                                              ENC=Default Sales Cycle Code] }
+    { 35  ;   ;Attachment Storage Type;Option     ;CaptionML=[ENU=Attachment Storage Type;
+                                                              ESM=Tipo almacenamiento anexo;
+                                                              FRC=Type enregistrement piŠce jointe;
+                                                              ENC=Attachment Storage Type];
+                                                   OptionCaptionML=[ENU=Embedded,Disk File;
+                                                                    ESM=Incorporado,Archivo disco;
+                                                                    FRC=Base de donn‚es,Dossier disque;
+                                                                    ENC=Embedded,Disk File];
+                                                   OptionString=Embedded,Disk File }
+    { 36  ;   ;Attachment Storage Location;Text250;CaptionML=[ENU=Attachment Storage Location;
+                                                              ESM=Ruta almcenamiento anexo;
+                                                              FRC=Emplacement enregistrement piŠce jointe;
+                                                              ENC=Attachment Storage Location] }
+    { 37  ;   ;Autosearch for Duplicates;Boolean  ;InitValue=Yes;
+                                                   OnValidate=BEGIN
+                                                                IF "Autosearch for Duplicates" THEN
+                                                                  "Maintain Dupl. Search Strings" := TRUE;
+                                                              END;
+
+                                                   CaptionML=[ENU=Autosearch for Duplicates;
+                                                              ESM=Busca duplicados autom tic.;
+                                                              FRC=Recherche auto. des doublons;
+                                                              ENC=Autosearch for Duplicates] }
+    { 38  ;   ;Search Hit %        ;Integer       ;InitValue=60;
+                                                   CaptionML=[ENU=Search Hit %;
+                                                              ESM=% Acierto b£squeda;
+                                                              FRC=% chaŒnes communes;
+                                                              ENC=Search Hit %];
+                                                   MinValue=1;
+                                                   MaxValue=100;
+                                                   NotBlank=Yes }
+    { 39  ;   ;Maintain Dupl. Search Strings;Boolean;
+                                                   InitValue=Yes;
+                                                   OnValidate=BEGIN
+                                                                IF NOT "Maintain Dupl. Search Strings" THEN
+                                                                  "Autosearch for Duplicates" := FALSE;
+                                                              END;
+
+                                                   CaptionML=[ENU=Maintain Dupl. Search Strings;
+                                                              ESM=Mantiene cadenas b£sq. duplic.;
+                                                              FRC=Maint. chaŒnes rech. doublons;
+                                                              ENC=Maintain Dupl. Search Strings];
+                                                   NotBlank=Yes }
+    { 50  ;   ;Mergefield Language ID;Integer     ;TableRelation="Windows Language";
+                                                   CaptionML=[ENU=Mergefield Language ID;
+                                                              ESM=ID idioma campos comb.;
+                                                              FRC=Code langue champ fusion;
+                                                              ENC=Mergefield Language ID];
+                                                   BlankZero=Yes }
+    { 51  ;   ;Def. Company Salutation Code;Code10;TableRelation=Salutation;
+                                                   CaptionML=[ENU=Def. Company Salutation Code;
+                                                              ESM=C¢d. saludo empresa gen‚rico;
+                                                              FRC=Code appellation cie par d‚f.;
+                                                              ENC=Def. Company Salutation Code] }
+    { 52  ;   ;Default Person Salutation Code;Code10;
+                                                   TableRelation=Salutation;
+                                                   CaptionML=[ENU=Default Person Salutation Code;
+                                                              ESM=C¢d. saludo persona gen‚rico;
+                                                              FRC=Code appell. pers. par d‚faut;
+                                                              ENC=Default Person Salutation Code] }
+    { 53  ;   ;Default Correspondence Type;Option ;CaptionML=[ENU=Default Correspondence Type;
+                                                              ESM=Tipo correspondencia gen‚rico;
+                                                              FRC=Type correspondance par d‚faut;
+                                                              ENC=Default Correspondence Type];
+                                                   OptionCaptionML=[ENU=" ,Hard Copy,E-Mail,Fax";
+                                                                    ESM=" ,Impresi¢n,Correo electr¢nico,Fax";
+                                                                    FRC=" ,Copie papier,Courriel,T‚l‚copie";
+                                                                    ENC=" ,Hard Copy,E-Mail,Fax"];
+                                                   OptionString=[ ,Hard Copy,E-Mail,Fax] }
+    { 56  ;   ;Queue Folder Path   ;Text250       ;CaptionML=[ENU=Queue Folder Path;
+                                                              ESM=Ruta acceso carpeta cola;
+                                                              FRC=Chemin d'accŠs dossier attente;
+                                                              ENC=Queue Folder Path];
+                                                   Editable=No }
+    { 57  ;   ;Queue Folder UID    ;BLOB          ;CaptionML=[ENU=Queue Folder UID;
+                                                              ESM=UID carpeta cola;
+                                                              FRC=UID dossier attente;
+                                                              ENC=Queue Folder UID] }
+    { 59  ;   ;Storage Folder Path ;Text250       ;CaptionML=[ENU=Storage Folder Path;
+                                                              ESM=Ruta acceso carpeta almacenam.;
+                                                              FRC=Chemin d'accŠs dossier stockage;
+                                                              ENC=Storage Folder Path];
+                                                   Editable=No }
+    { 60  ;   ;Storage Folder UID  ;BLOB          ;CaptionML=[ENU=Storage Folder UID;
+                                                              ESM=UID carpeta almacenam.;
+                                                              FRC=UID dossier stockage;
+                                                              ENC=Storage Folder UID] }
+    { 67  ;   ;Default To-do Date Calculation;DateFormula;
+                                                   CaptionML=[ENU=Default To-do Date Calculation;
+                                                              ESM=C lculo fecha tarea gen‚rico;
+                                                              FRC=Calcul de la date de la tƒche par d‚f.;
+                                                              ENC=Default To-do Date Calculation] }
+    { 68  ;   ;Enable Connector    ;Boolean       ;OnValidate=BEGIN
+                                                                CASE "Enable Connector" OF
+                                                                  TRUE:
+                                                                    IF CONFIRM(Text005,FALSE) THEN BEGIN
+                                                                      IF InheritanceEnabled THEN
+                                                                        IF NOT CONFIRM(Text009,FALSE) THEN
+                                                                          ERROR('');
+                                                                      IntegrationManagement.EnableConnector;
+                                                                      MESSAGE(Text006);
+                                                                    END ELSE
+                                                                      ERROR('');
+                                                                  FALSE:
+                                                                    IF CONFIRM(Text007,FALSE) THEN BEGIN
+                                                                      IntegrationManagement.DisableConnector;
+                                                                      MESSAGE(Text008);
+                                                                    END ELSE
+                                                                      ERROR('');
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Enable Connector;
+                                                              ESM=Habilitar Connector;
+                                                              FRC=Activer Connector;
+                                                              ENC=Enable Connector] }
+    { 69  ;   ;Autodiscovery E-Mail Address;Text250;
+                                                   CaptionML=[ENU=Autodiscovery E-Mail Address;
+                                                              ESM=Det. autom. direcci¢n correo elect.;
+                                                              FRC=Adresse de courriel d‚couverte automatique;
+                                                              ENC=Autodiscovery E-Mail Address] }
+    { 70  ;   ;Email Batch Size    ;Integer       ;CaptionML=[ENU=Email Batch Size;
+                                                              ESM=Tama¤o del lote de correo electr¢nico;
+                                                              FRC=Taille lot email;
+                                                              ENC=Email Batch Size];
+                                                   MinValue=0 }
+    { 71  ;   ;Exchange Service URL;Text250       ;CaptionML=[ENU=Exchange Service URL;
+                                                              ESM=Direcci¢n URL del servicio de Exchange;
+                                                              FRC=URL service Exchange;
+                                                              ENC=Exchange Service URL] }
+    { 72  ;   ;Exchange Account User Name;Text250 ;CaptionML=[ENU=Exchange Account User Name;
+                                                              ESM=Nombre de usuario de la cuenta de Exchange;
+                                                              FRC=Nom d'utilisateur compte Exchange;
+                                                              ENC=Exchange Account User Name] }
+    { 73  ;   ;Exchange Account Password Key;GUID ;CaptionML=[ENU=Exchange Account Password Key;
+                                                              ESM=Clave de contrase¤a de la cuenta de Exchange;
+                                                              FRC=Cl‚ mot de passe compte Exchange;
+                                                              ENC=Exchange Account Password Key] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text005@1003 : TextConst 'ENU=Do you want to enable integration with the Connector for Microsoft Dynamics?;ESM=¨Desea habilitar la integraci¢n con Connector for Microsoft Dynamics?;FRC=Voulez-vous activer l''int‚gration avec Connector for Microsoft Dynamics ?;ENC=Do you want to enable integration with the Connector for Microsoft Dynamics?';
+      Text006@1004 : TextConst 'ENU=Integration with the Connector for Microsoft Dynamics is enabled.;ESM=La integraci¢n con Connector for Microsoft Dynamics est  habilitada.;FRC=L''int‚gration avec Connector for Microsoft Dynamics est activ‚e.;ENC=Integration with the Connector for Microsoft Dynamics is enabled.';
+      IntegrationManagement@1005 : Codeunit 5150;
+      Text007@1006 : TextConst 'ENU=Do you want to disable integration with the Connector for Microsoft Dynamics?;ESM=¨Desea deshabilitar la integraci¢n con Connector for Microsoft Dynamics?;FRC=Voulez-vous d‚sactiver l''int‚gration avec Connector for Microsoft Dynamics ?;ENC=Do you want to disable integration with the Connector for Microsoft Dynamics?';
+      Text008@1007 : TextConst 'ENU=Integration with the Connector for Microsoft Dynamics is disabled.;ESM=La integraci¢n con Connector for Microsoft Dynamics est  deshabilitada.;FRC=L''int‚gration avec Connector for Microsoft Dynamics est d‚sactiv‚e.;ENC=Integration with the Connector for Microsoft Dynamics is disabled.';
+      Text009@1008 : TextConst 'ENU=Enabling the Connector while Inheritance is enabled may lead to data corruption. Do you want to continue?;ESM=Al activar el conector con la herencia activada se puede da¤ar los datos. ¨Desea continuar?;FRC=L''activation du Connector pendant l''activation de l''h‚ritage peut corrompre les donn‚es. Òtes-vous certain de vouloir continuerÿ?;ENC=Enabling the Connector while Inheritance is enabled may lead to data corruption. Do you want to continue?';
+      Text010@1000 : TextConst 'ENU=The queue and storage folders cannot be the same. Choose a different folder.;ESM=Las carpetas de cola y almacenamiento no pueden ser la misma. Elija una carpeta distinta.;FRC=Les dossiers d''attente et de stockage ne peuvent pas ˆtre identiques. Choisissez un dossier diff‚rent.;ENC=The queue and storage folders cannot be the same. Choose a different folder.';
+      ExchangeAccountNotConfiguredErr@1001 : TextConst 'ENU=The Exchange account for Email logging is not configured.;ESM=La cuenta de Exchange para el inicio de sesi¢n en correo electr¢nico no est  configurada.;FRC=Le compte Exchange pour le param‚trage de connexion … la messagerie n''est pas configur‚.;ENC=The Exchange account for Email logging is not configured.';
+
+    LOCAL PROCEDURE InheritanceEnabled@1() : Boolean;
+    BEGIN
+      EXIT("Inherit Salesperson Code" OR
+        "Inherit Territory Code" OR
+        "Inherit Country/Region Code" OR
+        "Inherit Language Code" OR
+        "Inherit Address Details" OR
+        "Inherit Communication Details");
+    END;
+
+    PROCEDURE SetQueueFolder@2(ExchangeFolder@1000 : Record 5320);
+    VAR
+      InStream@1001 : InStream;
+      OutStream@1002 : OutStream;
+    BEGIN
+      IF (ExchangeFolder.FullPath = "Storage Folder Path") AND (ExchangeFolder.FullPath <> '') THEN
+        ERROR(Text010);
+      IF (ExchangeFolder.ReadUniqueID = GetStorageFolderUID) AND ExchangeFolder."Unique ID".HASVALUE THEN
+        ERROR(Text010);
+
+      "Queue Folder Path" := ExchangeFolder.FullPath;
+
+      ExchangeFolder."Unique ID".CREATEINSTREAM(InStream);
+      "Queue Folder UID".CREATEOUTSTREAM(OutStream);
+      COPYSTREAM(OutStream,InStream);
+      MODIFY;
+    END;
+
+    PROCEDURE SetStorageFolder@3(ExchangeFolder@1000 : Record 5320);
+    VAR
+      InStream@1001 : InStream;
+      OutStream@1002 : OutStream;
+    BEGIN
+      IF (ExchangeFolder.FullPath = "Queue Folder Path") AND (ExchangeFolder.FullPath <> '') THEN
+        ERROR(Text010);
+      IF (ExchangeFolder.ReadUniqueID = GetQueueFolderUID) AND ExchangeFolder."Unique ID".HASVALUE THEN
+        ERROR(Text010);
+
+      "Storage Folder Path" := ExchangeFolder.FullPath;
+
+      ExchangeFolder."Unique ID".CREATEINSTREAM(InStream);
+      "Storage Folder UID".CREATEOUTSTREAM(OutStream);
+      COPYSTREAM(OutStream,InStream);
+      MODIFY;
+    END;
+
+    PROCEDURE GetQueueFolderUID@7() Return : Text;
+    VAR
+      Stream@1000 : InStream;
+    BEGIN
+      CALCFIELDS("Queue Folder UID");
+      "Queue Folder UID".CREATEINSTREAM(Stream);
+      Stream.READTEXT(Return);
+    END;
+
+    PROCEDURE GetStorageFolderUID@8() Return : Text;
+    VAR
+      Stream@1000 : InStream;
+    BEGIN
+      CALCFIELDS("Storage Folder UID");
+      "Storage Folder UID".CREATEINSTREAM(Stream);
+      Stream.READTEXT(Return);
+    END;
+
+    PROCEDURE SetExchangeAccountPassword@4(PasswordText@1001 : Text);
+    VAR
+      ServicePassword@1000 : Record 1261;
+    BEGIN
+      IF ISNULLGUID("Exchange Account Password Key") OR NOT ServicePassword.GET("Exchange Account Password Key") THEN BEGIN
+        ServicePassword.SavePassword(PasswordText);
+        ServicePassword.INSERT(TRUE);
+        "Exchange Account Password Key" := ServicePassword.Key;
+      END ELSE BEGIN
+        ServicePassword.SavePassword(PasswordText);
+        ServicePassword.MODIFY;
+      END;
+    END;
+
+    PROCEDURE CreateExchangeAccountCredentials@5(VAR Credentials@1000 : DotNet "'System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Net.NetworkCredential");
+    VAR
+      ServicePassword@1001 : Record 1261;
+    BEGIN
+      IF "Exchange Account User Name" = '' THEN
+        ERROR(ExchangeAccountNotConfiguredErr);
+      IF ISNULLGUID("Exchange Account Password Key") OR NOT ServicePassword.GET("Exchange Account Password Key") THEN
+        ERROR(ExchangeAccountNotConfiguredErr);
+
+      Credentials := Credentials.NetworkCredential("Exchange Account User Name",ServicePassword.GetPassword);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

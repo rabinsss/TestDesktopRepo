@@ -1,0 +1,176 @@
+OBJECT Table 8640 Config. Text Transformation
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Config. Text Transformation;
+               ESM=Transformaci¢n de texto de configuraci¢n;
+               FRC=Transformation de texte config.;
+               ENC=Config. Text Transformation];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Package Code        ;Code20        ;TableRelation="Config. Package";
+                                                   CaptionML=[ENU=Package Code;
+                                                              ESM=C¢digo de paquete;
+                                                              FRC=Code package;
+                                                              ENC=Package Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Table ID            ;Integer       ;TableRelation=AllObj."Object ID" WHERE (Object Type=CONST(Table));
+                                                   OnLookup=BEGIN
+                                                              TableNameLookup;
+                                                            END;
+
+                                                   CaptionML=[ENU=Table ID;
+                                                              ESM=Id. tabla;
+                                                              FRC=Code de table;
+                                                              ENC=Table ID];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Field ID            ;Integer       ;TableRelation="Config. Package Field"."Field ID" WHERE (Table ID=FIELD(Table ID));
+                                                   OnLookup=BEGIN
+                                                              FieldLookup;
+                                                            END;
+
+                                                   CaptionML=[ENU=Field ID;
+                                                              ESM=Id. campo;
+                                                              FRC=Code champ;
+                                                              ENC=Field ID] }
+    { 4   ;   ;Transformation Type ;Option        ;CaptionML=[ENU=Transformation Type;
+                                                              ESM=Tipo de transformaci¢n;
+                                                              FRC=Type de transformation;
+                                                              ENC=Transformation Type];
+                                                   OptionCaptionML=[ENU=Uppercase,Lowercase,Title Case,Trim,Substring,Replace,Regular Expression,Remove Non-Alphanumeric Characters,Date and Time Formatting;
+                                                                    ESM=May£scula,Min£scula,Tipo t¡tulo,Recortar,Subcadena,Reemplazar,Expresi¢n Regular,Quitar caracteres no alfanum‚ricos,Formato de fecha y hora;
+                                                                    FRC=Majuscule,Minuscule,Casse de titre,Couper,Sous-chaŒne,Remplacer,Expression r‚guliŠre,Supprimer caractŠres non alphanum‚riques,Format de date et heure;
+                                                                    ENC=Uppercase,Lowercase,Title Case,Trim,Substring,Replace,Regular Expression,Remove Non-Alphanumeric Characters,Date and Time Formatting];
+                                                   OptionString=Uppercase,Lowercase,Title Case,Trim,Substring,Replace,Regular Expression,Remove Non-Alphanumeric Characters,Date and Time Formatting }
+    { 5   ;   ;Processing Order    ;Integer       ;CaptionML=[ENU=Processing Order;
+                                                              ESM=Pedido de procesamiento;
+                                                              FRC=Traitement des commandes;
+                                                              ENC=Processing Order] }
+    { 6   ;   ;Table Name          ;Text250       ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(AllObjWithCaption."Object Name" WHERE (Object Type=CONST(Table),
+                                                                                                             Object ID=FIELD(Table ID)));
+                                                   CaptionML=[ENU=Table Name;
+                                                              ESM=Nombre tabla;
+                                                              FRC=Nom de la table;
+                                                              ENC=Table Name];
+                                                   Editable=No }
+    { 7   ;   ;Field Name          ;Text30        ;TableRelation=Field.FieldName WHERE (TableNo=FIELD(Table ID));
+                                                   OnLookup=BEGIN
+                                                              FieldLookup;
+                                                            END;
+
+                                                   CaptionML=[ENU=Field Name;
+                                                              ESM=Nombre de campo;
+                                                              FRC=Nom de champ;
+                                                              ENC=Field Name] }
+    { 10  ;   ;Current Value       ;Text250       ;CaptionML=[ENU=Current Value;
+                                                              ESM=Valor actual;
+                                                              FRC=Valeur … ce jour;
+                                                              ENC=Current Value] }
+    { 11  ;   ;New Value           ;Text250       ;CaptionML=[ENU=New Value;
+                                                              ESM=Valor nuevo;
+                                                              FRC=Nouvelle valeur;
+                                                              ENC=New Value] }
+    { 15  ;   ;Start Position      ;Integer       ;OnValidate=BEGIN
+                                                                IF "Start Position" <= 0 THEN
+                                                                  ERROR(MustBeGreaterThanZeroErr);
+                                                              END;
+
+                                                   CaptionML=[ENU=Start Position;
+                                                              ESM=Posici¢n inicial;
+                                                              FRC=Position d‚but;
+                                                              ENC=Start Position];
+                                                   BlankZero=Yes }
+    { 16  ;   ;Length              ;Integer       ;OnValidate=BEGIN
+                                                                IF Length < 0 THEN
+                                                                  ERROR(MustBeGreaterThanZeroErr);
+                                                              END;
+
+                                                   CaptionML=[ENU=Length;
+                                                              ESM=Longitud;
+                                                              FRC=Longueur;
+                                                              ENC=Length];
+                                                   BlankZero=Yes }
+    { 18  ;   ;Format              ;Text30        ;CaptionML=[ENU=Format;
+                                                              ESM=Formato;
+                                                              FRC=Format;
+                                                              ENC=Format] }
+    { 20  ;   ;Language ID         ;Integer       ;TableRelation="Windows Language";
+                                                   CaptionML=[ENU=Language ID;
+                                                              ESM=Id. idioma;
+                                                              FRC=Code de langue;
+                                                              ENC=Language ID];
+                                                   BlankZero=Yes }
+    { 21  ;   ;Enabled             ;Boolean       ;CaptionML=[ENU=Enabled;
+                                                              ESM=Activado;
+                                                              FRC=Activ‚;
+                                                              ENC=Enabled] }
+    { 50  ;   ;Last Used Field ID  ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Max("Config. Text Transformation"."Processing Order" WHERE (Package Code=FIELD(Package Code),
+                                                                                                                           Table ID=FIELD(Table ID),
+                                                                                                                           Field ID=FIELD(Field ID)));
+                                                   CaptionML=[ENU=Last Used Field ID;
+                                                              ESM=Id. de £ltimo campo usado;
+                                                              FRC=Dernier code champ utilis‚;
+                                                              ENC=Last Used Field ID] }
+  }
+  KEYS
+  {
+    {    ;Package Code,Table ID,Field ID,Processing Order;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      MustBeGreaterThanZeroErr@1000 : TextConst 'ENU=The Value entered must be greater than zero.;ESM=El valor especificado debe ser mayor que cero.;FRC=La valeur entr‚e doit ˆtre sup‚rieure … z‚ro.;ENC=The Value entered must be greater than zero.';
+
+    PROCEDURE GetLanguageID@1() : Integer;
+    BEGIN
+      IF "Language ID" > 0 THEN
+        EXIT("Language ID");
+      EXIT(GLOBALLANGUAGE);
+    END;
+
+    LOCAL PROCEDURE FieldLookup@6();
+    VAR
+      Field@1001 : Record 2000000041;
+      FieldList@1000 : Page 6218;
+    BEGIN
+      CLEAR(FieldList);
+      Field.SETRANGE(TableNo,"Table ID");
+      FieldList.SETTABLEVIEW(Field);
+      FieldList.LOOKUPMODE := TRUE;
+      IF FieldList.RUNMODAL = ACTION::LookupOK THEN BEGIN
+        FieldList.GETRECORD(Field);
+        "Table ID" := Field.TableNo;
+        VALIDATE("Field ID",Field."No.");
+        VALIDATE("Field Name",Field.FieldName);
+      END;
+    END;
+
+    LOCAL PROCEDURE TableNameLookup@3();
+    VAR
+      ConfigValidateManagement@1000 : Codeunit 8617;
+    BEGIN
+      ConfigValidateManagement.LookupTable("Table ID");
+      IF "Table ID" <> 0 THEN
+        VALIDATE("Table ID");
+
+      CALCFIELDS("Table Name");
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

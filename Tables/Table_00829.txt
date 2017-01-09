@@ -1,0 +1,148 @@
+OBJECT Table 829 DO Payment Trans. Log Entry
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/09/14;
+    Time=12:00:00 PM;
+    Version List=NAVW18.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=DO Payment Trans. Log Entry;
+               ESM=Movimiento de registro de trans. de pago de DE;
+               FRC=êcriture du registre des transactions de paiement de DO;
+               ENC=DO Payment Trans. Log Entry];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Entry No.;
+                                                              ESM=Nß mov.;
+                                                              FRC=N¯ Çcriture;
+                                                              ENC=Entry No.] }
+    { 2   ;   ;Document Type       ;Option        ;CaptionML=[ENU=Document Type;
+                                                              ESM=Tipo documento;
+                                                              FRC=Type de document;
+                                                              ENC=Document Type];
+                                                   OptionCaptionML=[ENU=" ,Order,Invoice,Payment,Refund";
+                                                                    ESM=" ,Pedido,Factura,Pago,Reembolso";
+                                                                    FRC=" ,Commande,Facture,Paiement,Remboursement";
+                                                                    ENC=" ,Order,Invoice,Payment,Refund"];
+                                                   OptionString=[ ,Order,Invoice,Payment,Refund] }
+    { 3   ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ESM=Nß documento;
+                                                              FRC=N¯ de document;
+                                                              ENC=Document No.] }
+    { 4   ;   ;Customer No.        ;Code20        ;TableRelation=Customer;
+                                                   CaptionML=[ENU=Customer No.;
+                                                              ESM=Nß cliente;
+                                                              FRC=N¯ client;
+                                                              ENC=Customer No.] }
+    { 5   ;   ;Credit Card No.     ;Code20        ;TableRelation="DO Payment Credit Card".No.;
+                                                   CaptionML=[ENU=Credit Card No.;
+                                                              ESM=Nß tarjeta de crÇdito;
+                                                              FRC=N¯ de carte de crÇdit;
+                                                              ENC=Credit Card No.] }
+    { 6   ;   ;Transaction Type    ;Option        ;CaptionML=[ENU=Transaction Type;
+                                                              ESM=Naturaleza transacci¢n;
+                                                              FRC=Type de transaction;
+                                                              ENC=Transaction Type];
+                                                   OptionCaptionML=[ENU=Authorization,Void,Capture,Refund;
+                                                                    ESM=Autorizaci¢n,Anulaci¢n,Captura,Reembolso;
+                                                                    FRC=Autorisation,Annulation,Capture,Remboursement;
+                                                                    ENC=Authorization,Void,Capture,Refund];
+                                                   OptionString=Authorization,Void,Capture,Refund }
+    { 7   ;   ;Transaction Result  ;Option        ;CaptionML=[ENU=Transaction Result;
+                                                              ESM=Resultado de transacci¢n;
+                                                              FRC=RÇsultats de transaction;
+                                                              ENC=Transaction Result];
+                                                   OptionCaptionML=[ENU=Success,Failed;
+                                                                    ESM=Correcta,Incorrecta;
+                                                                    FRC=Succäs,êchec;
+                                                                    ENC=Success,Failed];
+                                                   OptionString=Success,Failed }
+    { 8   ;   ;Transaction Description;Text250    ;CaptionML=[ENU=Transaction Description;
+                                                              ESM=Descripci¢n de transacci¢n;
+                                                              FRC=Description de transaction;
+                                                              ENC=Transaction Description] }
+    { 9   ;   ;Amount              ;Decimal       ;CaptionML=[ENU=Amount;
+                                                              ESM=Importe;
+                                                              FRC=Montant;
+                                                              ENC=Amount];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr="Currency Code" }
+    { 10  ;   ;Transaction Date-Time;DateTime     ;CaptionML=[ENU=Transaction Date-Time;
+                                                              ESM=Fecha y hora de la transacci¢n;
+                                                              FRC=Date/Heure transaction;
+                                                              ENC=Transaction Date-Time] }
+    { 11  ;   ;Transaction Status  ;Option        ;CaptionML=[ENU=Transaction Status;
+                                                              ESM=Estado de la transacci¢n;
+                                                              FRC=êtat de la transaction;
+                                                              ENC=Transaction Status];
+                                                   OptionCaptionML=[ENU=" ,Voided,Expired,Captured,Refunded,Posting Not Finished";
+                                                                    ESM=" ,Anulada,Expirada,Capturada,Reembolsada,Registro incompleto";
+                                                                    FRC=" ,AnnulÇ,ExpirÇ,CapturÇ,RemboursÇ,Report non terminÇ";
+                                                                    ENC=" ,Voided,Expired,Captured,Refunded,Posting Not Finished"];
+                                                   OptionString=[ ,Voided,Expired,Captured,Refunded,Posting Not Finished] }
+    { 12  ;   ;Cust. Ledger Entry No.;Integer     ;TableRelation="Cust. Ledger Entry";
+                                                   CaptionML=[ENU=Cust. Ledger Entry No.;
+                                                              ESM=Nß mov. cliente;
+                                                              FRC=N¯ sÇquence Çcriture clt;
+                                                              ENC=Cust. Ledger Entry No.] }
+    { 13  ;   ;Currency Code       ;Code10        ;TableRelation=Currency;
+                                                   CaptionML=[ENU=Currency Code;
+                                                              ESM=C¢d. divisa;
+                                                              FRC=Code devise;
+                                                              ENC=Currency Code] }
+    { 14  ;   ;Transaction GUID    ;GUID          ;CaptionML=[ENU=Transaction GUID;
+                                                              ESM=GUID de transacci¢n;
+                                                              FRC=GUID transaction;
+                                                              ENC=Transaction GUID] }
+    { 15  ;   ;Transaction ID      ;Text50        ;CaptionML=[ENU=Transaction ID;
+                                                              ESM=Id. de transacci¢n;
+                                                              FRC=Code transaction;
+                                                              ENC=Transaction ID] }
+    { 16  ;   ;User ID             ;Code50        ;TableRelation=User."User Name";
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 17  ;   ;Parent Entry No.    ;Integer       ;CaptionML=[ENU=Parent Entry No.;
+                                                              ESM=Nß movimiento principal;
+                                                              FRC=N¯ Çcriture parent;
+                                                              ENC=Parent Entry No.] }
+    { 18  ;   ;Reference GUID      ;GUID          ;CaptionML=[ENU=Reference GUID;
+                                                              ESM=GUID de referencia;
+                                                              FRC=GUID rÇfÇrence;
+                                                              ENC=Reference GUID] }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;Clustered=Yes }
+    {    ;Document Type,Document No.,Transaction Type,Transaction Result,Transaction Status }
+    {    ;Cust. Ledger Entry No.                   }
+    {    ;Parent Entry No.,Transaction Type,Transaction Result;
+                                                   SumIndexFields=Amount }
+    {    ;Credit Card No.                          }
+    {    ;Document No.,Customer No.,Transaction Status }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE HasTransaction@1(VAR DOPaymentCreditCard@1000 : Record 827) : Boolean;
+    BEGIN
+      SETCURRENTKEY("Credit Card No.");
+      SETRANGE("Credit Card No.",DOPaymentCreditCard."No.");
+      SETFILTER("Transaction Result",'<>%1',"Transaction Result"::Failed);
+      EXIT(FINDFIRST);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

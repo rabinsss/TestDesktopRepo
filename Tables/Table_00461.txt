@@ -1,0 +1,276 @@
+OBJECT Table 461 Prepayment Inv. Line Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Prepayment Inv. Line Buffer;
+               ESM=Mem. int. l¡n. fact. anticipo;
+               FRC=Tampon ligne fact. paiement anticip‚;
+               ENC=Prepayment Inv. Line Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;G/L Account No.     ;Code20        ;TableRelation="G/L Account";
+                                                   CaptionML=[ENU=G/L Account No.;
+                                                              ESM=N§ cuenta;
+                                                              FRC=Nø de compte du grand livre;
+                                                              ENC=G/L Account No.] }
+    { 2   ;   ;Line No.            ;Integer       ;CaptionML=[ENU=Line No.;
+                                                              ESM=N§ l¡nea;
+                                                              FRC=Nø ligne;
+                                                              ENC=Line No.] }
+    { 3   ;   ;Amount              ;Decimal       ;CaptionML=[ENU=Amount;
+                                                              ESM=Importe;
+                                                              FRC=Montant;
+                                                              ENC=Amount];
+                                                   AutoFormatType=2 }
+    { 4   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 5   ;   ;Gen. Bus. Posting Group;Code10     ;TableRelation="Gen. Business Posting Group";
+                                                   CaptionML=[ENU=Gen. Bus. Posting Group;
+                                                              ESM=Grupo contable negocio;
+                                                              FRC=Groupe de report de march‚;
+                                                              ENC=Gen. Bus. Posting Group] }
+    { 6   ;   ;Gen. Prod. Posting Group;Code10    ;TableRelation="Gen. Product Posting Group";
+                                                   CaptionML=[ENU=Gen. Prod. Posting Group;
+                                                              ESM=Grupo contable producto;
+                                                              FRC=Groupe de report de produit;
+                                                              ENC=Gen. Prod. Posting Group] }
+    { 7   ;   ;VAT Bus. Posting Group;Code10      ;TableRelation="VAT Business Posting Group";
+                                                   CaptionML=[ENU=Tax Bus. Posting Group;
+                                                              ESM=Grupo registro IVA neg.;
+                                                              FRC=Groupe de reports de taxe sur la valeur ajout‚e de l'entreprise;
+                                                              ENC=Tax Bus. Posting Group] }
+    { 8   ;   ;VAT Prod. Posting Group;Code10     ;TableRelation="VAT Product Posting Group";
+                                                   CaptionML=[ENU=Tax Prod. Posting Group;
+                                                              ESM=Grupo registro IVA prod.;
+                                                              FRC=Groupe de report de produit taxe;
+                                                              ENC=Tax Prod. Posting Group] }
+    { 9   ;   ;VAT Amount          ;Decimal       ;CaptionML=[ENU=Tax Amount;
+                                                              ESM=Importe IVA;
+                                                              FRC=Montant de TVA;
+                                                              ENC=Tax Amount];
+                                                   AutoFormatType=1 }
+    { 10  ;   ;VAT Calculation Type;Option        ;CaptionML=[ENU=Tax Calculation Type;
+                                                              ESM=Tipo c lculo IVA;
+                                                              FRC=Type de calcul taxe;
+                                                              ENC=Tax Calculation Type];
+                                                   OptionCaptionML=[ENU=Normal VAT,Reverse Charge VAT,Full VAT,Sales Tax;
+                                                                    ESM=Normal,Reversi¢n,Total,Impto. venta;
+                                                                    FRC=TVA normale,Frais renvers‚s TVA,TVA complŠte,Taxe de vente;
+                                                                    ENC=Normal VAT,Reverse Charge VAT,Full VAT,Sales Tax];
+                                                   OptionString=Normal VAT,Reverse Charge VAT,Full VAT,Sales Tax }
+    { 11  ;   ;VAT Base Amount     ;Decimal       ;CaptionML=[ENU=Tax Base Amount;
+                                                              ESM=Importe base IVA;
+                                                              FRC=Montant de base de la taxe;
+                                                              ENC=Tax Base Amount];
+                                                   AutoFormatType=1 }
+    { 12  ;   ;Amount (ACY)        ;Decimal       ;CaptionML=[ENU=Amount (ACY);
+                                                              ESM=Importe (DA);
+                                                              FRC=Montant (devise additionnelle);
+                                                              ENC=Amount (ACY)];
+                                                   AutoFormatType=1 }
+    { 13  ;   ;VAT Amount (ACY)    ;Decimal       ;CaptionML=[ENU=Tax Amount (ACY);
+                                                              ESM=Importe IVA (DA);
+                                                              FRC=Montant TVA (dev. add.);
+                                                              ENC=Tax Amount (ACY)];
+                                                   AutoFormatType=1 }
+    { 14  ;   ;VAT Base Amount (ACY);Decimal      ;CaptionML=[ENU=Tax Base Amount (ACY);
+                                                              ESM=Importe Base IVA (DA);
+                                                              FRC=Montant base TVA (dev. add.);
+                                                              ENC=Tax Base Amount (ACY)];
+                                                   AutoFormatType=1 }
+    { 15  ;   ;VAT Difference      ;Decimal       ;CaptionML=[ENU=Tax Difference;
+                                                              ESM=Diferencia IVA;
+                                                              FRC=Diff‚rence TVA;
+                                                              ENC=Tax Difference];
+                                                   AutoFormatType=1 }
+    { 16  ;   ;VAT %               ;Decimal       ;CaptionML=[ENU=Tax %;
+                                                              ESM=% IVA;
+                                                              FRC=% TVA;
+                                                              ENC=Tax %];
+                                                   DecimalPlaces=1:1 }
+    { 17  ;   ;VAT Identifier      ;Code10        ;CaptionML=[ENU=Tax Identifier;
+                                                              ESM=Identific. IVA;
+                                                              FRC=Identificateur de TVA;
+                                                              ENC=Tax Identifier];
+                                                   Editable=No }
+    { 19  ;   ;Global Dimension 1 Code;Code20     ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(1));
+                                                   CaptionML=[ENU=Global Dimension 1 Code;
+                                                              ESM=C¢d. dimensi¢n global 1;
+                                                              FRC=Code de dimension principal 1;
+                                                              ENC=Global Dimension 1 Code];
+                                                   CaptionClass='1,1,1' }
+    { 20  ;   ;Global Dimension 2 Code;Code20     ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(2));
+                                                   CaptionML=[ENU=Global Dimension 2 Code;
+                                                              ESM=C¢d. dimensi¢n global 2;
+                                                              FRC=Code de dimension principal 2;
+                                                              ENC=Global Dimension 2 Code];
+                                                   CaptionClass='1,1,2' }
+    { 21  ;   ;Job No.             ;Code20        ;TableRelation=Job;
+                                                   CaptionML=[ENU=Job No.;
+                                                              ESM=N§ proyecto;
+                                                              FRC=Nø projet;
+                                                              ENC=Job No.] }
+    { 22  ;   ;Amount Incl. VAT    ;Decimal       ;CaptionML=[ENU=Amount Incl. Tax;
+                                                              ESM=Importe con IVA;
+                                                              FRC=Montant incl. TVA;
+                                                              ENC=Amount Incl. Tax];
+                                                   AutoFormatType=1 }
+    { 24  ;   ;Tax Area Code       ;Code20        ;TableRelation="Tax Area";
+                                                   CaptionML=[ENU=Tax Area Code;
+                                                              ESM=C¢d.  rea impuesto;
+                                                              FRC=Code de r‚gion fiscale;
+                                                              ENC=Tax Area Code] }
+    { 25  ;   ;Tax Liable          ;Boolean       ;CaptionML=[ENU=Tax Liable;
+                                                              ESM=Sujeto a impuesto;
+                                                              FRC=Imposable;
+                                                              ENC=Tax Liable] }
+    { 26  ;   ;Tax Group Code      ;Code10        ;TableRelation="Tax Group";
+                                                   CaptionML=[ENU=Tax Group Code;
+                                                              ESM=C¢d. grupo impuesto;
+                                                              FRC=Code groupe fiscal;
+                                                              ENC=Tax Group Code] }
+    { 27  ;   ;Invoice Rounding    ;Boolean       ;CaptionML=[ENU=Invoice Rounding;
+                                                              ESM=Redondeo factura;
+                                                              FRC=Arrondissement facture;
+                                                              ENC=Invoice Rounding] }
+    { 28  ;   ;Adjustment          ;Boolean       ;CaptionML=[ENU=Adjustment;
+                                                              ESM=Ajuste;
+                                                              FRC=Ajustement;
+                                                              ENC=Adjustment] }
+    { 480 ;   ;Dimension Set ID    ;Integer       ;TableRelation="Dimension Set Entry";
+                                                   CaptionML=[ENU=Dimension Set ID;
+                                                              ESM=Id. grupo dimensiones;
+                                                              FRC=Code ensemble de dimensions;
+                                                              ENC=Dimension Set ID];
+                                                   Editable=No }
+    { 1001;   ;Job Task No.        ;Code20        ;TableRelation="Job Task";
+                                                   CaptionML=[ENU=Job Task No.;
+                                                              ESM=N§ tarea proyecto;
+                                                              FRC=Nø tƒche de projet;
+                                                              ENC=Job Task No.] }
+  }
+  KEYS
+  {
+    {    ;G/L Account No.,Job No.,Tax Area Code,Tax Liable,Tax Group Code,Invoice Rounding,Adjustment,Line No.,Dimension Set ID;
+                                                   SumIndexFields=Amount,Amount Incl. VAT;
+                                                   Clustered=Yes }
+    {    ;Adjustment                               }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE IncrAmounts@1(PrepmtInvLineBuf@1001 : Record 461);
+    BEGIN
+      Amount := Amount + PrepmtInvLineBuf.Amount;
+      "Amount Incl. VAT" := "Amount Incl. VAT" + PrepmtInvLineBuf."Amount Incl. VAT";
+      "VAT Amount" := "VAT Amount" + PrepmtInvLineBuf."VAT Amount";
+      "VAT Base Amount" := "VAT Base Amount" + PrepmtInvLineBuf."VAT Base Amount";
+      "Amount (ACY)" := "Amount (ACY)" + PrepmtInvLineBuf."Amount (ACY)";
+      "VAT Amount (ACY)" := "VAT Amount (ACY)" + PrepmtInvLineBuf."VAT Amount (ACY)";
+      "VAT Base Amount (ACY)" := "VAT Base Amount (ACY)" + PrepmtInvLineBuf."VAT Base Amount (ACY)";
+      "VAT Difference" := "VAT Difference" + PrepmtInvLineBuf."VAT Difference";
+    END;
+
+    PROCEDURE ReverseAmounts@2();
+    BEGIN
+      Amount := -Amount;
+      "Amount Incl. VAT" := -"Amount Incl. VAT";
+      "VAT Amount" := -"VAT Amount";
+      "VAT Base Amount" := -"VAT Base Amount";
+      "Amount (ACY)" := -"Amount (ACY)";
+      "VAT Amount (ACY)" := -"VAT Amount (ACY)";
+      "VAT Base Amount (ACY)" := -"VAT Base Amount (ACY)";
+      "VAT Difference" := -"VAT Difference";
+    END;
+
+    PROCEDURE InsertInvLineBuffer@3(PrepmtInvLineBuf2@1000 : Record 461);
+    BEGIN
+      Rec := PrepmtInvLineBuf2;
+      IF FIND THEN BEGIN
+        IncrAmounts(PrepmtInvLineBuf2);
+        MODIFY;
+      END ELSE
+        INSERT;
+    END;
+
+    PROCEDURE CopyWithLineNo@4(PrepmtInvLineBuf@1001 : Record 461;LineNo@1002 : Integer);
+    BEGIN
+      Rec := PrepmtInvLineBuf;
+      "Line No." := LineNo;
+      INSERT;
+    END;
+
+    PROCEDURE SetFilterOnPKey@5(PrepmtInvLineBuf@1001 : Record 461);
+    BEGIN
+      RESET;
+      SETRANGE("G/L Account No.",PrepmtInvLineBuf."G/L Account No.");
+      SETRANGE("Dimension Set ID",PrepmtInvLineBuf."Dimension Set ID");
+      SETRANGE("Job No.",PrepmtInvLineBuf."Job No.");
+      SETRANGE("Tax Area Code",PrepmtInvLineBuf."Tax Area Code");
+      SETRANGE("Tax Liable",PrepmtInvLineBuf."Tax Liable");
+      SETRANGE("Tax Group Code",PrepmtInvLineBuf."Tax Group Code");
+      SETRANGE("Invoice Rounding",PrepmtInvLineBuf."Invoice Rounding");
+      SETRANGE(Adjustment,PrepmtInvLineBuf.Adjustment);
+      IF PrepmtInvLineBuf."Line No." <> 0 THEN
+        SETRANGE("Line No.",PrepmtInvLineBuf."Line No.");
+    END;
+
+    PROCEDURE FillAdjInvLineBuffer@6(PrepmtInvLineBuf@1000 : Record 461;GLAccountNo@1003 : Code[20];CorrAmount@1002 : Decimal;CorrAmountACY@1001 : Decimal);
+    BEGIN
+      INIT;
+      Adjustment := TRUE;
+      "G/L Account No." := GLAccountNo;
+      Amount := CorrAmount;
+      "Amount Incl. VAT" := CorrAmount;
+      "Amount (ACY)" := CorrAmountACY;
+      "Line No." := PrepmtInvLineBuf."Line No.";
+      "Global Dimension 1 Code" := PrepmtInvLineBuf."Global Dimension 1 Code";
+      "Global Dimension 2 Code" := PrepmtInvLineBuf."Global Dimension 2 Code";
+      "Dimension Set ID" := PrepmtInvLineBuf."Dimension Set ID";
+      Description := PrepmtInvLineBuf.Description;
+    END;
+
+    PROCEDURE FillFromGLAcc@7(CompressPrepayment@1002 : Boolean);
+    VAR
+      GLAcc@1001 : Record 15;
+    BEGIN
+      GLAcc.GET("G/L Account No.");
+      "Gen. Prod. Posting Group" := GLAcc."Gen. Prod. Posting Group";
+      "VAT Prod. Posting Group" := GLAcc."VAT Prod. Posting Group";
+      IF CompressPrepayment THEN
+        Description := GLAcc.Name;
+    END;
+
+    PROCEDURE AdjustVATBase@8(VATAdjustment@1002 : ARRAY [2] OF Decimal);
+    BEGIN
+      IF Amount <> "Amount Incl. VAT" THEN BEGIN
+        Amount := Amount + VATAdjustment[1];
+        "VAT Base Amount" := Amount;
+        "VAT Amount" := "VAT Amount" + VATAdjustment[2];
+        "Amount Incl. VAT" := Amount + "VAT Amount";
+      END;
+    END;
+
+    PROCEDURE AmountsToArray@9(VAR VATAmount@1001 : ARRAY [2] OF Decimal);
+    BEGIN
+      VATAmount[1] := Amount;
+      VATAmount[2] := "Amount Incl. VAT" - Amount;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

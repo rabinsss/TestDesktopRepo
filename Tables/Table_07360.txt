@@ -1,0 +1,68 @@
+OBJECT Table 7360 Reservation Entry Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Reservation Entry Buffer;
+               ESM=Almacenaje mov. reserva;
+               FRC=Tampon ‚criture r‚servation;
+               ENC=Reservation Entry Buffer];
+  }
+  FIELDS
+  {
+    { 4   ;   ;Quantity (Base)     ;Decimal       ;CaptionML=[ENU=Quantity (Base);
+                                                              ESM=Cantidad (base);
+                                                              FRC=Quantit‚ (base);
+                                                              ENC=Quantity (Base)];
+                                                   DecimalPlaces=0:5 }
+    { 10  ;   ;Source Type         ;Integer       ;CaptionML=[ENU=Source Type;
+                                                              ESM=Tipo procedencia mov.;
+                                                              FRC=Type origine;
+                                                              ENC=Source Type] }
+    { 11  ;   ;Source Subtype      ;Option        ;CaptionML=[ENU=Source Subtype;
+                                                              ESM=Subtipo origen;
+                                                              FRC=Sous-type origine;
+                                                              ENC=Source Subtype];
+                                                   OptionCaptionML=[ENU=0,1,2,3,4,5,6,7,8,9,10;
+                                                                    ESM=0,1,2,3,4,5,6,7,8,9,10;
+                                                                    FRC=0,1,2,3,4,5,6,7,8,9,10;
+                                                                    ENC=0,1,2,3,4,5,6,7,8,9,10];
+                                                   OptionString=0,1,2,3,4,5,6,7,8,9,10 }
+    { 12  ;   ;Source ID           ;Code20        ;CaptionML=[ENU=Source ID;
+                                                              ESM=Id. origen;
+                                                              FRC=Code origine;
+                                                              ENC=Source ID] }
+    { 13  ;   ;Source Batch Name   ;Code10        ;CaptionML=[ENU=Source Batch Name;
+                                                              ESM=Nombre secci¢n origen;
+                                                              FRC=Nom de lot source;
+                                                              ENC=Source Batch Name] }
+    { 14  ;   ;Source Prod. Order Line;Integer    ;CaptionML=[ENU=Source Prod. Order Line;
+                                                              ESM=L¡nea O.P. origen;
+                                                              FRC=Ligne bon de production origine;
+                                                              ENC=Source Prod. Order Line] }
+    { 15  ;   ;Source Ref. No.     ;Integer       ;CaptionML=[ENU=Source Ref. No.;
+                                                              ESM=N§ ref. origen;
+                                                              FRC=Nø de r‚f‚rence source;
+                                                              ENC=Source Ref. No.] }
+  }
+  KEYS
+  {
+    {    ;Source Type,Source Subtype,Source ID,Source Batch Name,Source Prod. Order Line,Source Ref. No.;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

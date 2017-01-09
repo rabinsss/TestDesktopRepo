@@ -1,0 +1,85 @@
+OBJECT Table 7300 Zone
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Location Code,Code,Description;
+    OnDelete=VAR
+               Bin@1000 : Record 7354;
+             BEGIN
+               Bin.SETCURRENTKEY("Location Code","Zone Code");
+               Bin.SETRANGE("Location Code","Location Code");
+               Bin.SETRANGE("Zone Code",Code);
+               Bin.DELETEALL(TRUE);
+             END;
+
+    CaptionML=[ENU=Zone;
+               ESM=Zona;
+               FRC=Zone;
+               ENC=Zone];
+    LookupPageID=Page7301;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Location Code       ;Code10        ;TableRelation=Location;
+                                                   CaptionML=[ENU=Location Code;
+                                                              ESM=C¢d. almac‚n;
+                                                              FRC=Code d'emplacement;
+                                                              ENC=Location Code];
+                                                   NotBlank=Yes;
+                                                   Editable=No }
+    { 2   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 5   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 10  ;   ;Bin Type Code       ;Code10        ;TableRelation="Bin Type";
+                                                   CaptionML=[ENU=Bin Type Code;
+                                                              ESM=C¢d. tipo ubicaci¢n;
+                                                              FRC=Code type zone;
+                                                              ENC=Bin Type Code] }
+    { 11  ;   ;Warehouse Class Code;Code10        ;TableRelation="Warehouse Class";
+                                                   CaptionML=[ENU=Warehouse Class Code;
+                                                              ESM=C¢d. clase almac‚n;
+                                                              FRC=Code classe magasin;
+                                                              ENC=Warehouse Class Code] }
+    { 20  ;   ;Special Equipment Code;Code10      ;TableRelation="Special Equipment";
+                                                   CaptionML=[ENU=Special Equipment Code;
+                                                              ESM=C¢d. equipo especial;
+                                                              FRC=Code ‚quipement sp‚cial;
+                                                              ENC=Special Equipment Code] }
+    { 21  ;   ;Zone Ranking        ;Integer       ;CaptionML=[ENU=Zone Ranking;
+                                                              ESM=Ranking zona;
+                                                              FRC=Priorit‚ zone;
+                                                              ENC=Zone Ranking] }
+    { 40  ;   ;Cross-Dock Bin Zone ;Boolean       ;CaptionML=[ENU=Cross-Dock Bin Zone;
+                                                              ESM=Zona ubicac. tr ns. directo;
+                                                              FRC=Transborder zone;
+                                                              ENC=Cross-Dock Bin Zone] }
+  }
+  KEYS
+  {
+    {    ;Location Code,Code                      ;Clustered=Yes }
+    {    ;Code                                     }
+    {    ;Description                              }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

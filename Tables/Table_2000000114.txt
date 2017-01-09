@@ -1,0 +1,63 @@
+OBJECT Table 2000000114 Document Service
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Document Service;
+               ESM=Servicio documento;
+               FRC=Service de document;
+               ENC=Document Service];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Service ID          ;Code30        ;CaptionML=[ENU=Service ID;
+                                                              ESM=Id. de servicio;
+                                                              FRC=Code du service;
+                                                              ENC=Service ID] }
+    { 3   ;   ;Description         ;Text80        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 5   ;   ;Location            ;Text250       ;CaptionML=[ENU=Location;
+                                                              ESM=Almac‚n;
+                                                              FRC=Emplacement;
+                                                              ENC=Location] }
+    { 7   ;   ;User Name           ;Text128       ;CaptionML=[ENU=User Name;
+                                                              ESM=Nombre usuario;
+                                                              FRC=Nom utilisateur;
+                                                              ENC=User Name] }
+    { 9   ;   ;Password            ;Text128       ;CaptionML=[ENU=Password;
+                                                              ESM=Contrase¤a;
+                                                              FRC=Mot de passe;
+                                                              ENC=Password] }
+    { 11  ;   ;Document Repository ;Text250       ;CaptionML=[ENU=Document Repository;
+                                                              ESM=Repositorio de documentos;
+                                                              FRC=R‚f‚rentiel de documents;
+                                                              ENC=Document Repository] }
+    { 13  ;   ;Folder              ;Text250       ;CaptionML=[ENU=Folder;
+                                                              ESM=Carpeta;
+                                                              FRC=Dossier;
+                                                              ENC=Folder] }
+  }
+  KEYS
+  {
+    {    ;Service ID                              ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;Service ID,Description                   }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

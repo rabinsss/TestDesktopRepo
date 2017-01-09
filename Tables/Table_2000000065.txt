@@ -1,0 +1,50 @@
+OBJECT Table 2000000065 Send-To Program
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Send-To Program;
+               ESM=Enviar a programa;
+               FRC=Envoyer vers le programme;
+               ENC=Send-To Program];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Program ID          ;GUID          ;CaptionML=[ENU=Program ID;
+                                                              ESM=Id. programa;
+                                                              FRC=Code programme;
+                                                              ENC=Program ID] }
+    { 2   ;   ;Executable          ;Text250       ;CaptionML=[ENU=Executable;
+                                                              ESM=Ejecutable;
+                                                              FRC=Ex‚cutable;
+                                                              ENC=Executable] }
+    { 3   ;   ;Parameter           ;Text250       ;CaptionML=[ENU=Parameter;
+                                                              ESM=Par metro;
+                                                              FRC=ParamŠtre;
+                                                              ENC=Parameter] }
+    { 4   ;   ;Name                ;Text250       ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+  }
+  KEYS
+  {
+    {    ;Program ID                              ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

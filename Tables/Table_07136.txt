@@ -1,0 +1,109 @@
+OBJECT Table 7136 Item Budget Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Item Budget Buffer;
+               ESM=B£fer del presupuesto de productos;
+               FRC=Tampon de budget d'article;
+               ENC=Item Budget Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Item No.            ;Code20        ;TableRelation=Item;
+                                                   CaptionML=[ENU=Item No.;
+                                                              ESM=N§ producto;
+                                                              FRC=Nø d'article;
+                                                              ENC=Item No.] }
+    { 2   ;   ;Source Type         ;Option        ;CaptionML=[ENU=Source Type;
+                                                              ESM=Tipo procedencia mov.;
+                                                              FRC=Type d'origine;
+                                                              ENC=Source Type];
+                                                   OptionCaptionML=[ENU=" ,Customer,Vendor,Item";
+                                                                    ESM=" ,Cliente,Proveedor,Producto";
+                                                                    FRC=" ,Client,Fournisseur,Article";
+                                                                    ENC=" ,Customer,Vendor,Item"];
+                                                   OptionString=[ ,Customer,Vendor,Item] }
+    { 3   ;   ;Source No.          ;Code20        ;TableRelation=IF (Source Type=CONST(Customer)) Customer
+                                                                 ELSE IF (Source Type=CONST(Vendor)) Vendor
+                                                                 ELSE IF (Source Type=CONST(Item)) Item;
+                                                   CaptionML=[ENU=Source No.;
+                                                              ESM=C¢d. procedencia mov.;
+                                                              FRC=Nø d'origine;
+                                                              ENC=Source No.] }
+    { 4   ;   ;Location Code       ;Code10        ;TableRelation=Location;
+                                                   CaptionML=[ENU=Location Code;
+                                                              ESM=C¢d. almac‚n;
+                                                              FRC=Code d'emplacement;
+                                                              ENC=Location Code] }
+    { 5   ;   ;Global Dimension 1 Code;Code20     ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(1));
+                                                   CaptionML=[ENU=Global Dimension 1 Code;
+                                                              ESM=C¢d. dimensi¢n global 1;
+                                                              FRC=Code de dimension principal 1;
+                                                              ENC=Global Dimension 1 Code];
+                                                   CaptionClass='1,1,1' }
+    { 6   ;   ;Global Dimension 2 Code;Code20     ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(2));
+                                                   CaptionML=[ENU=Global Dimension 2 Code;
+                                                              ESM=C¢d. dimensi¢n global 2;
+                                                              FRC=Code de dimension principal 2;
+                                                              ENC=Global Dimension 2 Code];
+                                                   CaptionClass='1,1,2' }
+    { 7   ;   ;Budget Dimension 1 Code;Code20     ;CaptionML=[ENU=Budget Dimension 1 Code;
+                                                              ESM=C¢d. dim. presupuesto 1;
+                                                              FRC=Code de dimension budget 1;
+                                                              ENC=Budget Dimension 1 Code] }
+    { 8   ;   ;Budget Dimension 2 Code;Code20     ;CaptionML=[ENU=Budget Dimension 2 Code;
+                                                              ESM=C¢d. dim. presupuesto 2;
+                                                              FRC=Code de dimension budget 2;
+                                                              ENC=Budget Dimension 2 Code] }
+    { 9   ;   ;Budget Dimension 3 Code;Code20     ;CaptionML=[ENU=Budget Dimension 3 Code;
+                                                              ESM=C¢d. dim. presupuesto 3;
+                                                              FRC=Code de dimension budget 3;
+                                                              ENC=Budget Dimension 3 Code] }
+    { 10  ;   ;Date                ;Date          ;CaptionML=[ENU=Date;
+                                                              ESM=Fecha;
+                                                              FRC=Date;
+                                                              ENC=Date] }
+    { 11  ;   ;Quantity            ;Decimal       ;CaptionML=[ENU=Quantity;
+                                                              ESM=Cantidad;
+                                                              FRC=Quantit‚;
+                                                              ENC=Quantity];
+                                                   DecimalPlaces=0:5 }
+    { 12  ;   ;Sales Amount        ;Decimal       ;CaptionML=[ENU=Sales Amount;
+                                                              ESM=Importe ventas;
+                                                              FRC=Montant de ventes;
+                                                              ENC=Sales Amount];
+                                                   AutoFormatType=1 }
+    { 13  ;   ;Cost Amount         ;Decimal       ;CaptionML=[ENU=Cost Amount;
+                                                              ESM=Importe costo;
+                                                              FRC=Co–t indiqu‚;
+                                                              ENC=Cost Amount];
+                                                   AutoFormatType=1 }
+    { 480 ;   ;Dimension Set ID    ;Integer       ;TableRelation="Dimension Set Entry";
+                                                   CaptionML=[ENU=Dimension Set ID;
+                                                              ESM=Id. grupo dimensiones;
+                                                              FRC=Code ensemble de dimensions;
+                                                              ENC=Dimension Set ID];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Item No.,Source Type,Source No.,Location Code,Global Dimension 1 Code,Global Dimension 2 Code,Budget Dimension 1 Code,Budget Dimension 2 Code,Budget Dimension 3 Code,Date;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

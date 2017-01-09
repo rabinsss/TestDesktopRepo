@@ -1,0 +1,68 @@
+OBJECT Table 2000000074 Profile Metadata
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Profile Metadata;
+               ESM=Metadatos de perfil;
+               FRC=M‚tadonn‚es profil;
+               ENC=Profile Metadata];
+  }
+  FIELDS
+  {
+    { 3   ;   ;Profile ID          ;Code30        ;TableRelation=Profile."Profile ID";
+                                                   CaptionML=[ENU=Profile ID;
+                                                              ESM=Id. perfil;
+                                                              FRC=Code profil;
+                                                              ENC=Profile ID] }
+    { 6   ;   ;Page ID             ;Integer       ;TableRelation=AllObj."Object ID" WHERE (Object Type=CONST(Page));
+                                                   CaptionML=[ENU=Page ID;
+                                                              ESM=Id. p gina;
+                                                              FRC=Code page;
+                                                              ENC=Page ID] }
+    { 9   ;   ;Description         ;Text250       ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(AllObjWithCaption."Object Caption" WHERE (Object Type=CONST(Page),
+                                                                                                                Object ID=FIELD(Page ID)));
+                                                   CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 12  ;   ;Date                ;Date          ;CaptionML=[ENU=Date;
+                                                              ESM=Fecha;
+                                                              FRC=Date;
+                                                              ENC=Date] }
+    { 15  ;   ;Time                ;Time          ;CaptionML=[ENU=Time;
+                                                              ESM=Hora;
+                                                              FRC=Heure;
+                                                              ENC=Time] }
+    { 18  ;   ;Personalization ID  ;Code40        ;CaptionML=[ENU=Personalization ID;
+                                                              ESM=Id. personalizaci¢n;
+                                                              FRC=Code personnalisation;
+                                                              ENC=Personalization ID] }
+    { 21  ;   ;Page Metadata Delta ;BLOB          ;CaptionML=[ENU=Page Metadata Delta;
+                                                              ESM=P gina metadatos Delta;
+                                                              FRC=Delta m‚tadonn‚es page;
+                                                              ENC=Page Metadata Delta] }
+  }
+  KEYS
+  {
+    {    ;Profile ID,Page ID,Personalization ID   ;Clustered=Yes }
+    {    ;Date                                     }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

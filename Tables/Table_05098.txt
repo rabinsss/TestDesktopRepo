@@ -1,0 +1,75 @@
+OBJECT Table 5098 Saved Segment Criteria
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               "User ID" := USERID;
+             END;
+
+    OnDelete=VAR
+               SavedSegCriteriaLine@1000 : Record 5099;
+             BEGIN
+               SavedSegCriteriaLine.SETRANGE("Segment Criteria Code",Code);
+               SavedSegCriteriaLine.DELETEALL(TRUE);
+             END;
+
+    CaptionML=[ENU=Saved Segment Criteria;
+               ESM=Criterio segmento guardado;
+               FRC=CritŠre segment enregistr‚;
+               ENC=Saved Segment Criteria];
+    LookupPageID=Page5141;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 4   ;   ;User ID             ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=VAR
+                                                              UserMgt@1000 : Codeunit 418;
+                                                            BEGIN
+                                                              UserMgt.LookupUserID("User ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID];
+                                                   Editable=No }
+    { 5   ;   ;No. of Actions      ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Saved Segment Criteria Line" WHERE (Segment Criteria Code=FIELD(Code),
+                                                                                                          Type=CONST(Action)));
+                                                   CaptionML=[ENU=No. of Actions;
+                                                              ESM=N§ de acciones;
+                                                              FRC=Nombre d'actions;
+                                                              ENC=No. of Actions];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

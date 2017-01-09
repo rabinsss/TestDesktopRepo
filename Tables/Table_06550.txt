@@ -1,0 +1,413 @@
+OBJECT Table 6550 Whse. Item Tracking Line
+{
+  OBJECT-PROPERTIES
+  {
+    Date=10/23/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.43402;
+  }
+  PROPERTIES
+  {
+    OnDelete=BEGIN
+               TESTFIELD("Quantity Handled (Base)",0);
+             END;
+
+    CaptionML=[ENU=Whse. Item Tracking Line;
+               ESM=L°n. seguim. producto alm.;
+               FRC=Ligne traáabilitÇ mag.;
+               ENC=Whse. Item Tracking Line];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;CaptionML=[ENU=Entry No.;
+                                                              ESM=Nß mov.;
+                                                              FRC=N¯ Çcriture;
+                                                              ENC=Entry No.] }
+    { 2   ;   ;Item No.            ;Code20        ;TableRelation=Item;
+                                                   CaptionML=[ENU=Item No.;
+                                                              ESM=Nß producto;
+                                                              FRC=N¯ d'article;
+                                                              ENC=Item No.] }
+    { 3   ;   ;Location Code       ;Code10        ;TableRelation=Location;
+                                                   CaptionML=[ENU=Location Code;
+                                                              ESM=C¢d. almacÇn;
+                                                              FRC=Code d'emplacement;
+                                                              ENC=Location Code] }
+    { 4   ;   ;Quantity (Base)     ;Decimal       ;OnValidate=BEGIN
+                                                                IF "Quantity (Base)" < 0 THEN
+                                                                  FIELDERROR("Quantity (Base)",Text004);
+
+                                                                IF "Quantity (Base)" < "Quantity Handled (Base)" THEN
+                                                                  FIELDERROR("Quantity (Base)",STRSUBSTNO(Text002,FIELDCAPTION("Quantity Handled (Base)")));
+
+                                                                CheckSerialNoQty;
+
+                                                                InitQtyToHandle;
+                                                              END;
+
+                                                   CaptionML=[ENU=Quantity (Base);
+                                                              ESM=Cantidad (base);
+                                                              FRC=QuantitÇ (base);
+                                                              ENC=Quantity (Base)];
+                                                   DecimalPlaces=0:5 }
+    { 7   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 10  ;   ;Source Type         ;Integer       ;CaptionML=[ENU=Source Type;
+                                                              ESM=Tipo procedencia mov.;
+                                                              FRC=Type origine;
+                                                              ENC=Source Type] }
+    { 11  ;   ;Source Subtype      ;Option        ;CaptionML=[ENU=Source Subtype;
+                                                              ESM=Subtipo origen;
+                                                              FRC=Sous-type origine;
+                                                              ENC=Source Subtype];
+                                                   OptionCaptionML=[ENU=0,1,2,3,4,5,6,7,8,9,10;
+                                                                    ESM=0,1,2,3,4,5,6,7,8,9,10;
+                                                                    FRC=0,1,2,3,4,5,6,7,8,9,10;
+                                                                    ENC=0,1,2,3,4,5,6,7,8,9,10];
+                                                   OptionString=0,1,2,3,4,5,6,7,8,9,10 }
+    { 12  ;   ;Source ID           ;Code20        ;CaptionML=[ENU=Source ID;
+                                                              ESM=Id. origen;
+                                                              FRC=Code origine;
+                                                              ENC=Source ID] }
+    { 13  ;   ;Source Batch Name   ;Code10        ;CaptionML=[ENU=Source Batch Name;
+                                                              ESM=Nombre secci¢n origen;
+                                                              FRC=Nom de lot source;
+                                                              ENC=Source Batch Name] }
+    { 14  ;   ;Source Prod. Order Line;Integer    ;CaptionML=[ENU=Source Prod. Order Line;
+                                                              ESM=L°nea O.P. origen;
+                                                              FRC=Ligne bon de production origine;
+                                                              ENC=Source Prod. Order Line] }
+    { 15  ;   ;Source Ref. No.     ;Integer       ;CaptionML=[ENU=Source Ref. No.;
+                                                              ESM=Nß ref. origen;
+                                                              FRC=N¯ de rÇfÇrence source;
+                                                              ENC=Source Ref. No.] }
+    { 24  ;   ;Serial No.          ;Code20        ;OnValidate=BEGIN
+                                                                IF "Serial No." <> xRec."Serial No." THEN BEGIN
+                                                                  TESTFIELD("Quantity Handled (Base)",0);
+                                                                  IF IsReclass("Source Type","Source Batch Name") THEN
+                                                                    "New Serial No." := "Serial No.";
+                                                                  CheckSerialNoQty;
+                                                                  InitExpirationDate;
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Serial No.;
+                                                              ESM=Nß serie;
+                                                              FRC=N¯ de sÇrie;
+                                                              ENC=Serial No.] }
+    { 29  ;   ;Qty. per Unit of Measure;Decimal   ;InitValue=1;
+                                                   CaptionML=[ENU=Qty. per Unit of Measure;
+                                                              ESM=Cdad. por unidad medida;
+                                                              FRC=QuantitÇ par unitÇ de mesure;
+                                                              ENC=Qty. per Unit of Measure];
+                                                   DecimalPlaces=0:5;
+                                                   Editable=No }
+    { 40  ;   ;Warranty Date       ;Date          ;CaptionML=[ENU=Warranty Date;
+                                                              ESM=Fecha garant°a;
+                                                              FRC=Date de garantie;
+                                                              ENC=Warranty Date] }
+    { 41  ;   ;Expiration Date     ;Date          ;OnValidate=BEGIN
+                                                                "New Expiration Date" := "Expiration Date";
+                                                              END;
+
+                                                   CaptionML=[ENU=Expiration Date;
+                                                              ESM=Fecha caducidad;
+                                                              FRC=Date d'expiration;
+                                                              ENC=Expiration Date] }
+    { 50  ;   ;Qty. to Handle (Base);Decimal      ;OnValidate=BEGIN
+                                                                IF "Qty. to Handle (Base)" < 0 THEN
+                                                                  FIELDERROR("Qty. to Handle (Base)",Text004);
+
+                                                                IF "Qty. to Handle (Base)" > ("Quantity (Base)" - "Quantity Handled (Base)")
+                                                                THEN
+                                                                  ERROR(
+                                                                    Text001,
+                                                                    "Quantity (Base)" - "Quantity Handled (Base)");
+
+                                                                "Qty. to Handle" := CalcQty("Qty. to Handle (Base)");
+                                                              END;
+
+                                                   CaptionML=[ENU=Qty. to Handle (Base);
+                                                              ESM=Cdad. a manipular (base);
+                                                              FRC=QuantitÇ Ö traiter (base);
+                                                              ENC=Qty. to Handle (Base)];
+                                                   DecimalPlaces=0:5 }
+    { 51  ;   ;Qty. to Invoice (Base);Decimal     ;CaptionML=[ENU=Qty. to Invoice (Base);
+                                                              ESM=Cdad. a facturar (base);
+                                                              FRC=QuantitÇ Ö facturer (base);
+                                                              ENC=Qty. to Invoice (Base)];
+                                                   DecimalPlaces=0:5 }
+    { 52  ;   ;Quantity Handled (Base);Decimal    ;CaptionML=[ENU=Quantity Handled (Base);
+                                                              ESM=Cdad. manipulada (Base);
+                                                              FRC=QuantitÇ traitÇe (base);
+                                                              ENC=Quantity Handled (Base)];
+                                                   DecimalPlaces=0:5;
+                                                   Editable=No }
+    { 53  ;   ;Quantity Invoiced (Base);Decimal   ;CaptionML=[ENU=Quantity Invoiced (Base);
+                                                              ESM=Cdad. facturada (Base);
+                                                              FRC=QuantitÇ facturÇe (base);
+                                                              ENC=Quantity Invoiced (Base)];
+                                                   DecimalPlaces=0:5;
+                                                   Editable=No }
+    { 60  ;   ;Qty. to Handle      ;Decimal       ;CaptionML=[ENU=Qty. to Handle;
+                                                              ESM=Cdad.a manipular;
+                                                              FRC=QuantitÇ Ö traiter;
+                                                              ENC=Qty. to Handle];
+                                                   DecimalPlaces=0:5 }
+    { 70  ;   ;Buffer Status       ;Option        ;CaptionML=[ENU=Buffer Status;
+                                                              ESM=Estado mem. int.;
+                                                              FRC=êtat tampon;
+                                                              ENC=Buffer Status];
+                                                   OptionCaptionML=[ENU=" ,MODIFY";
+                                                                    ESM=" ,MODIFY";
+                                                                    FRC=" ,MODIFIER";
+                                                                    ENC=" ,MODIFY"];
+                                                   OptionString=[ ,MODIFY];
+                                                   Editable=No }
+    { 71  ;   ;Buffer Status2      ;Option        ;CaptionML=[ENU=Buffer Status2;
+                                                              ESM=Estado mem. int.2;
+                                                              FRC=êtat2 tampon;
+                                                              ENC=Buffer Status2];
+                                                   OptionCaptionML=[ENU=,ExpDate blocked;
+                                                                    ESM=,FechaFinalizaci¢n bloqueada;
+                                                                    FRC=,DateExp bloquÇe;
+                                                                    ENC=,ExpDate blocked];
+                                                   OptionString=,ExpDate blocked;
+                                                   Editable=No }
+    { 80  ;   ;New Serial No.      ;Code20        ;CaptionML=[ENU=New Serial No.;
+                                                              ESM=Nuevo nß serie;
+                                                              FRC=Nouveau n¯ de sÇrie;
+                                                              ENC=New Serial No.] }
+    { 81  ;   ;New Lot No.         ;Code20        ;CaptionML=[ENU=New Lot No.;
+                                                              ESM=Nuevo nß lote;
+                                                              FRC=Nouveau n¯ lot;
+                                                              ENC=New Lot No.] }
+    { 90  ;   ;Source Type Filter  ;Option        ;FieldClass=FlowFilter;
+                                                   CaptionML=[ENU=Source Type Filter;
+                                                              ESM=Filtro tipo origen;
+                                                              FRC=Filtre type origine;
+                                                              ENC=Source Type Filter];
+                                                   OptionCaptionML=[ENU=" ,Receipt,Shipment,Internal Put-away,Internal Pick,Production,Movement Worksheet,Assembly";
+                                                                    ESM=" ,Recepci¢n,Env°o,Ubicac. interna,Picking interno,Producci¢n,Hoja trab. mov.,Ensamblado";
+                                                                    FRC=" ,RÇception,Livraison,Rangement interne,PrÇlävement interne,Production,Feuille mouvement,Assemblage";
+                                                                    ENC=" ,Receipt,Shipment,Internal Put-away,Internal Pick,Production,Movement Worksheet,Assembly"];
+                                                   OptionString=[ ,Receipt,Shipment,Internal Put-away,Internal Pick,Production,Movement Worksheet,Assembly] }
+    { 91  ;   ;Qty. Registered (Base);Decimal     ;CaptionML=[ENU=Qty. Registered (Base);
+                                                              ESM=Cdad. registrada (Base);
+                                                              FRC=QtÇ validÇe (base);
+                                                              ENC=Qty. Registered (Base)] }
+    { 92  ;   ;Put-away Qty. (Base);Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Warehouse Activity Line"."Qty. Outstanding (Base)" WHERE (Activity Type=FILTER(Put-away),
+                                                                                                                              Whse. Document Type=FIELD(Source Type Filter),
+                                                                                                                              Whse. Document No.=FIELD(Source ID),
+                                                                                                                              Whse. Document Line No.=FIELD(Source Ref. No.),
+                                                                                                                              Serial No.=FIELD(Serial No.),
+                                                                                                                              Lot No.=FIELD(Lot No.),
+                                                                                                                              Action Type=FILTER(' '|Take)));
+                                                   CaptionML=[ENU=Put-away Qty. (Base);
+                                                              ESM=Cdad. ubicac. (Base);
+                                                              FRC=Ranger qtÇ (base);
+                                                              ENC=Put-away Qty. (Base)] }
+    { 93  ;   ;Pick Qty. (Base)    ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Warehouse Activity Line"."Qty. Outstanding (Base)" WHERE (Activity Type=FILTER(Pick|Movement),
+                                                                                                                              Whse. Document Type=FIELD(Source Type Filter),
+                                                                                                                              Whse. Document No.=FIELD(Source ID),
+                                                                                                                              Whse. Document Line No.=FIELD(Source Ref. No.),
+                                                                                                                              Serial No.=FIELD(Serial No.),
+                                                                                                                              Lot No.=FIELD(Lot No.),
+                                                                                                                              Action Type=FILTER(' '|Place)));
+                                                   CaptionML=[ENU=Pick Qty. (Base);
+                                                              ESM=Cdad. picking (Base);
+                                                              FRC=PrÇlever qtÇ (base);
+                                                              ENC=Pick Qty. (Base)] }
+    { 94  ;   ;Created by Whse. Activity Line;Boolean;
+                                                   CaptionML=[ENU=Created by Whse. Activity Line;
+                                                              ESM=Creado por l°nea de actividad de almacÇn;
+                                                              FRC=CrÇÇ par ligne activitÇ entrep.;
+                                                              ENC=Created by Whse. Activity Line] }
+    { 5400;   ;Lot No.             ;Code20        ;OnValidate=BEGIN
+                                                                IF "Lot No." <> xRec."Lot No." THEN BEGIN
+                                                                  TESTFIELD("Quantity Handled (Base)",0);
+                                                                  IF IsReclass("Source Type","Source Batch Name") THEN
+                                                                    "New Lot No." := "Lot No.";
+                                                                  InitExpirationDate;
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Lot No.;
+                                                              ESM=Nß lote;
+                                                              FRC=N¯ de lot;
+                                                              ENC=Lot No.] }
+    { 5401;   ;Variant Code        ;Code10        ;TableRelation="Item Variant".Code WHERE (Item No.=FIELD(Item No.));
+                                                   CaptionML=[ENU=Variant Code;
+                                                              ESM=C¢d. variante;
+                                                              FRC=Code variante;
+                                                              ENC=Variant Code] }
+    { 6505;   ;New Expiration Date ;Date          ;CaptionML=[ENU=New Expiration Date;
+                                                              ESM=Nueva fecha caducidad;
+                                                              FRC=Nouvelle date d'expiration;
+                                                              ENC=New Expiration Date] }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;Clustered=Yes }
+    {    ;Source ID,Source Type,Source Subtype,Source Batch Name,Source Prod. Order Line,Source Ref. No.,Location Code;
+                                                   SumIndexFields=Quantity (Base),Qty. to Handle (Base),Qty. to Invoice (Base),Quantity Handled (Base),Quantity Invoiced (Base);
+                                                   MaintainSIFTIndex=No }
+    {    ;Serial No.,Lot No.                       }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text001@1001 : TextConst 'ENU=You cannot handle more than %1 units.;ESM=No puede manipular m†s de %1 unidades.;FRC=Vous ne pouvez pas gÇrer plus de %1 unitÇ(s).;ENC=You cannot handle more than %1 units.';
+      Text002@1000 : TextConst 'ENU=must not be less than %1;ESM=No puede ser inferior a %1.;FRC=ne doit pas àtre infÇrieur Ö %1;ENC=must not be less than %1';
+      Text003@1002 : TextConst 'ENU=%1 must be 0 or 1 when %2 is stated.;ESM=%1 debe ser 0 o 1 cuando est† definido %2.;FRC=La %1 doit àtre Çgale Ö 0 ou 1 lorsque la valeur %2 est indiquÇe.;ENC=%1 must be 0 or 1 when %2 is stated.';
+      Text004@1004 : TextConst 'ENU=must not be negative;ESM=no debe ser negativo;FRC=ne doit pas àtre de signe nÇgatif;ENC=must not be negative';
+
+    LOCAL PROCEDURE CheckSerialNoQty@1();
+    BEGIN
+      IF "Serial No." <> '' THEN
+        IF NOT ("Quantity (Base)" IN [0,1]) THEN
+          ERROR(Text003,FIELDCAPTION("Quantity (Base)"),FIELDCAPTION("Serial No."));
+    END;
+
+    LOCAL PROCEDURE CalcQty@14(BaseQty@1000 : Decimal) : Decimal;
+    BEGIN
+      IF "Qty. per Unit of Measure" = 0 THEN
+        "Qty. per Unit of Measure" := 1;
+      EXIT(ROUND(BaseQty / "Qty. per Unit of Measure",0.00001));
+    END;
+
+    PROCEDURE InitQtyToHandle@15();
+    BEGIN
+      "Qty. to Handle (Base)" := "Quantity (Base)" - "Quantity Handled (Base)";
+      "Qty. to Handle" := CalcQty("Qty. to Handle (Base)");
+    END;
+
+    PROCEDURE InitExpirationDate@2();
+    VAR
+      Location@1003 : Record 14;
+      ItemTrackingMgt@1001 : Codeunit 6500;
+      ExpDate@1000 : Date;
+      WarDate@1004 : Date;
+    BEGIN
+      IF ("Serial No." = xRec."Serial No.") AND ("Lot No." = xRec."Lot No.") THEN
+        EXIT;
+
+      "Expiration Date" := 0D;
+      "Buffer Status2" := 0;
+
+      Location.INIT;
+      IF "Location Code" <> '' THEN
+        Location.GET("Location Code");
+
+      IF ItemTrackingMgt.GetWhseExpirationDate("Item No.","Variant Code",Location,"Lot No.","Serial No.",ExpDate) THEN BEGIN
+        "Expiration Date" := ExpDate;
+        "Buffer Status2" := "Buffer Status2"::"ExpDate blocked";
+      END;
+
+      IF IsReclass("Source Type","Source Batch Name") THEN BEGIN
+        "New Expiration Date" := "Expiration Date";
+        IF ItemTrackingMgt.GetWhseWarrantyDate("Item No.","Variant Code",Location,"Lot No.","Serial No.",WarDate) THEN
+          "Warranty Date" := WarDate;
+      END;
+    END;
+
+    PROCEDURE IsReclass@4(SourceType@1001 : Integer;SourceBatchName@1002 : Code[10]) : Boolean;
+    VAR
+      WhseJnlLine@1000 : Record 7311;
+    BEGIN
+      IF SourceType = DATABASE::"Warehouse Journal Line" THEN
+        EXIT(WhseJnlLine.IsReclass(SourceBatchName));
+
+      EXIT(FALSE);
+    END;
+
+    PROCEDURE LookUpTrackingSummary@50(VAR WhseItemTrackingLine@1000 : Record 6550;TrackingType@1001 : 'SerialNo,LotNo';MaxQuantity@1002 : Decimal;SignFactor@1003 : Integer;SearchForSupply@1004 : Boolean);
+    VAR
+      TempTrackingSpecification@1005 : TEMPORARY Record 336;
+      WhseJnlLine@1006 : Record 7311;
+      WhseWorksheetLine@1007 : Record 7326;
+      WhseInternalPutawayLine@1010 : Record 7332;
+      InternalMovementLine@1011 : Record 7347;
+      ItemTrackingDataCollection@1008 : Codeunit 6501;
+      BinCode@1009 : Code[20];
+    BEGIN
+      WITH WhseItemTrackingLine DO BEGIN
+        CASE "Source Type" OF
+          DATABASE::"Warehouse Journal Line":
+            BEGIN
+              WhseJnlLine.GET("Source Batch Name","Source ID","Location Code","Source Ref. No.");
+              BinCode := WhseJnlLine."Bin Code";
+            END;
+          DATABASE::"Whse. Worksheet Line":
+            BEGIN
+              WhseWorksheetLine.GET("Source Batch Name","Source ID","Location Code","Source Ref. No.");
+              BinCode := WhseWorksheetLine."From Bin Code";
+            END;
+          DATABASE::"Whse. Internal Put-away Line":
+            BEGIN
+              WhseInternalPutawayLine.GET("Source ID","Source Ref. No.");
+              BinCode := WhseInternalPutawayLine."From Bin Code";
+            END;
+          DATABASE::"Internal Movement Line":
+            BEGIN
+              InternalMovementLine.GET("Source ID","Source Ref. No.");
+              BinCode := InternalMovementLine."From Bin Code";
+            END;
+          ELSE
+            EXIT;
+        END;
+
+        TempTrackingSpecification.INIT;
+        TempTrackingSpecification."Source Type" := "Source Type";
+        TempTrackingSpecification."Item No." := "Item No.";
+        TempTrackingSpecification."Location Code" := "Location Code";
+        TempTrackingSpecification.Description := Description;
+        TempTrackingSpecification."Variant Code" := "Variant Code";
+        TempTrackingSpecification."Source Subtype" := "Source Subtype";
+        TempTrackingSpecification."Source ID" := "Source ID";
+        TempTrackingSpecification."Source Batch Name" := "Source Batch Name";
+        TempTrackingSpecification."Source Prod. Order Line" := "Source Prod. Order Line";
+        TempTrackingSpecification."Source Ref. No." := "Source Ref. No.";
+        TempTrackingSpecification."Quantity (Base)" := "Quantity (Base)";
+        TempTrackingSpecification."Qty. to Handle" := "Qty. to Handle";
+        TempTrackingSpecification."Qty. to Handle (Base)" := "Qty. to Handle (Base)";
+        TempTrackingSpecification."Qty. to Invoice" := 0;
+        TempTrackingSpecification."Qty. to Invoice (Base)" := 0;
+        TempTrackingSpecification."Quantity Handled (Base)" := 0;
+        TempTrackingSpecification."Quantity Invoiced (Base)" := 0;
+        TempTrackingSpecification."Qty. per Unit of Measure" := "Qty. per Unit of Measure";
+        TempTrackingSpecification."Bin Code" := BinCode;
+
+        ItemTrackingDataCollection.AssistEditLotSerialNo(
+          TempTrackingSpecification,SearchForSupply,SignFactor,TrackingType,MaxQuantity);
+
+        VALIDATE("Quantity (Base)",TempTrackingSpecification."Quantity (Base)");
+
+        CASE TrackingType OF
+          TrackingType::SerialNo:
+            IF TempTrackingSpecification."Serial No." <> '' THEN
+              VALIDATE("Serial No.",TempTrackingSpecification."Serial No.");
+          TrackingType::LotNo:
+            IF TempTrackingSpecification."Lot No." <> '' THEN
+              VALIDATE("Lot No.",TempTrackingSpecification."Lot No.");
+        END;
+      END;
+    END;
+
+    PROCEDURE TrackingExists@3() : Boolean;
+    BEGIN
+      EXIT(("Lot No." <> '') OR ("Serial No." <> ''));
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

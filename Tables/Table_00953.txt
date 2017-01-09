@@ -1,0 +1,68 @@
+OBJECT Table 953 Time Sheet Comment Line
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Time Sheet Comment Line;
+               ESM=L¡nea de comentario hoja horas;
+               FRC=Ligne commentaire feuille de temps;
+               ENC=Time Sheet Comment Line];
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Code20        ;CaptionML=[ENU=No.;
+                                                              ESM=N§;
+                                                              FRC=Nø;
+                                                              ENC=No.] }
+    { 2   ;   ;Time Sheet Line No. ;Integer       ;CaptionML=[ENU=Time Sheet Line No.;
+                                                              ESM=N§ l¡nea hoja horas;
+                                                              FRC=Nø de ligne de la feuille de temps;
+                                                              ENC=Time Sheet Line No.] }
+    { 3   ;   ;Line No.            ;Integer       ;CaptionML=[ENU=Line No.;
+                                                              ESM=N§ l¡nea;
+                                                              FRC=Nø ligne;
+                                                              ENC=Line No.] }
+    { 4   ;   ;Date                ;Date          ;CaptionML=[ENU=Date;
+                                                              ESM=Fecha;
+                                                              FRC=Date;
+                                                              ENC=Date] }
+    { 5   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code] }
+    { 6   ;   ;Comment             ;Text80        ;CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment] }
+  }
+  KEYS
+  {
+    {    ;No.,Time Sheet Line No.,Line No.        ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE SetUpNewLine@1();
+    VAR
+      TimeSheetCommentLine@1000 : Record 953;
+    BEGIN
+      TimeSheetCommentLine.SETRANGE("No.","No.");
+      TimeSheetCommentLine.SETRANGE("Time Sheet Line No.","Time Sheet Line No.");
+      TimeSheetCommentLine.SETRANGE(Date,WORKDATE);
+      IF TimeSheetCommentLine.ISEMPTY THEN
+        Date := WORKDATE;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

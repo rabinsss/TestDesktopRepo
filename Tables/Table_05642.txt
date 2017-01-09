@@ -1,0 +1,67 @@
+OBJECT Table 5642 Depreciation Table Header
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Code,Description;
+    OnDelete=BEGIN
+               DeprTableLine.LOCKTABLE;
+               DeprTableLine.SETRANGE("Depreciation Table Code",Code);
+               DeprTableLine.DELETEALL(TRUE);
+             END;
+
+    CaptionML=[ENU=Depreciation Table Header;
+               ESM=Cab. tabla amortizaci¢n;
+               FRC=En-tˆte table amortissement;
+               ENC=Depreciation Table Header];
+    LookupPageID=Page5663;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 3   ;   ;Period Length       ;Option        ;CaptionML=[ENU=Period Length;
+                                                              ESM=Longitud periodo;
+                                                              FRC=Dur‚e de la p‚riode;
+                                                              ENC=Period Length];
+                                                   OptionCaptionML=[ENU=Month,Period,Quarter,Year;
+                                                                    ESM=Mes,Periodo,Trimestre,A¤o;
+                                                                    FRC=Mois,P‚riode,Trimestre,Ann‚e;
+                                                                    ENC=Month,Period,Quarter,Year];
+                                                   OptionString=Month,Period,Quarter,Year }
+    { 4   ;   ;Total No. of Units  ;Decimal       ;CaptionML=[ENU=Total No. of Units;
+                                                              ESM=N§ total de unidades;
+                                                              FRC=Nombre total unit‚s;
+                                                              ENC=Total No. of Units];
+                                                   DecimalPlaces=0:5;
+                                                   MinValue=0 }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      DeprTableLine@1000 : Record 5643;
+
+    BEGIN
+    END.
+  }
+}
+

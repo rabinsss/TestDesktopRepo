@@ -1,0 +1,343 @@
+OBJECT Table 454 Approval Entry
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    OnModify=BEGIN
+               "Last Date-Time Modified" := CREATEDATETIME(TODAY,TIME);
+               "Last Modified By User ID" := USERID;
+             END;
+
+    CaptionML=[ENU=Approval Entry;
+               ESM=Movimiento aprobaci¢n;
+               FRC=êcriture d'approbation;
+               ENC=Approval Entry];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Table ID            ;Integer       ;CaptionML=[ENU=Table ID;
+                                                              ESM=Id. tabla;
+                                                              FRC=Code table;
+                                                              ENC=Table ID] }
+    { 2   ;   ;Document Type       ;Option        ;CaptionML=[ENU=Document Type;
+                                                              ESM=Tipo documento;
+                                                              FRC=Type de document;
+                                                              ENC=Document Type];
+                                                   OptionCaptionML=[ENU="Quote,Order,Invoice,Credit Memo,Blanket Order,Return Order, ";
+                                                                    ESM="Cotizaci¢n,Pedido,Factura,Nota crÇdito,Pedido abierto,Devoluci¢n, ";
+                                                                    FRC="Devis,Commande,Facture,Note de crÇdit,Commande permanente,Retour, ";
+                                                                    ENC="Quote,Order,Invoice,Credit Memo,Blanket Order,Return Order, "];
+                                                   OptionString=[Quote,Order,Invoice,Credit Memo,Blanket Order,Return Order, ] }
+    { 3   ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ESM=Nß documento;
+                                                              FRC=N¯ de document;
+                                                              ENC=Document No.] }
+    { 4   ;   ;Sequence No.        ;Integer       ;CaptionML=[ENU=Sequence No.;
+                                                              ESM=Nß secuencia;
+                                                              FRC=Nß sÇquence;
+                                                              ENC=Sequence No.] }
+    { 5   ;   ;Approval Code       ;Code20        ;CaptionML=[ENU=Approval Code;
+                                                              ESM=C¢digo aprobaci¢n;
+                                                              FRC=Code d'approbation;
+                                                              ENC=Approval Code] }
+    { 6   ;   ;Sender ID           ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=BEGIN
+                                                              UserMgt.LookupUserID("Sender ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Sender ID;
+                                                              ESM=Id. remitente;
+                                                              FRC=Code expÇditeur;
+                                                              ENC=Sender ID] }
+    { 7   ;   ;Salespers./Purch. Code;Code10      ;CaptionML=[ENU=Salespers./Purch. Code;
+                                                              ESM=C¢d. vendedor/comprador;
+                                                              FRC=Code de reprÇsentant/d'achat;
+                                                              ENC=Salespers./Purch. Code] }
+    { 8   ;   ;Approver ID         ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=BEGIN
+                                                              UserMgt.LookupUserID("Approver ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Approver ID;
+                                                              ESM=Id. aprobador;
+                                                              FRC=Code approbateur;
+                                                              ENC=Approver ID] }
+    { 9   ;   ;Status              ;Option        ;OnValidate=BEGIN
+                                                                IF (xRec.Status = Status::Created) AND (Status = Status::Open) THEN
+                                                                  "Date-Time Sent for Approval" := CREATEDATETIME(TODAY,TIME);
+                                                              END;
+
+                                                   CaptionML=[ENU=Status;
+                                                              ESM=Estado;
+                                                              FRC=êtat;
+                                                              ENC=Status];
+                                                   OptionCaptionML=[ENU=Created,Open,Canceled,Rejected,Approved;
+                                                                    ESM=Creado,Abierto,Cancelado,Rechazado,Aprobado;
+                                                                    FRC=CrÇÇ,Ouvert,AnnulÇ,RefusÇ,ApprouvÇ;
+                                                                    ENC=Created,Open,Cancelled,Rejected,Approved];
+                                                   OptionString=Created,Open,Canceled,Rejected,Approved }
+    { 10  ;   ;Date-Time Sent for Approval;DateTime;
+                                                   CaptionML=[ENU=Date-Time Sent for Approval;
+                                                              ESM=Fecha-hora enviados para aprobaci¢n;
+                                                              FRC=Date-heure d'envoi pour approbation;
+                                                              ENC=Date-Time Sent for Approval] }
+    { 11  ;   ;Last Date-Time Modified;DateTime   ;CaptionML=[ENU=Last Date-Time Modified;
+                                                              ESM=Fecha-hora £lt. modificaci¢n;
+                                                              FRC=Date-heure de derniäre modification;
+                                                              ENC=Last Date-Time Modified] }
+    { 12  ;   ;Last Modified By User ID;Code50    ;TableRelation=User."User Name";
+                                                   OnLookup=BEGIN
+                                                              UserMgt.LookupUserID("Last Modified By User ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Last Modified By User ID;
+                                                              ESM=Èlt. modificaci¢n por id. usuario;
+                                                              FRC=Derniäre modification par Code utilisateur;
+                                                              ENC=Last Modified By User ID] }
+    { 13  ;   ;Comment             ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Approval Comment Line" WHERE (Table ID=FIELD(Table ID),
+                                                                                                    Record ID to Approve=FIELD(Record ID to Approve)));
+                                                   CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment];
+                                                   Editable=No }
+    { 14  ;   ;Due Date            ;Date          ;CaptionML=[ENU=Due Date;
+                                                              ESM=Fecha vencimiento;
+                                                              FRC=Date d'ÇchÇance;
+                                                              ENC=Due Date] }
+    { 15  ;   ;Amount              ;Decimal       ;CaptionML=[ENU=Amount;
+                                                              ESM=Importe;
+                                                              FRC=Montant;
+                                                              ENC=Amount];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr="Currency Code" }
+    { 16  ;   ;Amount (LCY)        ;Decimal       ;CaptionML=[ENU=Amount ($);
+                                                              ESM=Importe ($);
+                                                              FRC=Montant ($);
+                                                              ENC=Amount ($)];
+                                                   AutoFormatType=1 }
+    { 17  ;   ;Currency Code       ;Code10        ;TableRelation=Currency;
+                                                   CaptionML=[ENU=Currency Code;
+                                                              ESM=C¢d. divisa;
+                                                              FRC=Code devise;
+                                                              ENC=Currency Code] }
+    { 18  ;   ;Approval Type       ;Option        ;CaptionML=[ENU=Approval Type;
+                                                              ESM=Tipo aprobaci¢n;
+                                                              FRC=Type d'approbation;
+                                                              ENC=Approval Type];
+                                                   OptionCaptionML=[ENU=Workflow User Group,Sales Pers./Purchaser,Approver;
+                                                                    ESM=Grupo de usuarios de flujo de trabajo,Vendedor/Comprador,Aprobador;
+                                                                    FRC=Groupe d'utilisateurs du flux de travail,Vendeur/Acheteur,Approbateur;
+                                                                    ENC=Workflow User Group,Sales Pers./Purchaser,Approver];
+                                                   OptionString=Workflow User Group,Sales Pers./Purchaser,Approver }
+    { 19  ;   ;Limit Type          ;Option        ;CaptionML=[ENU=Limit Type;
+                                                              ESM=Tipo l°mite;
+                                                              FRC=Type de limite;
+                                                              ENC=Limit Type];
+                                                   OptionCaptionML=[ENU=Approval Limits,Credit Limits,Request Limits,No Limits;
+                                                                    ESM=L°mites aprobaci¢n,L°mites crÇdito,L°mites solicitud,Sin l°mites;
+                                                                    FRC=Limites d'approbation,Limites de crÇdit,Limites de demande,Aucune limite;
+                                                                    ENC=Approval Limits,Credit Limits,Request Limits,No Limits];
+                                                   OptionString=Approval Limits,Credit Limits,Request Limits,No Limits }
+    { 20  ;   ;Available Credit Limit (LCY);Decimal;
+                                                   CaptionML=[ENU=Available Credit Limit ($);
+                                                              ESM=L°mite crÇdito disponible ($);
+                                                              FRC=Limite de crÇdit disponible ($);
+                                                              ENC=Available Credit Limit ($)] }
+    { 21  ;   ;Pending Approvals   ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Approval Entry" WHERE (Record ID to Approve=FIELD(Record ID to Approve),
+                                                                                             Status=FILTER(Created|Open),
+                                                                                             Workflow Step Instance ID=FIELD(Workflow Step Instance ID)));
+                                                   CaptionML=[ENU=Pending Approvals;
+                                                              ESM=Aprobaciones pendientes;
+                                                              FRC=Approbations en attente;
+                                                              ENC=Pending Approvals] }
+    { 22  ;   ;Record ID to Approve;RecordID      ;CaptionML=[ENU=Record ID to Approve;
+                                                              ESM=Id. registro que aprobar;
+                                                              FRC=Code de l'enregistrement Ö approuver;
+                                                              ENC=Record ID to Approve] }
+    { 23  ;   ;Delegation Date Formula;DateFormula;CaptionML=[ENU=Delegation Date Formula;
+                                                              ESM=F¢rmula fecha delegaci¢n;
+                                                              FRC=Formule date dÇlÇgation;
+                                                              ENC=Delegation Date Formula] }
+    { 26  ;   ;Number of Approved Requests;Integer;FieldClass=FlowField;
+                                                   CalcFormula=Count("Approval Entry" WHERE (Record ID to Approve=FIELD(Record ID to Approve),
+                                                                                             Status=FILTER(Approved),
+                                                                                             Workflow Step Instance ID=FIELD(Workflow Step Instance ID)));
+                                                   CaptionML=[ENU=Number of Approved Requests;
+                                                              ESM=N£mero de solicitudes aprobadas;
+                                                              FRC=Nombre de demandes approuvÇes;
+                                                              ENC=Number of Approved Requests] }
+    { 27  ;   ;Number of Rejected Requests;Integer;FieldClass=FlowField;
+                                                   CalcFormula=Count("Approval Entry" WHERE (Record ID to Approve=FIELD(Record ID to Approve),
+                                                                                             Status=FILTER(Rejected),
+                                                                                             Workflow Step Instance ID=FIELD(Workflow Step Instance ID)));
+                                                   CaptionML=[ENU=Number of Rejected Requests;
+                                                              ESM=N£mero de solicitudes rechazadas;
+                                                              FRC=Nombre de demandes rejetÇes;
+                                                              ENC=Number of Rejected Requests] }
+    { 29  ;   ;Entry No.           ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Entry No.;
+                                                              ESM=Nß mov.;
+                                                              FRC="N¯ sÇquence ";
+                                                              ENC=Entry No.] }
+    { 30  ;   ;Workflow Step Instance ID;GUID     ;CaptionML=[ENU=Workflow Step Instance ID;
+                                                              ESM=Id. de instancia de paso de flujo de trabajo;
+                                                              FRC=Code instance d'Çtape de flux de travail;
+                                                              ENC=Workflow Step Instance ID] }
+    { 31  ;   ;Related to Change   ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Workflow - Record Change" WHERE (Workflow Step Instance ID=FIELD(Workflow Step Instance ID),
+                                                                                                       Record ID=FIELD(Record ID to Approve)));
+                                                   CaptionML=[ENU=Related to Change;
+                                                              ESM=Relacionado con el cambio;
+                                                              FRC=Modification liÇe;
+                                                              ENC=Related to Change] }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;Clustered=Yes }
+    {    ;Record ID to Approve,Workflow Step Instance ID,Sequence No. }
+    {    ;Table ID,Document Type,Document No.,Sequence No.,Record ID to Approve }
+    {    ;Approver ID,Status                       }
+    {    ;Sender ID                                }
+    {    ;Due Date                                 }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      UserMgt@1000 : Codeunit 418;
+      PageManagement@1001 : Codeunit 700;
+      RecNotExistTxt@1002 : TextConst 'ENU=The record does not exist.;ESM=El registro no existe.;FRC=L''enregistrement n''existe pas.;ENC=The record does not exist.';
+      ChangeRecordDetailsTxt@1003 : TextConst '@@@="Prefix = Record information %1 = field caption %2 = old value %3 = new value. Example: Customer 123455; Credit Limit changed from 100.00 to 200.00";ENU="; %1 changed from %2 to %3";ESM="; %1 cambiado de %2 a %3";FRC="; %1 modifiÇ de %2 en %3";ENC="; %1 changed from %2 to %3"';
+
+    PROCEDURE ShowRecord@1();
+    VAR
+      RecRef@1000 : RecordRef;
+    BEGIN
+      IF NOT RecRef.GET("Record ID to Approve") THEN
+        EXIT;
+      RecRef.SETRECFILTER;
+      PageManagement.PageRun(RecRef);
+    END;
+
+    PROCEDURE RecordCaption@4() : Text;
+    VAR
+      Object@1000 : Record 2000000001;
+      RecRef@1002 : RecordRef;
+      PageNo@1001 : Integer;
+    BEGIN
+      IF NOT RecRef.GET("Record ID to Approve") THEN
+        EXIT;
+      PageNo := PageManagement.GetPageID(RecRef);
+      IF PageNo = 0 THEN
+        EXIT;
+      Object.GET(Object.Type::Page,'',PageNo);
+      Object.CALCFIELDS(Caption);
+      EXIT(STRSUBSTNO('%1 %2',Object.Caption,"Document No."));
+    END;
+
+    PROCEDURE RecordDetails@3() : Text;
+    VAR
+      SalesHeader@1001 : Record 36;
+      PurchHeader@1000 : Record 38;
+      RecRef@1002 : RecordRef;
+      ChangeRecordDetails@1003 : Text;
+    BEGIN
+      IF NOT RecRef.GET("Record ID to Approve") THEN
+        EXIT(RecNotExistTxt);
+
+      ChangeRecordDetails := GetChangeRecordDetails;
+
+      CASE RecRef.NUMBER OF
+        DATABASE::"Sales Header":
+          BEGIN
+            RecRef.SETTABLE(SalesHeader);
+            SalesHeader.CALCFIELDS(Amount);
+            EXIT(STRSUBSTNO('%1 ; %2: %3',SalesHeader."Sell-to Customer Name",
+                SalesHeader.FIELDCAPTION(Amount),SalesHeader.Amount));
+          END;
+        DATABASE::"Purchase Header":
+          BEGIN
+            RecRef.SETTABLE(PurchHeader);
+            PurchHeader.CALCFIELDS(Amount);
+            EXIT(STRSUBSTNO('%1 ; %2: %3',PurchHeader."Buy-from Vendor Name",
+                PurchHeader.FIELDCAPTION(Amount),PurchHeader.Amount));
+          END;
+        ELSE
+          EXIT(FORMAT("Record ID to Approve",0,1) + ChangeRecordDetails);
+      END;
+    END;
+
+    PROCEDURE IsOverdue@5() : Boolean;
+    BEGIN
+      EXIT((Status IN [Status::Created,Status::Open]) AND ("Due Date" < TODAY));
+    END;
+
+    PROCEDURE GetCustVendorDetails@6(VAR CustVendorNo@1002 : Code[20];VAR CustVendorName@1003 : Text[50]);
+    VAR
+      PurchaseHeader@1000 : Record 38;
+      SalesHeader@1001 : Record 36;
+      Customer@1005 : Record 18;
+      RecRef@1004 : RecordRef;
+    BEGIN
+      IF NOT RecRef.GET("Record ID to Approve") THEN
+        EXIT;
+
+      CASE "Table ID" OF
+        DATABASE::"Purchase Header":
+          BEGIN
+            RecRef.SETTABLE(PurchaseHeader);
+            CustVendorNo := PurchaseHeader."Pay-to Vendor No.";
+            CustVendorName := PurchaseHeader."Pay-to Name";
+          END;
+        DATABASE::"Sales Header":
+          BEGIN
+            RecRef.SETTABLE(SalesHeader);
+            CustVendorNo := SalesHeader."Bill-to Customer No.";
+            CustVendorName := SalesHeader."Bill-to Name";
+          END;
+        DATABASE::Customer:
+          BEGIN
+            RecRef.SETTABLE(Customer);
+            CustVendorNo := Customer."No.";
+            CustVendorName := Customer.Name;
+          END;
+      END;
+    END;
+
+    PROCEDURE GetChangeRecordDetails@2() ChangeDetails : Text;
+    VAR
+      WorkflowRecordChange@1000 : Record 1525;
+      OldValue@1001 : Text;
+      NewValue@1002 : Text;
+    BEGIN
+      WorkflowRecordChange.SETRANGE("Record ID","Record ID to Approve");
+      WorkflowRecordChange.SETRANGE("Workflow Step Instance ID","Workflow Step Instance ID");
+
+      IF WorkflowRecordChange.FINDSET THEN
+        REPEAT
+          WorkflowRecordChange.CALCFIELDS("Field Caption");
+          NewValue := WorkflowRecordChange.GetFormattedNewValue(TRUE);
+          OldValue := WorkflowRecordChange.GetFormattedOldValue(TRUE);
+          ChangeDetails += STRSUBSTNO(ChangeRecordDetailsTxt,WorkflowRecordChange."Field Caption",
+              OldValue,NewValue);
+        UNTIL WorkflowRecordChange.NEXT = 0;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

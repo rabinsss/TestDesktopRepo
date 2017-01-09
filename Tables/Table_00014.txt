@@ -1,0 +1,874 @@
+OBJECT Table 14 Location
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974,NAVNA9.00.00.44974;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Code,Name;
+    OnDelete=VAR
+               TransferRoute@1000 : Record 5742;
+               WhseEmployee@1003 : Record 7301;
+               WorkCenter@1004 : Record 99000754;
+             BEGIN
+               WMSCheckWarehouse;
+
+               TransferRoute.SETRANGE("Transfer-from Code",Code);
+               TransferRoute.DELETEALL;
+               TransferRoute.RESET;
+               TransferRoute.SETRANGE("Transfer-to Code",Code);
+               TransferRoute.DELETEALL;
+
+               WhseEmployee.SETRANGE("Location Code",Code);
+               WhseEmployee.DELETEALL(TRUE);
+
+               WorkCenter.SETRANGE("Location Code",Code);
+               IF WorkCenter.FINDSET(TRUE) THEN
+                 REPEAT
+                   WorkCenter.VALIDATE("Location Code",'');
+                   WorkCenter.MODIFY(TRUE);
+                 UNTIL WorkCenter.NEXT = 0;
+             END;
+
+    CaptionML=[ENU=Location;
+               ESM=AlmacÇn;
+               FRC=Emplacement;
+               ENC=Location];
+    LookupPageID=Page15;
+    DrillDownPageID=Page15;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Name                ;Text50        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+    { 130 ;   ;Default Bin Code    ;Code20        ;TableRelation=Bin.Code WHERE (Location Code=FIELD(Code));
+                                                   CaptionML=[ENU=Default Bin Code;
+                                                              ESM=C¢d. ubic. predeterminado;
+                                                              FRC=Code de zone par dÇfaut;
+                                                              ENC=Default Bin Code] }
+    { 5700;   ;Name 2              ;Text50        ;CaptionML=[ENU=Name 2;
+                                                              ESM=Nombre 2;
+                                                              FRC=Nom 2;
+                                                              ENC=Name 2] }
+    { 5701;   ;Address             ;Text50        ;CaptionML=[ENU=Address;
+                                                              ESM=Direcci¢n;
+                                                              FRC=Adresse;
+                                                              ENC=Address] }
+    { 5702;   ;Address 2           ;Text50        ;CaptionML=[ENU=Address 2;
+                                                              ESM=Colonia;
+                                                              FRC=Adresse 2;
+                                                              ENC=Address 2] }
+    { 5703;   ;City                ;Text30        ;TableRelation=IF (Country/Region Code=CONST()) "Post Code".City
+                                                                 ELSE IF (Country/Region Code=FILTER(<>'')) "Post Code".City WHERE (Country/Region Code=FIELD(Country/Region Code));
+                                                   OnValidate=BEGIN
+                                                                Postcode.ValidateCity(City,"Post Code",County,"Country/Region Code",(CurrFieldNo <> 0) AND GUIALLOWED);
+                                                              END;
+
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=City;
+                                                              ESM=Municipio/Ciudad;
+                                                              FRC=Ville;
+                                                              ENC=City] }
+    { 5704;   ;Phone No.           ;Text30        ;ExtendedDatatype=Phone No.;
+                                                   CaptionML=[ENU=Phone No.;
+                                                              ESM=Nß telÇfono;
+                                                              FRC=N¯ tÇlÇphone;
+                                                              ENC=Phone No.] }
+    { 5705;   ;Phone No. 2         ;Text30        ;ExtendedDatatype=Phone No.;
+                                                   CaptionML=[ENU=Phone No. 2;
+                                                              ESM=Nß telÇfono 2;
+                                                              FRC=N¯ tÇlÇphone 2;
+                                                              ENC=Phone No. 2] }
+    { 5706;   ;Telex No.           ;Text30        ;CaptionML=[ENU=Telex No.;
+                                                              ESM=Nß tÇlex;
+                                                              FRC=N¯ tÇlex;
+                                                              ENC=Telex No.] }
+    { 5707;   ;Fax No.             ;Text30        ;CaptionML=[ENU=Fax No.;
+                                                              ESM=Nß fax;
+                                                              FRC=N¯ tÇlÇcopieur;
+                                                              ENC=Fax No.] }
+    { 5713;   ;Contact             ;Text50        ;CaptionML=[ENU=Contact;
+                                                              ESM=Contacto;
+                                                              FRC=Contact;
+                                                              ENC=Contact] }
+    { 5714;   ;Post Code           ;Code20        ;TableRelation=IF (Country/Region Code=CONST()) "Post Code"
+                                                                 ELSE IF (Country/Region Code=FILTER(<>'')) "Post Code" WHERE (Country/Region Code=FIELD(Country/Region Code));
+                                                   OnValidate=BEGIN
+                                                                Postcode.ValidatePostCode(City,"Post Code",County,"Country/Region Code",(CurrFieldNo <> 0) AND GUIALLOWED);
+                                                              END;
+
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=ZIP Code;
+                                                              ESM=C.P.;
+                                                              FRC=Code postal;
+                                                              ENC=Postal/ZIP Code] }
+    { 5715;   ;County              ;Text30        ;CaptionML=[ENU=State;
+                                                              ESM=Provincia;
+                                                              FRC=ComtÇ;
+                                                              ENC=Province/State] }
+    { 5718;   ;E-Mail              ;Text80        ;ExtendedDatatype=E-Mail;
+                                                   CaptionML=[ENU=E-Mail;
+                                                              ESM=Correo electr¢nico;
+                                                              FRC=Courriel;
+                                                              ENC=E-Mail] }
+    { 5719;   ;Home Page           ;Text90        ;ExtendedDatatype=URL;
+                                                   CaptionML=[ENU=Home Page;
+                                                              ESM=P†gina principal;
+                                                              FRC=Page d'accueil;
+                                                              ENC=Home Page] }
+    { 5720;   ;Country/Region Code ;Code10        ;TableRelation=Country/Region;
+                                                   CaptionML=[ENU=Country/Region Code;
+                                                              ESM=C¢d. pa°s/regi¢n;
+                                                              FRC=Code pays/rÇgion;
+                                                              ENC=Country/Region Code] }
+    { 5724;   ;Use As In-Transit   ;Boolean       ;OnValidate=BEGIN
+                                                                IF "Use As In-Transit" THEN BEGIN
+                                                                  TESTFIELD("Require Put-away",FALSE);
+                                                                  TESTFIELD("Require Pick",FALSE);
+                                                                  TESTFIELD("Use Cross-Docking",FALSE);
+                                                                  TESTFIELD("Require Receive",FALSE);
+                                                                  TESTFIELD("Require Shipment",FALSE);
+                                                                  TESTFIELD("Bin Mandatory",FALSE);
+                                                                END;
+                                                              END;
+
+                                                   AccessByPermission=TableData 5740=R;
+                                                   CaptionML=[ENU=Use As In-Transit;
+                                                              ESM=Utiliz.como tr†nsito;
+                                                              FRC=Magasin de transit;
+                                                              ENC=Use As In-Transit] }
+    { 5726;   ;Require Put-away    ;Boolean       ;OnValidate=VAR
+                                                                WhseActivHeader@1000 : Record 5766;
+                                                                WhseRcptHeader@1001 : Record 7316;
+                                                              BEGIN
+                                                                WhseRcptHeader.SETCURRENTKEY("Location Code");
+                                                                WhseRcptHeader.SETRANGE("Location Code",Code);
+                                                                IF WhseRcptHeader.FINDFIRST THEN
+                                                                  ERROR(Text008,FIELDCAPTION("Require Put-away"),xRec."Require Put-away",WhseRcptHeader.TABLECAPTION);
+
+                                                                IF NOT "Require Put-away" THEN BEGIN
+                                                                  TESTFIELD("Directed Put-away and Pick",FALSE);
+                                                                  WhseActivHeader.SETRANGE(Type,WhseActivHeader.Type::"Put-away");
+                                                                  WhseActivHeader.SETRANGE("Location Code",Code);
+                                                                  IF WhseActivHeader.FINDFIRST THEN
+                                                                    ERROR(Text008,FIELDCAPTION("Require Put-away"),TRUE,WhseActivHeader.TABLECAPTION);
+                                                                  "Use Cross-Docking" := FALSE;
+                                                                  "Cross-Dock Bin Code" := '';
+                                                                END;
+                                                              END;
+
+                                                   AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Require Put-away;
+                                                              ESM=Ubicaci¢n requerida;
+                                                              FRC=Rangement requis;
+                                                              ENC=Require Put-away] }
+    { 5727;   ;Require Pick        ;Boolean       ;OnValidate=VAR
+                                                                WhseActivHeader@1000 : Record 5766;
+                                                                WhseShptHeader@1001 : Record 7320;
+                                                              BEGIN
+                                                                WhseShptHeader.SETCURRENTKEY("Location Code");
+                                                                WhseShptHeader.SETRANGE("Location Code",Code);
+                                                                IF WhseShptHeader.FINDFIRST THEN
+                                                                  ERROR(Text008,FIELDCAPTION("Require Pick"),xRec."Require Pick",WhseShptHeader.TABLECAPTION);
+
+                                                                IF NOT "Require Pick" THEN BEGIN
+                                                                  TESTFIELD("Directed Put-away and Pick",FALSE);
+                                                                  WhseActivHeader.SETRANGE(Type,WhseActivHeader.Type::Pick);
+                                                                  WhseActivHeader.SETRANGE("Location Code",Code);
+                                                                  IF WhseActivHeader.FINDFIRST THEN
+                                                                    ERROR(Text008,FIELDCAPTION("Require Pick"),TRUE,WhseActivHeader.TABLECAPTION);
+                                                                  "Use Cross-Docking" := FALSE;
+                                                                  "Cross-Dock Bin Code" := '';
+                                                                  "Pick According to FEFO" := FALSE;
+                                                                END;
+                                                              END;
+
+                                                   AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Require Pick;
+                                                              ESM=Picking requerido;
+                                                              FRC=PrÇlävement requis;
+                                                              ENC=Require Pick] }
+    { 5728;   ;Cross-Dock Due Date Calc.;DateFormula;
+                                                   AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Cross-Dock Due Date Calc.;
+                                                              ESM=Calcular fecha vto. tr†ns.directo;
+                                                              FRC=Calc. date d'ÇchÇance transbordement;
+                                                              ENC=Cross-Dock Due Date Calc.] }
+    { 5729;   ;Use Cross-Docking   ;Boolean       ;OnValidate=BEGIN
+                                                                IF "Use Cross-Docking" THEN BEGIN
+                                                                  TESTFIELD("Require Receive");
+                                                                  TESTFIELD("Require Shipment");
+                                                                  TESTFIELD("Require Put-away");
+                                                                  TESTFIELD("Require Pick");
+                                                                END ELSE
+                                                                  "Cross-Dock Bin Code" := '';
+                                                              END;
+
+                                                   AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Use Cross-Docking;
+                                                              ESM=Utilizar tr†nsito directo;
+                                                              FRC=Utiliser transbordement;
+                                                              ENC=Use Cross-Docking] }
+    { 5730;   ;Require Receive     ;Boolean       ;OnValidate=VAR
+                                                                WhseRcptHeader@1000 : Record 7316;
+                                                                WhseActivHeader@1001 : Record 5766;
+                                                              BEGIN
+                                                                IF NOT "Require Receive" THEN BEGIN
+                                                                  TESTFIELD("Directed Put-away and Pick",FALSE);
+                                                                  WhseRcptHeader.SETCURRENTKEY("Location Code");
+                                                                  WhseRcptHeader.SETRANGE("Location Code",Code);
+                                                                  IF WhseRcptHeader.FINDFIRST THEN
+                                                                    ERROR(Text008,FIELDCAPTION("Require Receive"),TRUE,WhseRcptHeader.TABLECAPTION);
+                                                                  "Receipt Bin Code" := '';
+                                                                  "Use Cross-Docking" := FALSE;
+                                                                  "Cross-Dock Bin Code" := '';
+                                                                END ELSE BEGIN
+                                                                  WhseActivHeader.SETRANGE(Type,WhseActivHeader.Type::"Put-away");
+                                                                  WhseActivHeader.SETRANGE("Location Code",Code);
+                                                                  IF WhseActivHeader.FINDFIRST THEN
+                                                                    ERROR(Text008,FIELDCAPTION("Require Receive"),FALSE,WhseActivHeader.TABLECAPTION);
+                                                                END;
+                                                              END;
+
+                                                   AccessByPermission=TableData 7316=R;
+                                                   CaptionML=[ENU=Require Receive;
+                                                              ESM=Recepci¢n requerida;
+                                                              FRC=RÇception requise;
+                                                              ENC=Require Receive] }
+    { 5731;   ;Require Shipment    ;Boolean       ;OnValidate=VAR
+                                                                WhseShptHeader@1000 : Record 7320;
+                                                                WhseActivHeader@1001 : Record 5766;
+                                                              BEGIN
+                                                                IF NOT "Require Shipment" THEN BEGIN
+                                                                  TESTFIELD("Directed Put-away and Pick",FALSE);
+                                                                  WhseShptHeader.SETCURRENTKEY("Location Code");
+                                                                  WhseShptHeader.SETRANGE("Location Code",Code);
+                                                                  IF WhseShptHeader.FINDFIRST THEN
+                                                                    ERROR(Text008,FIELDCAPTION("Require Shipment"),TRUE,WhseShptHeader.TABLECAPTION);
+                                                                  "Shipment Bin Code" := '';
+                                                                  "Use Cross-Docking" := FALSE;
+                                                                  "Cross-Dock Bin Code" := '';
+                                                                END ELSE BEGIN
+                                                                  WhseActivHeader.SETRANGE(Type,WhseActivHeader.Type::Pick);
+                                                                  WhseActivHeader.SETRANGE("Location Code",Code);
+                                                                  IF WhseActivHeader.FINDFIRST THEN
+                                                                    ERROR(Text008,FIELDCAPTION("Require Shipment"),FALSE,WhseActivHeader.TABLECAPTION);
+                                                                END;
+                                                              END;
+
+                                                   AccessByPermission=TableData 7320=R;
+                                                   CaptionML=[ENU=Require Shipment;
+                                                              ESM=Env°o requerido;
+                                                              FRC=Livraison requise;
+                                                              ENC=Require Shipment] }
+    { 5732;   ;Bin Mandatory       ;Boolean       ;OnValidate=VAR
+                                                                ItemLedgEntry@1004 : Record 32;
+                                                                WhseEntry@1000 : Record 7312;
+                                                                WhseActivHeader@1001 : Record 5766;
+                                                                WhseShptHeader@1002 : Record 7320;
+                                                                WhseRcptHeader@1003 : Record 7316;
+                                                                WhseIntegrationMgt@1006 : Codeunit 7317;
+                                                                Window@1005 : Dialog;
+                                                              BEGIN
+                                                                IF "Bin Mandatory" AND NOT xRec."Bin Mandatory" THEN BEGIN
+                                                                  Window.OPEN(Text010);
+                                                                  ItemLedgEntry.SETRANGE(Open,TRUE);
+                                                                  ItemLedgEntry.SETRANGE("Location Code",Code);
+                                                                  IF NOT ItemLedgEntry.ISEMPTY THEN
+                                                                    ERROR(Text009,FIELDCAPTION("Bin Mandatory"));
+
+                                                                  "Default Bin Selection" := "Default Bin Selection"::"Fixed Bin";
+                                                                END;
+
+                                                                WhseActivHeader.SETRANGE("Location Code",Code);
+                                                                IF NOT WhseActivHeader.ISEMPTY THEN
+                                                                  ERROR(Text008,FIELDCAPTION("Bin Mandatory"),xRec."Bin Mandatory",WhseActivHeader.TABLECAPTION);
+
+                                                                WhseRcptHeader.SETCURRENTKEY("Location Code");
+                                                                WhseRcptHeader.SETRANGE("Location Code",Code);
+                                                                IF NOT WhseRcptHeader.ISEMPTY THEN
+                                                                  ERROR(Text008,FIELDCAPTION("Bin Mandatory"),xRec."Bin Mandatory",WhseRcptHeader.TABLECAPTION);
+
+                                                                WhseShptHeader.SETCURRENTKEY("Location Code");
+                                                                WhseShptHeader.SETRANGE("Location Code",Code);
+                                                                IF NOT WhseShptHeader.ISEMPTY THEN
+                                                                  ERROR(Text008,FIELDCAPTION("Bin Mandatory"),xRec."Bin Mandatory",WhseShptHeader.TABLECAPTION);
+
+                                                                IF NOT "Bin Mandatory" AND xRec."Bin Mandatory" THEN BEGIN
+                                                                  WhseEntry.SETRANGE("Location Code",Code);
+                                                                  WhseEntry.CALCSUMS("Qty. (Base)");
+                                                                  IF WhseEntry."Qty. (Base)" <> 0 THEN
+                                                                    ERROR(Text002,FIELDCAPTION("Bin Mandatory"));
+                                                                END;
+
+                                                                IF NOT "Bin Mandatory" THEN BEGIN
+                                                                  "Open Shop Floor Bin Code" := '';
+                                                                  "To-Production Bin Code" := '';
+                                                                  "From-Production Bin Code" := '';
+                                                                  "Adjustment Bin Code" := '';
+                                                                  "Receipt Bin Code" := '';
+                                                                  "Shipment Bin Code" := '';
+                                                                  "Cross-Dock Bin Code" := '';
+                                                                  "To-Assembly Bin Code" := '';
+                                                                  "From-Assembly Bin Code" := '';
+                                                                  WhseIntegrationMgt.CheckLocationOnManufBins(Rec);
+                                                                END;
+                                                              END;
+
+                                                   AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Bin Mandatory;
+                                                              ESM=Ubicac. obligatoria;
+                                                              FRC=Zone obligatoire;
+                                                              ENC=Bin Mandatory] }
+    { 5733;   ;Directed Put-away and Pick;Boolean ;OnValidate=VAR
+                                                                WhseActivHeader@1002 : Record 5766;
+                                                                WhseShptHeader@1001 : Record 7320;
+                                                                WhseRcptHeader@1000 : Record 7316;
+                                                              BEGIN
+                                                                WhseActivHeader.SETRANGE("Location Code",Code);
+                                                                IF NOT WhseActivHeader.ISEMPTY THEN
+                                                                  ERROR(Text014,FIELDCAPTION("Directed Put-away and Pick"),WhseActivHeader.TABLECAPTION);
+
+                                                                WhseRcptHeader.SETCURRENTKEY("Location Code");
+                                                                WhseRcptHeader.SETRANGE("Location Code",Code);
+                                                                IF NOT WhseRcptHeader.ISEMPTY THEN
+                                                                  ERROR(Text014,FIELDCAPTION("Directed Put-away and Pick"),WhseRcptHeader.TABLECAPTION);
+
+                                                                WhseShptHeader.SETCURRENTKEY("Location Code");
+                                                                WhseShptHeader.SETRANGE("Location Code",Code);
+                                                                IF NOT WhseShptHeader.ISEMPTY THEN
+                                                                  ERROR(Text014,FIELDCAPTION("Directed Put-away and Pick"),WhseShptHeader.TABLECAPTION);
+
+                                                                IF "Directed Put-away and Pick" THEN BEGIN
+                                                                  TESTFIELD("Use As In-Transit",FALSE);
+                                                                  TESTFIELD("Bin Mandatory");
+                                                                  VALIDATE("Require Receive",TRUE);
+                                                                  VALIDATE("Require Shipment",TRUE);
+                                                                  VALIDATE("Require Put-away",TRUE);
+                                                                  VALIDATE("Require Pick",TRUE);
+                                                                  VALIDATE("Use Cross-Docking",TRUE);
+                                                                  "Default Bin Selection" := "Default Bin Selection"::" ";
+                                                                END ELSE
+                                                                  VALIDATE("Adjustment Bin Code",'');
+
+                                                                IF (NOT "Directed Put-away and Pick") AND xRec."Directed Put-away and Pick" THEN BEGIN
+                                                                  "Default Bin Selection" := "Default Bin Selection"::"Fixed Bin";
+                                                                  "Use Put-away Worksheet" := FALSE;
+                                                                  VALIDATE("Use Cross-Docking",FALSE);
+                                                                END;
+                                                              END;
+
+                                                   AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Directed Put-away and Pick;
+                                                              ESM=Ubicac. y pick. directo;
+                                                              FRC=Classement et prÇläv. dirigÇs;
+                                                              ENC=Directed Put-away and Pick] }
+    { 5734;   ;Default Bin Selection;Option       ;OnValidate=BEGIN
+                                                                IF ("Default Bin Selection" <> xRec."Default Bin Selection") AND ("Default Bin Selection" = "Default Bin Selection"::" ") THEN
+                                                                  TESTFIELD("Directed Put-away and Pick");
+                                                              END;
+
+                                                   AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Default Bin Selection;
+                                                              ESM=Selecci¢n ubicaci¢n genÇrica;
+                                                              FRC=SÇlection zone par dÇf.;
+                                                              ENC=Default Bin Selection];
+                                                   OptionCaptionML=[ENU=" ,Fixed Bin,Last-Used Bin";
+                                                                    ESM=" ,Ubic. fija,Èltima ubic. utiliz.";
+                                                                    FRC=" ,Zone fixe,Derniäre zone utilisÇe";
+                                                                    ENC=" ,Fixed Bin,Last-Used Bin"];
+                                                   OptionString=[ ,Fixed Bin,Last-Used Bin] }
+    { 5790;   ;Outbound Whse. Handling Time;DateFormula;
+                                                   AccessByPermission=TableData 14=R;
+                                                   CaptionML=[ENU=Outbound Whse. Handling Time;
+                                                              ESM=Tiempo manip. alm. salida;
+                                                              FRC=DÇlai dÇsenlogement;
+                                                              ENC=Outbound Whse. Handling Time] }
+    { 5791;   ;Inbound Whse. Handling Time;DateFormula;
+                                                   AccessByPermission=TableData 14=R;
+                                                   CaptionML=[ENU=Inbound Whse. Handling Time;
+                                                              ESM=Tiempo manip. alm. entrada;
+                                                              FRC=DÇlai enlogement;
+                                                              ENC=Inbound Whse. Handling Time] }
+    { 7305;   ;Put-away Template Code;Code10      ;TableRelation="Put-away Template Header";
+                                                   CaptionML=[ENU=Put-away Template Code;
+                                                              ESM=C¢d. plantilla ubicar;
+                                                              FRC=Code modäle rangement;
+                                                              ENC=Put-away Template Code] }
+    { 7306;   ;Use Put-away Worksheet;Boolean     ;AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Use Put-away Worksheet;
+                                                              ESM=Utilizar hoj. trab. ubicaci¢n;
+                                                              FRC=Utiliser feuille rangement;
+                                                              ENC=Use Put-away Worksheet] }
+    { 7307;   ;Pick According to FEFO;Boolean     ;AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Pick According to FEFO;
+                                                              ESM=Picking seg£n FEFO (Primero en caducar, primero en salir);
+                                                              FRC=PrÇlever selon FEFO;
+                                                              ENC=Pick According to FEFO] }
+    { 7308;   ;Allow Breakbulk     ;Boolean       ;AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Allow Breakbulk;
+                                                              ESM=Permite divisi¢n bulto;
+                                                              FRC=Autoriser dÇconditionnement;
+                                                              ENC=Allow Breakbulk] }
+    { 7309;   ;Bin Capacity Policy ;Option        ;AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Bin Capacity Policy;
+                                                              ESM=Directiva capacidad ubicaci¢n;
+                                                              FRC=Politique capacitÇ zone;
+                                                              ENC=Bin Capacity Policy];
+                                                   OptionCaptionML=[ENU=Never Check Capacity,Allow More Than Max. Capacity,Prohibit More Than Max. Cap.;
+                                                                    ESM=Nunca comprob. capacidad,Permite m†s que capac. m†x.,Prohibido m†s que cap. m†x..;
+                                                                    FRC=Ne pas vÇrifier la capacitÇ,Autoriser dÇpassement capacitÇ max.,Interdire dÇpassement capacitÇ max.;
+                                                                    ENC=Never Check Capacity,Allow More Than Max. Capacity,Prohibit More Than Max. Cap.];
+                                                   OptionString=Never Check Capacity,Allow More Than Max. Capacity,Prohibit More Than Max. Cap. }
+    { 7313;   ;Open Shop Floor Bin Code;Code20    ;TableRelation=Bin.Code WHERE (Location Code=FIELD(Code));
+                                                   OnValidate=VAR
+                                                                WhseIntegrationMgt@1000 : Codeunit 7317;
+                                                              BEGIN
+                                                                WhseIntegrationMgt.CheckBinCode(Code,
+                                                                  "Open Shop Floor Bin Code",
+                                                                  FIELDCAPTION("Open Shop Floor Bin Code"),
+                                                                  DATABASE::Location,Code);
+                                                              END;
+
+                                                   CaptionML=[ENU=Open Shop Floor Bin Code;
+                                                              ESM=Abre ubic. aprovision. manual;
+                                                              FRC=Code de zone atelier ouvert;
+                                                              ENC=Open Shop Floor Bin Code] }
+    { 7314;   ;To-Production Bin Code;Code20      ;TableRelation=Bin.Code WHERE (Location Code=FIELD(Code));
+                                                   OnValidate=VAR
+                                                                WhseIntegrationMgt@1000 : Codeunit 7317;
+                                                              BEGIN
+                                                                WhseIntegrationMgt.CheckBinCode(Code,
+                                                                  "To-Production Bin Code",
+                                                                  FIELDCAPTION("To-Production Bin Code"),
+                                                                  DATABASE::Location,Code);
+                                                              END;
+
+                                                   CaptionML=[ENU=To-Production Bin Code;
+                                                              ESM=C¢d. ubic. para producci¢n;
+                                                              FRC=Code empl. des consommations;
+                                                              ENC=To-Production Bin Code] }
+    { 7315;   ;From-Production Bin Code;Code20    ;TableRelation=Bin.Code WHERE (Location Code=FIELD(Code));
+                                                   OnValidate=VAR
+                                                                WhseIntegrationMgt@1000 : Codeunit 7317;
+                                                              BEGIN
+                                                                WhseIntegrationMgt.CheckBinCode(Code,
+                                                                  "From-Production Bin Code",
+                                                                  FIELDCAPTION("From-Production Bin Code"),
+                                                                  DATABASE::Location,Code);
+                                                              END;
+
+                                                   CaptionML=[ENU=From-Production Bin Code;
+                                                              ESM=C¢d. ubic. desde producci¢n;
+                                                              FRC=Code empl. apräs production;
+                                                              ENC=From-Production Bin Code] }
+    { 7317;   ;Adjustment Bin Code ;Code20        ;TableRelation=Bin.Code WHERE (Location Code=FIELD(Code));
+                                                   OnValidate=BEGIN
+                                                                IF "Adjustment Bin Code" <> xRec."Adjustment Bin Code" THEN BEGIN
+                                                                  IF "Adjustment Bin Code" = '' THEN
+                                                                    CheckEmptyBin(
+                                                                      xRec."Adjustment Bin Code",FIELDCAPTION("Adjustment Bin Code"))
+                                                                  ELSE
+                                                                    CheckEmptyBin(
+                                                                      "Adjustment Bin Code",FIELDCAPTION("Adjustment Bin Code"));
+
+                                                                  CheckWhseAdjmtJnl;
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Adjustment Bin Code;
+                                                              ESM=C¢d. ubicaci¢n ajuste;
+                                                              FRC=Code de zone ajustement;
+                                                              ENC=Adjustment Bin Code] }
+    { 7319;   ;Always Create Put-away Line;Boolean;AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Always Create Put-away Line;
+                                                              ESM=Crea siempre l°n. ubicaci¢n;
+                                                              FRC=Toujours crÇer ligne rangement;
+                                                              ENC=Always Create Put-away Line] }
+    { 7320;   ;Always Create Pick Line;Boolean    ;AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Always Create Pick Line;
+                                                              ESM=Crea siempre l°n. picking;
+                                                              FRC=Toujours crÇer ligne prÇläv.;
+                                                              ENC=Always Create Pick Line] }
+    { 7321;   ;Special Equipment   ;Option        ;AccessByPermission=TableData 5771=R;
+                                                   CaptionML=[ENU=Special Equipment;
+                                                              ESM=Equipo especial;
+                                                              FRC=êquipement spÇcial;
+                                                              ENC=Special Equipment];
+                                                   OptionCaptionML=[ENU=" ,According to Bin,According to SKU/Item";
+                                                                    ESM=" ,Seg£n ubicaci¢n,Seg£n Unidad almac./producto";
+                                                                    FRC=" ,Selon zone,Selon point de stock/article";
+                                                                    ENC=" ,According to Bin,According to SKU/Item"];
+                                                   OptionString=[ ,According to Bin,According to SKU/Item] }
+    { 7323;   ;Receipt Bin Code    ;Code20        ;TableRelation=Bin.Code WHERE (Location Code=FIELD(Code));
+                                                   CaptionML=[ENU=Receipt Bin Code;
+                                                              ESM=C¢d. ubicaci¢n recepci¢n;
+                                                              FRC=Code de zone rÇception;
+                                                              ENC=Receipt Bin Code] }
+    { 7325;   ;Shipment Bin Code   ;Code20        ;TableRelation=Bin.Code WHERE (Location Code=FIELD(Code));
+                                                   CaptionML=[ENU=Shipment Bin Code;
+                                                              ESM=C¢d. ubicaci¢n env°o;
+                                                              FRC=Code de zone livraison;
+                                                              ENC=Shipment Bin Code] }
+    { 7326;   ;Cross-Dock Bin Code ;Code20        ;TableRelation=Bin.Code WHERE (Location Code=FIELD(Code));
+                                                   CaptionML=[ENU=Cross-Dock Bin Code;
+                                                              ESM=C¢d. ubicac. tr†nsito directo;
+                                                              FRC=Code de zone transbordement;
+                                                              ENC=Cross-Dock Bin Code] }
+    { 7330;   ;To-Assembly Bin Code;Code20        ;TableRelation=Bin.Code WHERE (Location Code=FIELD(Code));
+                                                   OnValidate=VAR
+                                                                WhseIntegrationMgt@1000 : Codeunit 7317;
+                                                              BEGIN
+                                                                WhseIntegrationMgt.CheckBinCode(Code,
+                                                                  "To-Assembly Bin Code",
+                                                                  FIELDCAPTION("To-Assembly Bin Code"),
+                                                                  DATABASE::Location,Code);
+                                                              END;
+
+                                                   CaptionML=[ENU=To-Assembly Bin Code;
+                                                              ESM=C¢d. ubic. para ensamblado;
+                                                              FRC=Code empl. vers assemblage;
+                                                              ENC=To-Assembly Bin Code] }
+    { 7331;   ;From-Assembly Bin Code;Code20      ;TableRelation=Bin.Code WHERE (Location Code=FIELD(Code));
+                                                   OnValidate=VAR
+                                                                WhseIntegrationMgt@1000 : Codeunit 7317;
+                                                              BEGIN
+                                                                WhseIntegrationMgt.CheckBinCode(Code,
+                                                                  "From-Assembly Bin Code",
+                                                                  FIELDCAPTION("From-Assembly Bin Code"),
+                                                                  DATABASE::Location,Code);
+                                                              END;
+
+                                                   CaptionML=[ENU=From-Assembly Bin Code;
+                                                              ESM=C¢d. ubic. desde ensamblado;
+                                                              FRC=Code empl. depuis assemblage;
+                                                              ENC=From-Assembly Bin Code] }
+    { 7332;   ;Asm.-to-Order Shpt. Bin Code;Code20;TableRelation=Bin.Code WHERE (Location Code=FIELD(Code));
+                                                   OnValidate=VAR
+                                                                WhseIntegrationMgt@1000 : Codeunit 7317;
+                                                              BEGIN
+                                                                WhseIntegrationMgt.CheckBinCode(Code,
+                                                                  "Asm.-to-Order Shpt. Bin Code",
+                                                                  FIELDCAPTION("Asm.-to-Order Shpt. Bin Code"),
+                                                                  DATABASE::Location,Code);
+                                                              END;
+
+                                                   CaptionML=[ENU=Asm.-to-Order Shpt. Bin Code;
+                                                              ESM=C¢d. ubic. ens.contra-pedido;
+                                                              FRC=Code empl. exp. ass. pr comm.;
+                                                              ENC=Asm.-to-Order Shpt. Bin Code] }
+    { 7600;   ;Base Calendar Code  ;Code10        ;TableRelation="Base Calendar";
+                                                   CaptionML=[ENU=Base Calendar Code;
+                                                              ESM=C¢digo calendario base;
+                                                              FRC=Code calendrier principal;
+                                                              ENC=Base Calendar Code] }
+    { 7700;   ;Use ADCS            ;Boolean       ;AccessByPermission=TableData 7700=R;
+                                                   CaptionML=[ENU=Use ADCS;
+                                                              ESM=Utilizar ADCS;
+                                                              FRC=Saisie automatisÇe;
+                                                              ENC=Use ADCS] }
+    { 10010;  ;Tax Area Code       ;Code20        ;TableRelation="Tax Area";
+                                                   OnValidate=BEGIN
+                                                                IF "Do Not Use For Tax Calculation" THEN
+                                                                  "Tax Area Code" := '';
+                                                              END;
+
+                                                   CaptionML=[ENU=Tax Area Code;
+                                                              ESM=C¢d. †rea impuesto;
+                                                              FRC=Code de rÇgion fiscale;
+                                                              ENC=Tax Area Code] }
+    { 10015;  ;Tax Exemption No.   ;Text30        ;OnValidate=BEGIN
+                                                                IF "Do Not Use For Tax Calculation" THEN
+                                                                  "Tax Exemption No." := '';
+                                                              END;
+
+                                                   CaptionML=[ENU=Tax Exemption No.;
+                                                              ESM=Nß exenci¢n fisc.;
+                                                              FRC=N¯ d'exonÇration fiscale;
+                                                              ENC=Tax Exemption No.] }
+    { 10016;  ;Do Not Use For Tax Calculation;Boolean;
+                                                   OnValidate=BEGIN
+                                                                IF "Do Not Use For Tax Calculation" THEN BEGIN
+                                                                  "Tax Area Code" := '';
+                                                                  "Tax Exemption No." := '';
+                                                                  "Provincial Tax Area Code" := '';
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Do Not Use For Tax Calculation;
+                                                              ESM=No usar para c†lculo de impuestos;
+                                                              FRC=Ne pas utiliser pour le calcul des taxes;
+                                                              ENC=Do Not Use For Tax Calculation] }
+    { 10017;  ;Provincial Tax Area Code;Code20    ;TableRelation="Tax Area" WHERE (Country/Region=CONST(CA));
+                                                   OnValidate=BEGIN
+                                                                IF "Do Not Use For Tax Calculation" THEN
+                                                                  "Provincial Tax Area Code" := '';
+                                                              END;
+
+                                                   CaptionML=[ENU=Provincial Tax Area Code;
+                                                              ESM=C¢digo †rea impuesto provincial;
+                                                              FRC=Code provincial de rÇgion fiscale;
+                                                              ENC=Provincial Tax Area Code] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+    {    ;Name                                     }
+    {    ;Use As In-Transit,Bin Mandatory          }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Bin@1000 : Record 7354;
+      Postcode@1001 : Record 225;
+      WhseSetup@1002 : Record 5769;
+      InvtSetup@1003 : Record 313;
+      Location@1004 : Record 14;
+      Text000@1005 : TextConst 'ENU=You cannot delete the %1 %2, because they contain items.;ESM=No puede borrar el %1 %2, porque contienen productos.;FRC=Vous ne pouvez pas supprimer l''enregistrement %1 %2, car il contient des articles.;ENC=You cannot delete the %1 %2, because they contain items.';
+      Text001@1006 : TextConst 'ENU=You cannot delete the %1 %2, because one or more Warehouse Activity Lines exist for this %1.;ESM=No puede borrar el %1 %2 , porque existen una o m†s l°ns. actividad almacÇn para este %1.;FRC=Vous ne pouvez pas supprimer le %1 %2, car il existe une ou plusieurs lignes ActivitÇ de l''entrepìt pour ce %1.;ENC=You cannot delete the %1 %2, because one or more Warehouse Activity Lines exist for this %1.';
+      Text002@1007 : TextConst 'ENU=%1 must be Yes, because the bins contain items.;ESM=%1 tiene que ser s°, porque las ubic. contienen prods.;FRC=La valeur du champ %1 doit àtre Oui, car les zones contiennent des articles.;ENC=%1 must be Yes, because the bins contain items.';
+      Text003@1009 : TextConst 'ENU=Canceled.;ESM=Cancelado.;FRC=AnnulÇ.;ENC=Cancelled.';
+      Text004@1010 : TextConst 'ENU=The total quantity of items in the warehouse is 0, but the Adjustment Bin contains a negative quantity and other bins contain a positive quantity.\;ESM=La cdad. total de prods. en el alm. es 0, pero la ubic. de ajuste contiene una cantidad negativa y otras ubic. contienen una cantidad positiva.\;FRC=La quantitÇ totale d''articles dans le magasin est 0, mais la zone ajustement comporte une quantitÇ nÇgative et d''autres zones une quantitÇ positive.\;ENC=The total quantity of items in the warehouse is 0, but the Adjustment Bin contains a negative quantity and other bins contain a positive quantity.\';
+      Text005@1012 : TextConst 'ENU=Do you still want to delete this %1?;ESM=®Quiere todav°a borrar este %1?;FRC=Souhaitez-vous quand màme supprimer cet enregistrement %1?;ENC=Do you still want to delete this %1?';
+      Text006@1011 : TextConst 'ENU=You cannot change the %1 until the inventory stored in %2 %3 is 0.;ESM=No puede cambiar el %1 hasta que el invent. almacenado en %2 %3 sea 0.;FRC=Vous ne pouvez pas modifier la valeur du champ %1 tant que l''inventaire stockÇ dans %2 %3 est 0.;ENC=You cannot change the %1 until the inventory stored in %2 %3 is 0.';
+      Text007@1013 : TextConst 'ENU=You have to delete all Adjustment Warehouse Journal Lines first before you can change the %1.;ESM=Primero debe eliminar todos los ajustes de l°neas diario almacÇn para poder cambiar el %1.;FRC=Vous devez supprimer toutes les lignes du journal d''ajustement en entrepìt avant de pouvoir modifier la valeur du champ %1.;ENC=You have to delete all Adjustment Warehouse Journal Lines first before you can change the %1.';
+      Text008@1008 : TextConst 'ENU=%1 must be %2, because one or more %3 exist.;ESM=%1 tiene que ser %2, porque uno o m†s %3 existen.;FRC=%1 doit correspondre Ö %2, puisqu''il existe un ou plusieurs %3.;ENC=%1 must be %2, because one or more %3 exist.';
+      Text009@1014 : TextConst 'ENU=You cannot change %1 because there are one or more open ledger entries on this location.;ESM=No puede cambiar %1 por que hay uno ¢ m†s movs. abiertos en este almacÇn.;FRC=Vous ne pouvez pas modifier l''ÇlÇment %1, puisqu''une ou plusieurs entrÇes de grand livre sont ouvertes Ö cet emplacement.;ENC=You cannot change %1 because there are one or more open ledger entries on this location.';
+      Text010@1015 : TextConst 'ENU=Checking item ledger entries for open entries...;ESM=Chequear movs. contab. para movs. abiertos...;FRC=Recherche d''entrÇes ouvertes dans le grand livre...;ENC=Checking item ledger entries for open entries...';
+      Text011@1016 : TextConst 'ENU=You cannot change the %1 to %2 until the inventory stored in this bin is 0.;ESM=No puede cambiar %1 a %2 hasta que el valor del inventario almacenado en esta ubicaci¢n sea 0.;FRC=Vous ne pouvez pas changer la valeur du champ %1 pour %2 avant que le stock de cette zone soit Ö 0.;ENC=You cannot change the %1 to %2 until the inventory stored in this bin is 0.';
+      Text012@1017 : TextConst 'ENU=Before you can use Online Map, you must fill in the Online Map Setup window.\See Setting Up Online Map in Help.;ESM=Para poder usar Online Map, primero debe rellenar la ventana Configuraci¢n Online Map.\Consulte Configuraci¢n de Online Map en la Ayuda.;FRC=Avant de pouvoir utiliser Online Map, vous devez complÇter la fenàtre Configuration Online Map.\Consultez la section Configuration d''Online Map dans l''Aide.;ENC=Before you can use Online Map, you must fill in the Online Map Setup window.\See Setting Up Online Map in Help.';
+      Text013@1018 : TextConst 'ENU=You cannot delete %1 because there are one or more ledger entries on this location.;ESM=No puede eliminar %1 porque hay uno o m†s movimientos en este almacÇn.;FRC=Vous ne pouvez pas supprimer la valeur %1 car il existe une ou plusieurs Çcritures pour cette zone.;ENC=You cannot delete %1 because there are one or more ledger entries on this location.';
+      Text014@1019 : TextConst 'ENU=You cannot change %1 because one or more %2 exist.;ESM=No puede cambiar %1 porque existen uno o m†s %2.;FRC=Vous ne pouvez pas modifier %1 car il existe un ou plusieurs %2.;ENC=You cannot change %1 because one or more %2 exist.';
+
+    PROCEDURE RequireShipment@5(LocationCode@1000 : Code[10]) : Boolean;
+    BEGIN
+      IF Location.GET(LocationCode) THEN
+        EXIT(Location."Require Shipment");
+      WhseSetup.GET;
+      EXIT(WhseSetup."Require Shipment");
+    END;
+
+    PROCEDURE RequirePicking@1(LocationCode@1000 : Code[10]) : Boolean;
+    BEGIN
+      IF Location.GET(LocationCode) THEN
+        EXIT(Location."Require Pick");
+      WhseSetup.GET;
+      EXIT(WhseSetup."Require Pick");
+    END;
+
+    PROCEDURE RequireReceive@4(LocationCode@1000 : Code[10]) : Boolean;
+    BEGIN
+      IF Location.GET(LocationCode) THEN
+        EXIT(Location."Require Receive");
+      WhseSetup.GET;
+      EXIT(WhseSetup."Require Receive");
+    END;
+
+    PROCEDURE RequirePutaway@2(LocationCode@1000 : Code[10]) : Boolean;
+    BEGIN
+      IF Location.GET(LocationCode) THEN
+        EXIT(Location."Require Put-away");
+      WhseSetup.GET;
+      EXIT(WhseSetup."Require Put-away");
+    END;
+
+    PROCEDURE GetLocationSetup@3(LocationCode@1000 : Code[10];VAR Location2@1001 : Record 14) : Boolean;
+    BEGIN
+      IF NOT GET(LocationCode) THEN
+        WITH Location2 DO BEGIN
+          INIT;
+          WhseSetup.GET;
+          Code := LocationCode;
+          "Use As In-Transit" := FALSE;
+          "Require Put-away" := WhseSetup."Require Put-away";
+          "Require Pick" := WhseSetup."Require Pick";
+          "Outbound Whse. Handling Time" := InvtSetup."Outbound Whse. Handling Time";
+          "Inbound Whse. Handling Time" := InvtSetup."Inbound Whse. Handling Time";
+          "Require Receive" := WhseSetup."Require Receive";
+          "Require Shipment" := WhseSetup."Require Shipment";
+          EXIT(FALSE);
+        END;
+
+      Location2 := Rec;
+      EXIT(TRUE);
+    END;
+
+    LOCAL PROCEDURE WMSCheckWarehouse@7300();
+    VAR
+      Zone@1005 : Record 7300;
+      Bin@1006 : Record 7354;
+      BinContent@1004 : Record 7302;
+      WhseActivLine@1003 : Record 5767;
+      WarehouseEntry@1002 : Record 7312;
+      WarehouseEntry2@1001 : Record 7312;
+      WhseJnlLine@1000 : Record 7311;
+      ItemLedgerEntry@1007 : Record 32;
+    BEGIN
+      ItemLedgerEntry.SETRANGE("Location Code",Code);
+      ItemLedgerEntry.SETRANGE(Open,TRUE);
+      IF NOT ItemLedgerEntry.ISEMPTY THEN
+        ERROR(Text013,Code);
+
+      WarehouseEntry.SETRANGE("Location Code",Code);
+      WarehouseEntry.CALCSUMS("Qty. (Base)");
+      IF WarehouseEntry."Qty. (Base)" = 0 THEN BEGIN
+        IF "Adjustment Bin Code" <> '' THEN BEGIN
+          WarehouseEntry2.SETRANGE("Bin Code","Adjustment Bin Code");
+          WarehouseEntry2.SETRANGE("Location Code",Code);
+          WarehouseEntry2.CALCSUMS("Qty. (Base)");
+          IF WarehouseEntry2."Qty. (Base)" < 0 THEN
+            IF NOT CONFIRM(Text004 + Text005,FALSE,TABLECAPTION) THEN
+              ERROR(Text003)
+        END;
+      END ELSE
+        ERROR(Text000,TABLECAPTION,Code);
+
+      WhseActivLine.SETRANGE("Location Code",Code);
+      WhseActivLine.SETRANGE("Activity Type",WhseActivLine."Activity Type"::Movement);
+      WhseActivLine.SETFILTER("Qty. Outstanding",'<>0');
+      IF NOT WhseActivLine.ISEMPTY THEN
+        ERROR(Text001,TABLECAPTION,Code);
+
+      WhseJnlLine.SETRANGE("Location Code",Code);
+      WhseJnlLine.SETFILTER(Quantity,'<>0');
+      IF NOT WhseJnlLine.ISEMPTY THEN
+        ERROR(Text001,TABLECAPTION,Code);
+
+      Zone.SETRANGE("Location Code",Code);
+      Zone.DELETEALL;
+      Bin.SETRANGE("Location Code",Code);
+      Bin.DELETEALL;
+      BinContent.SETRANGE("Location Code",Code);
+      BinContent.DELETEALL;
+    END;
+
+    LOCAL PROCEDURE CheckEmptyBin@7302(BinCode@1001 : Code[20];CaptionOfField@1002 : Text[30]);
+    VAR
+      WarehouseEntry@1003 : Record 7312;
+      WhseEntry2@1000 : Record 7312;
+    BEGIN
+      WarehouseEntry.SETCURRENTKEY("Bin Code","Location Code","Item No.");
+      WarehouseEntry.SETRANGE("Bin Code",BinCode);
+      WarehouseEntry.SETRANGE("Location Code",Code);
+      IF WarehouseEntry.FINDFIRST THEN
+        REPEAT
+          WarehouseEntry.SETRANGE("Item No.",WarehouseEntry."Item No.");
+
+          WhseEntry2.SETCURRENTKEY("Item No.","Bin Code","Location Code");
+          WhseEntry2.COPYFILTERS(WarehouseEntry);
+          WhseEntry2.CALCSUMS("Qty. (Base)");
+          IF WhseEntry2."Qty. (Base)" <> 0 THEN BEGIN
+            IF (BinCode = "Adjustment Bin Code") AND (xRec."Adjustment Bin Code" = '') THEN
+              ERROR(Text011,CaptionOfField,BinCode);
+
+            ERROR(Text006,CaptionOfField,Bin.TABLECAPTION,BinCode);
+          END;
+
+          WarehouseEntry.FINDLAST;
+          WarehouseEntry.SETRANGE("Item No.");
+        UNTIL WarehouseEntry.NEXT = 0;
+    END;
+
+    LOCAL PROCEDURE CheckWhseAdjmtJnl@7303();
+    VAR
+      WhseJnlTemplate@1002 : Record 7309;
+      WhseJnlLine@1003 : Record 7311;
+    BEGIN
+      WhseJnlTemplate.SETRANGE(Type,WhseJnlTemplate.Type::Item);
+      IF WhseJnlTemplate.FIND('-') THEN
+        REPEAT
+          WhseJnlLine.SETRANGE("Journal Template Name",WhseJnlTemplate.Name);
+          WhseJnlLine.SETRANGE("Location Code",Code);
+          IF WhseJnlLine.FINDFIRST THEN
+            ERROR(
+              Text007,
+              FIELDCAPTION("Adjustment Bin Code"));
+        UNTIL WhseJnlTemplate.NEXT = 0;
+    END;
+
+    PROCEDURE GetRequirementText@6(FieldNumber@1000 : Integer) : Text[50];
+    VAR
+      Text000@1002 : TextConst 'ENU=Shipment,Receive,Pick,Put-Away;ESM=Env°o,Recibir,Picking,Ubicar;FRC=Livrer,Recevoir,PrÇlever,Classer;ENC=Shipment,Receive,Pick,Put-Away';
+    BEGIN
+      CASE FieldNumber OF
+        FIELDNO("Require Shipment"):
+          EXIT(SELECTSTR(1,Text000));
+        FIELDNO("Require Receive"):
+          EXIT(SELECTSTR(2,Text000));
+        FIELDNO("Require Pick"):
+          EXIT(SELECTSTR(3,Text000));
+        FIELDNO("Require Put-away"):
+          EXIT(SELECTSTR(4,Text000));
+      END;
+    END;
+
+    PROCEDURE DisplayMap@7();
+    VAR
+      MapPoint@1001 : Record 800;
+      MapMgt@1000 : Codeunit 802;
+    BEGIN
+      IF MapPoint.FINDFIRST THEN
+        MapMgt.MakeSelection(DATABASE::Location,GETPOSITION)
+      ELSE
+        MESSAGE(Text012);
+    END;
+
+    PROCEDURE IsBWReceive@8() : Boolean;
+    BEGIN
+      EXIT("Bin Mandatory" AND (NOT "Directed Put-away and Pick") AND "Require Receive");
+    END;
+
+    PROCEDURE IsBWShip@12() : Boolean;
+    BEGIN
+      EXIT("Bin Mandatory" AND (NOT "Directed Put-away and Pick") AND "Require Shipment");
+    END;
+
+    PROCEDURE IsBinBWReceiveOrShip@11(BinCode@1000 : Code[20]) : Boolean;
+    BEGIN
+      EXIT(("Receipt Bin Code" <> '') AND (BinCode = "Receipt Bin Code") OR
+        ("Shipment Bin Code" <> '') AND (BinCode = "Shipment Bin Code"));
+    END;
+
+    PROCEDURE IsInTransit@10(LocationCode@1000 : Code[10]) : Boolean;
+    BEGIN
+      IF Location.GET(LocationCode) THEN
+        EXIT(Location."Use As In-Transit");
+      EXIT(FALSE);
+    END;
+
+    PROCEDURE GetBinCode@9(UseFlushingMethod@1000 : Boolean;FlushingMethod@1001 : 'Manual,Forward,Backward,Pick + Forward,Pick + Backward') : Code[20];
+    BEGIN
+      IF NOT UseFlushingMethod THEN
+        EXIT("From-Production Bin Code");
+
+      CASE FlushingMethod OF
+        FlushingMethod::Manual,
+        FlushingMethod::"Pick + Forward",
+        FlushingMethod::"Pick + Backward":
+          EXIT("To-Production Bin Code");
+        FlushingMethod::Forward,
+        FlushingMethod::Backward:
+          EXIT("Open Shop Floor Bin Code");
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

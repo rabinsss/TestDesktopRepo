@@ -1,0 +1,66 @@
+OBJECT Table 1526 Workflow Record Change Archive
+{
+  OBJECT-PROPERTIES
+  {
+    Date=10/23/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.43402;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Workflow Record Change Archive;
+               ESM=Archivo de cambio de registro de flujo de trabajo;
+               FRC=Flux de travail - Archive de modification d'enregistrement;
+               ENC=Workflow Record Change Archive];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Entry No.;
+                                                              ESM=N§ mov.;
+                                                              FRC=Nø s‚quence;
+                                                              ENC=Entry No.] }
+    { 2   ;   ;Table No.           ;Integer       ;CaptionML=[ENU=Table No.;
+                                                              ESM=N§ tabla;
+                                                              FRC=Nø de la table;
+                                                              ENC=Table No.] }
+    { 3   ;   ;Field No.           ;Integer       ;CaptionML=[ENU=Field No.;
+                                                              ESM=N§ campo;
+                                                              FRC=Nø de champ;
+                                                              ENC=Field No.] }
+    { 4   ;   ;Old Value           ;Text250       ;CaptionML=[ENU=Old Value;
+                                                              ESM=Valor antiguo;
+                                                              FRC=Ancienne valeur;
+                                                              ENC=Old Value] }
+    { 5   ;   ;New Value           ;Text250       ;CaptionML=[ENU=New Value;
+                                                              ESM=Valor nuevo;
+                                                              FRC=Nouvelle valeur;
+                                                              ENC=New Value] }
+    { 6   ;   ;Record ID           ;RecordID      ;CaptionML=[ENU=Record ID;
+                                                              ESM=Id.ÿdel registro;
+                                                              FRC=Code d'enregistrement;
+                                                              ENC=Record ID] }
+    { 7   ;   ;Workflow Step Instance ID;GUID     ;CaptionML=[ENU=Workflow Step Instance ID;
+                                                              ESM=Id. de instancia de paso de flujo de trabajo;
+                                                              FRC=Code instance d'‚tape de flux de travail;
+                                                              ENC=Workflow Step Instance ID] }
+    { 9   ;   ;Inactive            ;Boolean       ;CaptionML=[ENU=Inactive;
+                                                              ESM=Inactivo;
+                                                              FRC=Inactif;
+                                                              ENC=Inactive] }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

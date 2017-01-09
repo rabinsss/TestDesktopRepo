@@ -1,0 +1,98 @@
+OBJECT Table 19 Cust. Invoice Disc.
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Cust. Invoice Disc.;
+               ESM=Dto. factura cliente;
+               FRC=Escompte facture client;
+               ENC=Cust. Invoice Disc.];
+    LookupPageID=Page23;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code20        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Minimum Amount      ;Decimal       ;CaptionML=[ENU=Minimum Amount;
+                                                              ESM=Importe m¡nimo;
+                                                              FRC=Montant minimum;
+                                                              ENC=Minimum Amount];
+                                                   MinValue=0;
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr="Currency Code" }
+    { 3   ;   ;Discount %          ;Decimal       ;CaptionML=[ENU=Discount %;
+                                                              ESM=% Descuento;
+                                                              FRC="% escompte ";
+                                                              ENC=Discount %];
+                                                   DecimalPlaces=0:5;
+                                                   MinValue=0;
+                                                   MaxValue=100 }
+    { 4   ;   ;Service Charge      ;Decimal       ;CaptionML=[ENU=Service Charge;
+                                                              ESM=Cargo servicio;
+                                                              FRC=Frais de service;
+                                                              ENC=Service Charge];
+                                                   MinValue=0;
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr="Currency Code" }
+    { 5   ;   ;Currency Code       ;Code10        ;TableRelation=Currency;
+                                                   CaptionML=[ENU=Currency Code;
+                                                              ESM=C¢d. divisa;
+                                                              FRC=Code devise;
+                                                              ENC=Currency Code] }
+  }
+  KEYS
+  {
+    {    ;Code,Currency Code,Minimum Amount       ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE GetRec@1(NewCode@1000 : Code[20];CurrencyCode@1001 : Code[10];CurrencyDate@1002 : Date;BaseAmount@1003 : Decimal);
+    VAR
+      Currency@1004 : Record 4;
+      CurrExchRate@1005 : Record 330;
+      CurrencyFactor@1006 : Decimal;
+    BEGIN
+      SETRANGE(Code,NewCode);
+      SETRANGE("Currency Code",CurrencyCode);
+      SETRANGE("Minimum Amount",0,BaseAmount);
+      IF NOT FIND('+') THEN
+        IF CurrencyCode <> '' THEN BEGIN
+          CurrencyFactor := CurrExchRate.ExchangeRate(CurrencyDate,CurrencyCode);
+          SETRANGE("Currency Code",'');
+          SETRANGE(
+            "Minimum Amount",0,
+            CurrExchRate.ExchangeAmtFCYToLCY(
+              CurrencyDate,CurrencyCode,
+              BaseAmount,CurrencyFactor));
+          IF NOT FIND('+') THEN
+            INIT
+          ELSE BEGIN
+            Currency.GET(CurrencyCode);
+            "Service Charge" :=
+              ROUND(
+                CurrExchRate.ExchangeAmtLCYToFCY(
+                  CurrencyDate,CurrencyCode,
+                  "Service Charge",CurrencyFactor),
+                Currency."Amount Rounding Precision");
+          END;
+        END ELSE
+          INIT;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

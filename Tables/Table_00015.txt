@@ -1,0 +1,717 @@
+OBJECT Table 15 G/L Account
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00,NAVNA9.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=No.,Name;
+    OnInsert=BEGIN
+               DimMgt.UpdateDefaultDim(DATABASE::"G/L Account","No.",
+                 "Global Dimension 1 Code","Global Dimension 2 Code");
+
+               IF CostAccSetup.GET THEN
+                 CostAccMgt.UpdateCostTypeFromGLAcc(Rec,xRec,0);
+             END;
+
+    OnModify=BEGIN
+               "Last Date Modified" := TODAY;
+
+               IF CostAccSetup.GET THEN
+                 CostAccMgt.UpdateCostTypeFromGLAcc(Rec,xRec,1);
+             END;
+
+    OnDelete=VAR
+               GLBudgetEntry@1000 : Record 96;
+               CommentLine@1001 : Record 97;
+               ExtTextHeader@1002 : Record 279;
+               AnalysisViewEntry@1003 : Record 365;
+               AnalysisViewBudgetEntry@1004 : Record 366;
+               MoveEntries@1005 : Codeunit 361;
+             BEGIN
+               MoveEntries.MoveGLEntries(Rec);
+
+               GLBudgetEntry.SETCURRENTKEY("Budget Name","G/L Account No.");
+               GLBudgetEntry.SETRANGE("G/L Account No.","No.");
+               GLBudgetEntry.DELETEALL(TRUE);
+
+               CommentLine.SETRANGE("Table Name",CommentLine."Table Name"::"G/L Account");
+               CommentLine.SETRANGE("No.","No.");
+               CommentLine.DELETEALL;
+
+               ExtTextHeader.SETRANGE("Table Name",ExtTextHeader."Table Name"::"G/L Account");
+               ExtTextHeader.SETRANGE("No.","No.");
+               ExtTextHeader.DELETEALL(TRUE);
+
+               AnalysisViewEntry.SETRANGE("Account No.","No.");
+               AnalysisViewEntry.DELETEALL;
+
+               AnalysisViewBudgetEntry.SETRANGE("G/L Account No.","No.");
+               AnalysisViewBudgetEntry.DELETEALL;
+
+               DimMgt.DeleteDefaultDim(DATABASE::"G/L Account","No.");
+             END;
+
+    OnRename=BEGIN
+               "Last Date Modified" := TODAY;
+
+               IF CostAccSetup.READPERMISSION THEN
+                 CostAccMgt.UpdateCostTypeFromGLAcc(Rec,xRec,3);
+             END;
+
+    CaptionML=[ENU=G/L Account;
+               ESM=Cuenta;
+               FRC=Cpte du grand livre;
+               ENC=G/L Account];
+    LookupPageID=Page18;
+    DrillDownPageID=Page16;
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Code20        ;AltSearchField=Search Name;
+                                                   CaptionML=[ENU=No.;
+                                                              ESM=Nß;
+                                                              FRC=N¯;
+                                                              ENC=No.];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Name                ;Text50        ;OnValidate=BEGIN
+                                                                IF ("Search Name" = UPPERCASE(xRec.Name)) OR ("Search Name" = '') THEN
+                                                                  "Search Name" := Name;
+                                                              END;
+
+                                                   CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+    { 3   ;   ;Search Name         ;Code50        ;CaptionML=[ENU=Search Name;
+                                                              ESM=Alias;
+                                                              FRC=Rechercher un nom;
+                                                              ENC=Search Name] }
+    { 4   ;   ;Account Type        ;Option        ;OnValidate=VAR
+                                                                GLEntry@1000 : Record 17;
+                                                                GLBudgetEntry@1001 : Record 96;
+                                                              BEGIN
+                                                                IF ("Account Type" <> "Account Type"::Posting) AND
+                                                                   (xRec."Account Type" = xRec."Account Type"::Posting)
+                                                                THEN BEGIN
+                                                                  GLEntry.SETCURRENTKEY("G/L Account No.");
+                                                                  GLEntry.SETRANGE("G/L Account No.","No.");
+                                                                  IF GLEntry.FINDFIRST THEN
+                                                                    ERROR(
+                                                                      Text000,
+                                                                      FIELDCAPTION("Account Type"));
+                                                                  GLBudgetEntry.SETCURRENTKEY("Budget Name","G/L Account No.");
+                                                                  GLBudgetEntry.SETRANGE("G/L Account No.","No.");
+                                                                  IF GLBudgetEntry.FINDFIRST THEN
+                                                                    ERROR(
+                                                                      Text001,
+                                                                      FIELDCAPTION("Account Type"));
+                                                                END;
+                                                                Totaling := '';
+                                                                IF "Account Type" = "Account Type"::Posting THEN BEGIN
+                                                                  IF "Account Type" <> xRec."Account Type" THEN
+                                                                    "Direct Posting" := TRUE;
+                                                                END ELSE
+                                                                  "Direct Posting" := FALSE;
+                                                              END;
+
+                                                   CaptionML=[ENU=Account Type;
+                                                              ESM=Tipo mov.;
+                                                              FRC=Type de compte;
+                                                              ENC=Account Type];
+                                                   OptionCaptionML=[ENU=Posting,Heading,Total,Begin-Total,End-Total;
+                                                                    ESM=Auxiliar,Mayor,Total,Inicio Total,Fin Total;
+                                                                    FRC=Report,En-tàte,Total,DÇbut-Total,Fin-Total;
+                                                                    ENC=Posting,Heading,Total,Begin-Total,End-Total];
+                                                   OptionString=Posting,Heading,Total,Begin-Total,End-Total }
+    { 6   ;   ;Global Dimension 1 Code;Code20     ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(1));
+                                                   OnValidate=BEGIN
+                                                                ValidateShortcutDimCode(1,"Global Dimension 1 Code");
+                                                              END;
+
+                                                   CaptionML=[ENU=Global Dimension 1 Code;
+                                                              ESM=C¢d. dimensi¢n global 1;
+                                                              FRC=Code de dimension principal 1;
+                                                              ENC=Global Dimension 1 Code];
+                                                   CaptionClass='1,1,1' }
+    { 7   ;   ;Global Dimension 2 Code;Code20     ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(2));
+                                                   OnValidate=BEGIN
+                                                                ValidateShortcutDimCode(2,"Global Dimension 2 Code");
+                                                              END;
+
+                                                   CaptionML=[ENU=Global Dimension 2 Code;
+                                                              ESM=C¢d. dimensi¢n global 2;
+                                                              FRC=Code de dimension principal 2;
+                                                              ENC=Global Dimension 2 Code];
+                                                   CaptionClass='1,1,2' }
+    { 9   ;   ;Income/Balance      ;Option        ;OnValidate=VAR
+                                                                CostType@1000 : Record 1103;
+                                                              BEGIN
+                                                                IF ("Income/Balance" = "Income/Balance"::"Balance Sheet") AND ("Cost Type No." <> '') THEN BEGIN
+                                                                  IF CostType.GET("No.") THEN BEGIN
+                                                                    CostType."G/L Account Range" := '';
+                                                                    CostType.MODIFY;
+                                                                  END;
+                                                                  "Cost Type No." := '';
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Income/Balance;
+                                                              ESM=Ingresos/Saldo;
+                                                              FRC=Revenu/solde;
+                                                              ENC=Income/Balance];
+                                                   OptionCaptionML=[ENU=Income Statement,Balance Sheet;
+                                                                    ESM=Resultado,Balance;
+                                                                    FRC=êtat des rÇsultats,Bilan;
+                                                                    ENC=Income Statement,Balance Sheet];
+                                                   OptionString=Income Statement,Balance Sheet }
+    { 10  ;   ;Debit/Credit        ;Option        ;CaptionML=[ENU=Debit/Credit;
+                                                              ESM=Debe/Haber;
+                                                              FRC=DÇbit/CrÇdit;
+                                                              ENC=Debit/Credit];
+                                                   OptionCaptionML=[ENU=Both,Debit,Credit;
+                                                                    ESM=Ambos,Debe,Haber;
+                                                                    FRC=Les deux,DÇbit,CrÇdit;
+                                                                    ENC=Both,Debit,Credit];
+                                                   OptionString=Both,Debit,Credit }
+    { 11  ;   ;No. 2               ;Code20        ;CaptionML=[ENU=No. 2;
+                                                              ESM=Nß 2;
+                                                              FRC=N¯ 2;
+                                                              ENC=No. 2] }
+    { 12  ;   ;Comment             ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Comment Line" WHERE (Table Name=CONST(G/L Account),
+                                                                                           No.=FIELD(No.)));
+                                                   CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment];
+                                                   Editable=No }
+    { 13  ;   ;Blocked             ;Boolean       ;CaptionML=[ENU=Blocked;
+                                                              ESM=Bloqueado;
+                                                              FRC=BloquÇ;
+                                                              ENC=Blocked] }
+    { 14  ;   ;Direct Posting      ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Direct Posting;
+                                                              ESM=Entrada directa;
+                                                              FRC=Report direct;
+                                                              ENC=Direct Posting] }
+    { 16  ;   ;Reconciliation Account;Boolean     ;AccessByPermission=TableData 270=R;
+                                                   CaptionML=[ENU=Reconciliation Account;
+                                                              ESM=Saldo controlable en diarios;
+                                                              FRC=Compte de rapprochement;
+                                                              ENC=Reconciliation Account] }
+    { 17  ;   ;New Page            ;Boolean       ;CaptionML=[ENU=New Page;
+                                                              ESM=Cambiar p†gina;
+                                                              FRC=Nouvelle page;
+                                                              ENC=New Page] }
+    { 18  ;   ;No. of Blank Lines  ;Integer       ;CaptionML=[ENU=No. of Blank Lines;
+                                                              ESM=Nß l°neas en blanco;
+                                                              FRC=Nombre lignes blanches;
+                                                              ENC=No. of Blank Lines];
+                                                   MinValue=0 }
+    { 19  ;   ;Indentation         ;Integer       ;CaptionML=[ENU=Indentation;
+                                                              ESM=Indentar;
+                                                              FRC=Indentation;
+                                                              ENC=Indentation];
+                                                   MinValue=0 }
+    { 26  ;   ;Last Date Modified  ;Date          ;CaptionML=[ENU=Last Date Modified;
+                                                              ESM=Fecha £lt. modificaci¢n;
+                                                              FRC=Date derniäre modification;
+                                                              ENC=Last Date Modified];
+                                                   Editable=No }
+    { 28  ;   ;Date Filter         ;Date          ;FieldClass=FlowFilter;
+                                                   CaptionML=[ENU=Date Filter;
+                                                              ESM=Filtro fecha;
+                                                              FRC=Filtre date;
+                                                              ENC=Date Filter] }
+    { 29  ;   ;Global Dimension 1 Filter;Code20   ;FieldClass=FlowFilter;
+                                                   TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(1));
+                                                   CaptionML=[ENU=Global Dimension 1 Filter;
+                                                              ESM=Filtro dimensi¢n global 1;
+                                                              FRC=Filtre dimension principale 1;
+                                                              ENC=Global Dimension 1 Filter];
+                                                   CaptionClass='1,3,1' }
+    { 30  ;   ;Global Dimension 2 Filter;Code20   ;FieldClass=FlowFilter;
+                                                   TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(2));
+                                                   CaptionML=[ENU=Global Dimension 2 Filter;
+                                                              ESM=Filtro dimensi¢n global  2;
+                                                              FRC=Filtre dimension principale 2;
+                                                              ENC=Global Dimension 2 Filter];
+                                                   CaptionClass='1,3,2' }
+    { 31  ;   ;Balance at Date     ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Entry".Amount WHERE (G/L Account No.=FIELD(No.),
+                                                                                             G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                             Business Unit Code=FIELD(Business Unit Filter),
+                                                                                             Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                             Global Dimension 2 Code=FIELD(Global Dimension 2 Filter),
+                                                                                             Posting Date=FIELD(UPPERLIMIT(Date Filter))));
+                                                   CaptionML=[ENU=Balance at Date;
+                                                              ESM=Saldo a la fecha;
+                                                              FRC=Solde en date du;
+                                                              ENC=Balance at Date];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 32  ;   ;Net Change          ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Entry".Amount WHERE (G/L Account No.=FIELD(No.),
+                                                                                             G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                             Business Unit Code=FIELD(Business Unit Filter),
+                                                                                             Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                             Global Dimension 2 Code=FIELD(Global Dimension 2 Filter),
+                                                                                             Posting Date=FIELD(Date Filter)));
+                                                   CaptionML=[ENU=Net Change;
+                                                              ESM=Saldo periodo;
+                                                              FRC=Variation nette;
+                                                              ENC=Net Change];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 33  ;   ;Budgeted Amount     ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Budget Entry".Amount WHERE (G/L Account No.=FIELD(No.),
+                                                                                                    G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                                    Business Unit Code=FIELD(Business Unit Filter),
+                                                                                                    Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                                    Global Dimension 2 Code=FIELD(Global Dimension 2 Filter),
+                                                                                                    Date=FIELD(Date Filter),
+                                                                                                    Budget Name=FIELD(Budget Filter)));
+                                                   CaptionML=[ENU=Budgeted Amount;
+                                                              ESM=Importe pptdo.;
+                                                              FRC=Montant budgÇtÇ;
+                                                              ENC=Budgeted Amount];
+                                                   AutoFormatType=1 }
+    { 34  ;   ;Totaling            ;Text250       ;OnValidate=BEGIN
+                                                                IF NOT ("Account Type" IN ["Account Type"::Total,"Account Type"::"End-Total"]) THEN
+                                                                  FIELDERROR("Account Type");
+                                                                CALCFIELDS(Balance);
+                                                              END;
+
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Totaling;
+                                                              ESM=Sumatorio;
+                                                              FRC=Totalisation;
+                                                              ENC=Totalling] }
+    { 35  ;   ;Budget Filter       ;Code10        ;FieldClass=FlowFilter;
+                                                   TableRelation="G/L Budget Name";
+                                                   CaptionML=[ENU=Budget Filter;
+                                                              ESM=Filtro presupuesto;
+                                                              FRC=Filtre budget;
+                                                              ENC=Budget Filter] }
+    { 36  ;   ;Balance             ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Entry".Amount WHERE (G/L Account No.=FIELD(No.),
+                                                                                             G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                             Business Unit Code=FIELD(Business Unit Filter),
+                                                                                             Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                             Global Dimension 2 Code=FIELD(Global Dimension 2 Filter)));
+                                                   CaptionML=[ENU=Balance;
+                                                              ESM=Saldo;
+                                                              FRC=Solde;
+                                                              ENC=Balance];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 37  ;   ;Budget at Date      ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Budget Entry".Amount WHERE (G/L Account No.=FIELD(No.),
+                                                                                                    G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                                    Business Unit Code=FIELD(Business Unit Filter),
+                                                                                                    Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                                    Global Dimension 2 Code=FIELD(Global Dimension 2 Filter),
+                                                                                                    Date=FIELD(UPPERLIMIT(Date Filter)),
+                                                                                                    Budget Name=FIELD(Budget Filter)));
+                                                   CaptionML=[ENU=Budget at Date;
+                                                              ESM=Presupuesto a la fecha;
+                                                              FRC=Budget pÇriode;
+                                                              ENC=Budget at Date];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 39  ;   ;Consol. Translation Method;Option  ;OnValidate=VAR
+                                                                ConflictGLAcc@1000 : Record 15;
+                                                              BEGIN
+                                                                IF TranslationMethodConflict(ConflictGLAcc) THEN
+                                                                  IF ConflictGLAcc.GETFILTER("Consol. Debit Acc.") <> '' THEN
+                                                                    MESSAGE(
+                                                                      Text002,ConflictGLAcc.TABLECAPTION,ConflictGLAcc."No.",ConflictGLAcc.FIELDCAPTION("Consol. Debit Acc."),
+                                                                      ConflictGLAcc.FIELDCAPTION("Consol. Translation Method"),ConflictGLAcc."Consol. Translation Method")
+                                                                  ELSE
+                                                                    MESSAGE(
+                                                                      Text002,ConflictGLAcc.TABLECAPTION,ConflictGLAcc."No.",ConflictGLAcc.FIELDCAPTION("Consol. Credit Acc."),
+                                                                      ConflictGLAcc.FIELDCAPTION("Consol. Translation Method"),ConflictGLAcc."Consol. Translation Method");
+                                                              END;
+
+                                                   AccessByPermission=TableData 220=R;
+                                                   CaptionML=[ENU=Consol. Translation Method;
+                                                              ESM=MÇtodo traducc. consolidaci¢n;
+                                                              FRC=MÇthode traduction consol.;
+                                                              ENC=Consol. Translation Method];
+                                                   OptionCaptionML=[ENU=Average Rate (Manual),Closing Rate,Historical Rate,Composite Rate,Equity Rate;
+                                                                    ESM=Tipo medio (manual),Tipo al cierre,Tipo hist¢rico,Tipo compuesto,Tipo neto;
+                                                                    FRC=Taux moyen (manuel),Taux de fermeture,Taux historique,Taux composÇ,Taux sur capital;
+                                                                    ENC=Average Rate (Manual),Closing Rate,Historical Rate,Composite Rate,Equity Rate];
+                                                   OptionString=Average Rate (Manual),Closing Rate,Historical Rate,Composite Rate,Equity Rate }
+    { 40  ;   ;Consol. Debit Acc.  ;Code20        ;OnValidate=VAR
+                                                                ConflictGLAcc@1000 : Record 15;
+                                                              BEGIN
+                                                                IF TranslationMethodConflict(ConflictGLAcc) THEN
+                                                                  MESSAGE(
+                                                                    Text002,ConflictGLAcc.TABLECAPTION,ConflictGLAcc."No.",ConflictGLAcc.FIELDCAPTION("Consol. Debit Acc."),
+                                                                    ConflictGLAcc.FIELDCAPTION("Consol. Translation Method"),ConflictGLAcc."Consol. Translation Method");
+                                                              END;
+
+                                                   AccessByPermission=TableData 220=R;
+                                                   CaptionML=[ENU=Consol. Debit Acc.;
+                                                              ESM=Cta. consol. debe;
+                                                              FRC=Compte dÇbit-consolidation;
+                                                              ENC=Consol. Debit Acc.] }
+    { 41  ;   ;Consol. Credit Acc. ;Code20        ;OnValidate=VAR
+                                                                ConflictGLAcc@1000 : Record 15;
+                                                              BEGIN
+                                                                IF TranslationMethodConflict(ConflictGLAcc) THEN
+                                                                  MESSAGE(
+                                                                    Text002,ConflictGLAcc.TABLECAPTION,ConflictGLAcc."No.",ConflictGLAcc.FIELDCAPTION("Consol. Credit Acc."),
+                                                                    ConflictGLAcc.FIELDCAPTION("Consol. Translation Method"),ConflictGLAcc."Consol. Translation Method");
+                                                              END;
+
+                                                   AccessByPermission=TableData 220=R;
+                                                   CaptionML=[ENU=Consol. Credit Acc.;
+                                                              ESM=Cta. consol. haber;
+                                                              FRC=Compte crÇdit-consolidation;
+                                                              ENC=Consol. Credit Acc.] }
+    { 42  ;   ;Business Unit Filter;Code10        ;FieldClass=FlowFilter;
+                                                   TableRelation="Business Unit";
+                                                   CaptionML=[ENU=Business Unit Filter;
+                                                              ESM=Filtro empresa;
+                                                              FRC=Filtre entitÇs commerciales;
+                                                              ENC=Business Unit Filter] }
+    { 43  ;   ;Gen. Posting Type   ;Option        ;CaptionML=[ENU=Gen. Posting Type;
+                                                              ESM=Tipo IVA;
+                                                              FRC=Type de report gÇnÇral;
+                                                              ENC=Gen. Posting Type];
+                                                   OptionCaptionML=[ENU=" ,Purchase,Sale";
+                                                                    ESM=" ,Compras,Ventas";
+                                                                    FRC=" ,Achat,Vente";
+                                                                    ENC=" ,Purchase,Sale"];
+                                                   OptionString=[ ,Purchase,Sale] }
+    { 44  ;   ;Gen. Bus. Posting Group;Code10     ;TableRelation="Gen. Business Posting Group";
+                                                   OnValidate=VAR
+                                                                GenBusPostingGrp@1000 : Record 250;
+                                                              BEGIN
+                                                                IF xRec."Gen. Bus. Posting Group" <> "Gen. Bus. Posting Group" THEN
+                                                                  IF GenBusPostingGrp.ValidateVatBusPostingGroup(GenBusPostingGrp,"Gen. Bus. Posting Group") THEN
+                                                                    VALIDATE("VAT Bus. Posting Group",GenBusPostingGrp."Def. VAT Bus. Posting Group");
+                                                              END;
+
+                                                   CaptionML=[ENU=Gen. Bus. Posting Group;
+                                                              ESM=Grupo contable negocio;
+                                                              FRC=Groupe de report de marchÇ;
+                                                              ENC=Gen. Bus. Posting Group] }
+    { 45  ;   ;Gen. Prod. Posting Group;Code10    ;TableRelation="Gen. Product Posting Group";
+                                                   OnValidate=VAR
+                                                                GenProdPostingGrp@1000 : Record 251;
+                                                              BEGIN
+                                                                IF xRec."Gen. Prod. Posting Group" <> "Gen. Prod. Posting Group" THEN
+                                                                  IF GenProdPostingGrp.ValidateVatProdPostingGroup(GenProdPostingGrp,"Gen. Prod. Posting Group") THEN
+                                                                    VALIDATE("VAT Prod. Posting Group",GenProdPostingGrp."Def. VAT Prod. Posting Group");
+                                                              END;
+
+                                                   CaptionML=[ENU=Gen. Prod. Posting Group;
+                                                              ESM=Grupo contable producto;
+                                                              FRC=Groupe de report de produit;
+                                                              ENC=Gen. Prod. Posting Group] }
+    { 46  ;   ;Picture             ;BLOB          ;CaptionML=[ENU=Picture;
+                                                              ESM=Imagen;
+                                                              FRC=Image;
+                                                              ENC=Picture];
+                                                   SubType=Bitmap }
+    { 47  ;   ;Debit Amount        ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Entry"."Debit Amount" WHERE (G/L Account No.=FIELD(No.),
+                                                                                                     G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                                     Business Unit Code=FIELD(Business Unit Filter),
+                                                                                                     Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                                     Global Dimension 2 Code=FIELD(Global Dimension 2 Filter),
+                                                                                                     Posting Date=FIELD(Date Filter)));
+                                                   CaptionML=[ENU=Debit Amount;
+                                                              ESM=Importe debe;
+                                                              FRC=Montant de dÇbit;
+                                                              ENC=Debit Amount];
+                                                   BlankZero=Yes;
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 48  ;   ;Credit Amount       ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Entry"."Credit Amount" WHERE (G/L Account No.=FIELD(No.),
+                                                                                                      G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                                      Business Unit Code=FIELD(Business Unit Filter),
+                                                                                                      Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                                      Global Dimension 2 Code=FIELD(Global Dimension 2 Filter),
+                                                                                                      Posting Date=FIELD(Date Filter)));
+                                                   CaptionML=[ENU=Credit Amount;
+                                                              ESM=Importe haber;
+                                                              FRC=Montant de crÇdit;
+                                                              ENC=Credit Amount];
+                                                   BlankZero=Yes;
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 49  ;   ;Automatic Ext. Texts;Boolean       ;CaptionML=[ENU=Automatic Ext. Text;
+                                                              ESM=Texto adicional autom†tico;
+                                                              FRC=Textes Çtendus automatiques;
+                                                              ENC=Automatic Ext. Text] }
+    { 52  ;   ;Budgeted Debit Amount;Decimal      ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Budget Entry".Amount WHERE (G/L Account No.=FIELD(No.),
+                                                                                                    G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                                    Business Unit Code=FIELD(Business Unit Filter),
+                                                                                                    Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                                    Global Dimension 2 Code=FIELD(Global Dimension 2 Filter),
+                                                                                                    Date=FIELD(Date Filter),
+                                                                                                    Budget Name=FIELD(Budget Filter)));
+                                                   CaptionML=[ENU=Budgeted Debit Amount;
+                                                              ESM=Debe presupuestado;
+                                                              FRC=Montant dÇbit budgÇtÇ;
+                                                              ENC=Budgeted Debit Amount];
+                                                   BlankNumbers=BlankNegAndZero;
+                                                   AutoFormatType=1 }
+    { 53  ;   ;Budgeted Credit Amount;Decimal     ;FieldClass=FlowField;
+                                                   CalcFormula=-Sum("G/L Budget Entry".Amount WHERE (G/L Account No.=FIELD(No.),
+                                                                                                     G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                                     Business Unit Code=FIELD(Business Unit Filter),
+                                                                                                     Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                                     Global Dimension 2 Code=FIELD(Global Dimension 2 Filter),
+                                                                                                     Date=FIELD(Date Filter),
+                                                                                                     Budget Name=FIELD(Budget Filter)));
+                                                   CaptionML=[ENU=Budgeted Credit Amount;
+                                                              ESM=Haber presupuestado;
+                                                              FRC=Montant crÇdit budgÇtÇ;
+                                                              ENC=Budgeted Credit Amount];
+                                                   BlankNumbers=BlankNegAndZero;
+                                                   AutoFormatType=1 }
+    { 54  ;   ;Tax Area Code       ;Code20        ;TableRelation="Tax Area";
+                                                   CaptionML=[ENU=Tax Area Code;
+                                                              ESM=C¢d. †rea impuesto;
+                                                              FRC=Code de rÇgion fiscale;
+                                                              ENC=Tax Area Code] }
+    { 55  ;   ;Tax Liable          ;Boolean       ;CaptionML=[ENU=Tax Liable;
+                                                              ESM=Sujeto a impuesto;
+                                                              FRC=Imposable;
+                                                              ENC=Tax Liable] }
+    { 56  ;   ;Tax Group Code      ;Code10        ;TableRelation="Tax Group";
+                                                   CaptionML=[ENU=Tax Group Code;
+                                                              ESM=C¢d. grupo impuesto;
+                                                              FRC=Code groupe fiscal;
+                                                              ENC=Tax Group Code] }
+    { 57  ;   ;VAT Bus. Posting Group;Code10      ;TableRelation="VAT Business Posting Group";
+                                                   CaptionML=[ENU=Tax Bus. Posting Group;
+                                                              ESM=Grupo registro IVA neg.;
+                                                              FRC=Groupe de reports de taxe sur la valeur ajoutÇe de l'entreprise;
+                                                              ENC=Tax Bus. Posting Group] }
+    { 58  ;   ;VAT Prod. Posting Group;Code10     ;TableRelation="VAT Product Posting Group";
+                                                   CaptionML=[ENU=Tax Prod. Posting Group;
+                                                              ESM=Grupo registro IVA prod.;
+                                                              FRC=Groupe de report de produit taxe;
+                                                              ENC=Tax Prod. Posting Group] }
+    { 60  ;   ;Additional-Currency Net Change;Decimal;
+                                                   FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Entry"."Additional-Currency Amount" WHERE (G/L Account No.=FIELD(No.),
+                                                                                                                   G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                                                   Business Unit Code=FIELD(Business Unit Filter),
+                                                                                                                   Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                                                   Global Dimension 2 Code=FIELD(Global Dimension 2 Filter),
+                                                                                                                   Posting Date=FIELD(Date Filter)));
+                                                   CaptionML=[ENU=Additional-Currency Net Change;
+                                                              ESM=Saldo periodo divisa-adicional;
+                                                              FRC=Variation devise additionnelle;
+                                                              ENC=Additional-Currency Net Change];
+                                                   Editable=No;
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 61  ;   ;Add.-Currency Balance at Date;Decimal;
+                                                   FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Entry"."Additional-Currency Amount" WHERE (G/L Account No.=FIELD(No.),
+                                                                                                                   G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                                                   Business Unit Code=FIELD(Business Unit Filter),
+                                                                                                                   Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                                                   Global Dimension 2 Code=FIELD(Global Dimension 2 Filter),
+                                                                                                                   Posting Date=FIELD(UPPERLIMIT(Date Filter))));
+                                                   CaptionML=[ENU=Add.-Currency Balance at Date;
+                                                              ESM=Saldo a la fecha divisa-adic.;
+                                                              FRC=Solde en date de devise add.;
+                                                              ENC=Add.-Currency Balance at Date];
+                                                   Editable=No;
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 62  ;   ;Additional-Currency Balance;Decimal;FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Entry"."Additional-Currency Amount" WHERE (G/L Account No.=FIELD(No.),
+                                                                                                                   G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                                                   Business Unit Code=FIELD(Business Unit Filter),
+                                                                                                                   Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                                                   Global Dimension 2 Code=FIELD(Global Dimension 2 Filter)));
+                                                   CaptionML=[ENU=Additional-Currency Balance;
+                                                              ESM=Saldo divisa-adicional;
+                                                              FRC=Solde devise additionnelle;
+                                                              ENC=Additional-Currency Balance];
+                                                   Editable=No;
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 63  ;   ;Exchange Rate Adjustment;Option    ;AccessByPermission=TableData 4=R;
+                                                   CaptionML=[ENU=Exchange Rate Adjustment;
+                                                              ESM=Ajuste tipo cambio;
+                                                              FRC=Ajustement taux de change;
+                                                              ENC=Exchange Rate Adjustment];
+                                                   OptionCaptionML=[ENU=No Adjustment,Adjust Amount,Adjust Additional-Currency Amount;
+                                                                    ESM=No ajustar,Ajustar importe,Ajustar importe divisa-adicional;
+                                                                    FRC=Aucun ajustement,Ajuster montant,Ajuster montant devise additionnelle;
+                                                                    ENC=No Adjustment,Adjust Amount,Adjust Additional-Currency Amount];
+                                                   OptionString=No Adjustment,Adjust Amount,Adjust Additional-Currency Amount }
+    { 64  ;   ;Add.-Currency Debit Amount;Decimal ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Entry"."Add.-Currency Debit Amount" WHERE (G/L Account No.=FIELD(No.),
+                                                                                                                   G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                                                   Business Unit Code=FIELD(Business Unit Filter),
+                                                                                                                   Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                                                   Global Dimension 2 Code=FIELD(Global Dimension 2 Filter),
+                                                                                                                   Posting Date=FIELD(Date Filter)));
+                                                   CaptionML=[ENU=Add.-Currency Debit Amount;
+                                                              ESM=Debe div.-adic.;
+                                                              FRC=Montant dÇbit devise add.;
+                                                              ENC=Add.-Currency Debit Amount];
+                                                   Editable=No;
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 65  ;   ;Add.-Currency Credit Amount;Decimal;FieldClass=FlowField;
+                                                   CalcFormula=Sum("G/L Entry"."Add.-Currency Credit Amount" WHERE (G/L Account No.=FIELD(No.),
+                                                                                                                    G/L Account No.=FIELD(FILTER(Totaling)),
+                                                                                                                    Business Unit Code=FIELD(Business Unit Filter),
+                                                                                                                    Global Dimension 1 Code=FIELD(Global Dimension 1 Filter),
+                                                                                                                    Global Dimension 2 Code=FIELD(Global Dimension 2 Filter),
+                                                                                                                    Posting Date=FIELD(Date Filter)));
+                                                   CaptionML=[ENU=Add.-Currency Credit Amount;
+                                                              ESM=Haber div.-adic.;
+                                                              FRC=Montant crÇdit devise add.;
+                                                              ENC=Add.-Currency Credit Amount];
+                                                   Editable=No;
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 66  ;   ;Default IC Partner G/L Acc. No;Code20;
+                                                   TableRelation="IC G/L Account".No.;
+                                                   CaptionML=[ENU=Default IC Partner G/L Acc. No;
+                                                              ESM=Nß cuenta IC asociada predet.;
+                                                              FRC=N¯ compte G/L du partenaire IC;
+                                                              ENC=Default IC Partner G/L Acc. No] }
+    { 70  ;   ;Omit Default Descr. in Jnl.;Boolean;CaptionML=[ENU=Omit Default Descr. in Jnl.;
+                                                              ESM=Omitir descripci¢n predeterminada en el diario;
+                                                              FRC=Omettre la descr. par dÇfaut dans le journal;
+                                                              ENC=Omit Default Descr. in Jnl.] }
+    { 1100;   ;Cost Type No.       ;Code20        ;TableRelation="Cost Type";
+                                                   ValidateTableRelation=No;
+                                                   CaptionML=[ENU=Cost Type No.;
+                                                              ESM=Nß tipo costo;
+                                                              FRC=N¯ type coñt;
+                                                              ENC=Cost Type No.];
+                                                   Editable=No }
+    { 1700;   ;Default Deferral Template Code;Code10;
+                                                   TableRelation="Deferral Template"."Deferral Code";
+                                                   CaptionML=[ENU=Default Deferral Template Code;
+                                                              ESM=C¢digo de plantilla de fraccionamiento predeterminada;
+                                                              FRC=Code modäle Çchelonnement par dÇfaut;
+                                                              ENC=Default Deferral Template Code] }
+    { 10001;  ;GIFI Code           ;Code10        ;TableRelation="GIFI Code";
+                                                   CaptionML=[ENU=GIFI Code;
+                                                              ESM=C¢d. GIFI;
+                                                              FRC=Code IGRF;
+                                                              ENC=GIFI Code] }
+    { 27000;  ;SAT Account Code    ;Code20        ;TableRelation="SAT Account Code";
+                                                   CaptionML=[ENU=SAT Account Code;
+                                                              ESM=C¢digo de cuenta del SAT;
+                                                              FRC=Code du compte SAT;
+                                                              ENC=SAT Account Code] }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+    {    ;Search Name                              }
+    {    ;Reconciliation Account                   }
+    {    ;Gen. Bus. Posting Group                  }
+    {    ;Gen. Prod. Posting Group                 }
+    { No ;Consol. Debit Acc.,Consol. Translation Method }
+    { No ;Consol. Credit Acc.,Consol. Translation Method }
+    {    ;Name                                     }
+    {    ;Account Type                             }
+    {    ;GIFI Code                                }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;No.,Name,Income/Balance,Blocked,Direct Posting }
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=You cannot change %1 because there are one or more ledger entries associated with this account.;ESM=No se puede cambiar la cuenta %1 porque tiene movimientos asociados.;FRC=Vous ne pouvez changer %1 parce qu''il y a une ou plusieurs Çcriture(s) associÇe(s) Ö ce compte.;ENC=You cannot change %1 because there are one or more ledger entries associated with this account.';
+      Text001@1001 : TextConst 'ENU=You cannot change %1 because this account is part of one or more budgets.;ESM=No se puede cambiar la cuenta %1 porque est† incluida en presupuestos.;FRC=Vous ne pouvez changer %1 parce qu''il fait partie d''un ou de plusieurs budget(s).;ENC=You cannot change %1 because this account is part of one or more budgets.';
+      GLSetup@1002 : Record 98;
+      CostAccSetup@1006 : Record 1108;
+      DimMgt@1003 : Codeunit 408;
+      CostAccMgt@1007 : Codeunit 1100;
+      GLSetupRead@1004 : Boolean;
+      Text002@1005 : TextConst 'ENU="There is another %1: %2; which refers to the same %3, but with a different %4: %5.";ESM=Existe otro %1: %2 que hace referencia al mismo %3, pero con un valor diferente para %4: %5.;FRC=Il y a un autre %1 : %2, qui se rapporte au màme %3, mais avec un diffÇrent %4 : %5.;ENC="There is another %1: %2; which refers to the same %3, but with a different %4: %5."';
+
+    PROCEDURE SetupNewGLAcc@1(OldGLAcc@1000 : Record 15;BelowOldGLAcc@1001 : Boolean);
+    VAR
+      OldGLAcc2@1002 : Record 15;
+    BEGIN
+      IF NOT BelowOldGLAcc THEN BEGIN
+        OldGLAcc2 := OldGLAcc;
+        OldGLAcc.COPY(Rec);
+        OldGLAcc := OldGLAcc2;
+        IF NOT OldGLAcc.FIND('<') THEN
+          OldGLAcc.INIT;
+      END;
+      "Income/Balance" := OldGLAcc."Income/Balance";
+    END;
+
+    PROCEDURE CheckGLAcc@2();
+    BEGIN
+      TESTFIELD("Account Type","Account Type"::Posting);
+      TESTFIELD(Blocked,FALSE);
+    END;
+
+    LOCAL PROCEDURE GetCurrencyCode@3() : Code[10];
+    BEGIN
+      IF NOT GLSetupRead THEN BEGIN
+        GLSetup.GET;
+        GLSetupRead := TRUE;
+      END;
+      EXIT(GLSetup."Additional Reporting Currency");
+    END;
+
+    LOCAL PROCEDURE ValidateShortcutDimCode@29(FieldNumber@1000 : Integer;VAR ShortcutDimCode@1001 : Code[20]);
+    BEGIN
+      DimMgt.ValidateDimValueCode(FieldNumber,ShortcutDimCode);
+      DimMgt.SaveDefaultDim(DATABASE::"G/L Account","No.",FieldNumber,ShortcutDimCode);
+      MODIFY;
+    END;
+
+    PROCEDURE TranslationMethodConflict@4(VAR GLAcc@1000 : Record 15) : Boolean;
+    BEGIN
+      GLAcc.RESET;
+      GLAcc.SETFILTER("No.",'<>%1',"No.");
+      GLAcc.SETFILTER("Consol. Translation Method",'<>%1',"Consol. Translation Method");
+      IF "Consol. Debit Acc." <> '' THEN BEGIN
+        IF NOT GLAcc.SETCURRENTKEY("Consol. Debit Acc.","Consol. Translation Method") THEN
+          GLAcc.SETCURRENTKEY("No.");
+        GLAcc.SETRANGE("Consol. Debit Acc.","Consol. Debit Acc.");
+        IF GLAcc.FIND('-') THEN
+          EXIT(TRUE);
+        GLAcc.SETRANGE("Consol. Debit Acc.");
+      END;
+      IF "Consol. Credit Acc." <> '' THEN BEGIN
+        IF NOT GLAcc.SETCURRENTKEY("Consol. Credit Acc.","Consol. Translation Method") THEN
+          GLAcc.SETCURRENTKEY("No.");
+        GLAcc.SETRANGE("Consol. Credit Acc.","Consol. Credit Acc.");
+        IF GLAcc.FIND('-') THEN
+          EXIT(TRUE);
+        GLAcc.SETRANGE("Consol. Credit Acc.");
+      END;
+      EXIT(FALSE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

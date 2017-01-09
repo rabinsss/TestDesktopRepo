@@ -1,0 +1,82 @@
+OBJECT Table 2000000110 Active Session
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Active Session;
+               ESM=Sesi¢n activa;
+               FRC=Session active;
+               ENC=Active Session];
+  }
+  FIELDS
+  {
+    { 1   ;   ;User SID            ;GUID          ;TableRelation=User."User Security ID";
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User SID;
+                                                              ESM=SID usuario;
+                                                              FRC=SID utilisateur;
+                                                              ENC=User SID] }
+    { 2   ;   ;Server Instance ID  ;Integer       ;TableRelation="Server Instance"."Server Instance ID";
+                                                   CaptionML=[ENU=Server Instance ID;
+                                                              ESM=Id. instancia de servidor;
+                                                              FRC=Code instance de serveur;
+                                                              ENC=Server Instance ID] }
+    { 3   ;   ;Session ID          ;Integer       ;CaptionML=[ENU=Session ID;
+                                                              ESM=Id. sesi¢n;
+                                                              FRC=Code session;
+                                                              ENC=Session ID] }
+    { 4   ;   ;Server Instance Name;Text250       ;CaptionML=[ENU=Server Instance Name;
+                                                              ESM=Nombre instancia servidor;
+                                                              FRC=Nom d'instance de serveur;
+                                                              ENC=Server Instance Name] }
+    { 5   ;   ;Server Computer Name;Text250       ;CaptionML=[ENU=Server Computer Name;
+                                                              ESM=Nombre equipo servidor;
+                                                              FRC=Nom du serveur;
+                                                              ENC=Server Computer Name] }
+    { 6   ;   ;User ID             ;Text132       ;CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 7   ;   ;Client Type         ;Option        ;CaptionML=[ENU=Client Type;
+                                                              ESM=Tipo cliente;
+                                                              FRC=Type de client;
+                                                              ENC=Client Type];
+                                                   OptionCaptionML=[ENU=Windows Client,SharePoint Client,Web Service,Client Service,NAS,Background,Management Client,Web Client,Unknown,Tablet,Phone,Desktop;
+                                                                    ESM=Cliente Windows,Cliente SharePoint,Servicio web,Servicio cliente,NAS,Segundo plano,Cliente admin.,Cliente web,Desconocido,Tableta,Tel‚fono,Escritorio;
+                                                                    FRC=Client Windows,Client SharePoint,Service Web,Service client,NAS,ArriŠre-plan,Gestion client,Client web,Inconnu,Tablette,T‚l‚phone,Bureau;
+                                                                    ENC=Windows Client,SharePoint Client,Web Service,Client Service,NAS,Background,Management Client,Web Client,Unknown,Tablet,Phone,Desktop];
+                                                   OptionString=Windows Client,SharePoint Client,Web Service,Client Service,NAS,Background,Management Client,Web Client,Unknown,Tablet,Phone,Desktop }
+    { 8   ;   ;Client Computer Name;Text250       ;CaptionML=[ENU=Client Computer Name;
+                                                              ESM=Nombre equipo cliente;
+                                                              FRC=Nom de l'ordinateur client;
+                                                              ENC=Client Computer Name] }
+    { 9   ;   ;Login Datetime      ;DateTime      ;CaptionML=[ENU=Login Datetime;
+                                                              ESM=Valor Datetime inicio sesi¢n;
+                                                              FRC=Date et heure de connexion;
+                                                              ENC=Login Datetime] }
+    { 10  ;   ;Database Name       ;Text250       ;CaptionML=[ENU=Database Name;
+                                                              ESM=Nombre base de datos;
+                                                              FRC=Nom de la base de donn‚es;
+                                                              ENC=Database Name] }
+  }
+  KEYS
+  {
+    {    ;Server Instance ID,Session ID           ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

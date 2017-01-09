@@ -1,0 +1,73 @@
+OBJECT Table 2000000112 Server Instance
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Server Instance;
+               ESM=Instancia de servidor;
+               FRC=Instance de serveurˇ;
+               ENC=Server Instance];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Server Instance ID  ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Server Instance ID;
+                                                              ESM=Id. instancia de servidor;
+                                                              FRC=Code instance de serveur;
+                                                              ENC=Server Instance ID] }
+    { 2   ;   ;Service Name        ;Text250       ;CaptionML=[ENU=Service Name;
+                                                              ESM=Nombre del servicio;
+                                                              FRC=Nom du service;
+                                                              ENC=Service Name] }
+    { 3   ;   ;Server Computer Name;Text250       ;CaptionML=[ENU=Server Computer Name;
+                                                              ESM=Nombre equipo servidor;
+                                                              FRC=Nom du serveur;
+                                                              ENC=Server Computer Name] }
+    { 4   ;   ;Last Active         ;DateTime      ;Volatile=Yes;
+                                                   CaptionML=[ENU=Last Active;
+                                                              ESM=Activo por £lt. vez;
+                                                              FRC=Dernier ÇlÇment actif;
+                                                              ENC=Last Active] }
+    { 5   ;   ;Server Instance Name;Text250       ;CaptionML=[ENU=Server Instance Name;
+                                                              ESM=Nombre instancia servidor;
+                                                              FRC=Nom d'instance de serveur;
+                                                              ENC=Server Instance Name] }
+    { 6   ;   ;Server Port         ;Integer       ;CaptionML=[ENU=Server Port;
+                                                              ESM=Puerto de servidor;
+                                                              FRC=Port du serveur;
+                                                              ENC=Server Port] }
+    { 7   ;   ;Management Port     ;Integer       ;CaptionML=[ENU=Management Port;
+                                                              ESM=Puerto de administraci¢n;
+                                                              FRC=Port gestion;
+                                                              ENC=Management Port] }
+    { 8   ;   ;Status              ;Option        ;CaptionML=[ENU=Status;
+                                                              ESM=Estado;
+                                                              FRC=êtat;
+                                                              ENC=Status];
+                                                   OptionCaptionML=[ENU=Started,Stopped,Crashed;
+                                                                    ESM=Iniciado,Detenido,Bloqueado;
+                                                                    FRC=DÇmarrÇ,StoppÇ,êchouÇ;
+                                                                    ENC=Started,Stopped,Crashed];
+                                                   OptionString=Started,Stopped,Crashed }
+  }
+  KEYS
+  {
+    {    ;Server Instance ID                      ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

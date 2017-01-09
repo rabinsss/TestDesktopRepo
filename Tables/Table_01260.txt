@@ -1,0 +1,117 @@
+OBJECT Table 1260 Bank Data Conv. Service Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    Permissions=TableData 1261=rimd;
+    OnDelete=BEGIN
+               DeletePassword;
+             END;
+
+    CaptionML=[ENU=Bank Data Conv. Service Setup;
+               ESM=Configuraci¢n de servicio de conv. de datos del banco;
+               FRC=Configuration service conv. donn‚es banque;
+               ENC=Bank Data Conv. Service Setup];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=[ENU=Primary Key;
+                                                              ESM=Clave primaria;
+                                                              FRC=Cl‚ primaire;
+                                                              ENC=Primary Key] }
+    { 2   ;   ;User Name           ;Text50        ;CaptionML=[ENU=User Name;
+                                                              ESM=Nombre de usuario;
+                                                              FRC=Nom de l'utilisateur;
+                                                              ENC=User Name];
+                                                   Editable=Yes }
+    { 3   ;   ;Password Key        ;GUID          ;TableRelation="Service Password".Key;
+                                                   CaptionML=[ENU=Password Key;
+                                                              ESM=Clave de contrase¤a;
+                                                              FRC=Cl‚ mot de passe;
+                                                              ENC=Password Key] }
+    { 4   ;   ;Signup URL          ;Text250       ;ExtendedDatatype=URL;
+                                                   CaptionML=[ENU=Signup URL;
+                                                              ESM=URL de registro;
+                                                              FRC=URL inscription;
+                                                              ENC=Signup URL] }
+    { 5   ;   ;Service URL         ;Text250       ;OnValidate=VAR
+                                                                WebRequestHelper@1000 : Codeunit 1299;
+                                                              BEGIN
+                                                                IF "Service URL" <> '' THEN
+                                                                  WebRequestHelper.IsSecureHttpUrl("Service URL");
+                                                              END;
+
+                                                   CaptionML=[ENU=Service URL;
+                                                              ESM=URL de servicio;
+                                                              FRC=URL service;
+                                                              ENC=Service URL] }
+    { 6   ;   ;Support URL         ;Text250       ;ExtendedDatatype=URL;
+                                                   CaptionML=[ENU=Support URL;
+                                                              ESM=URL de soporte;
+                                                              FRC=URL assistance;
+                                                              ENC=Support URL] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE SavePassword@1(PasswordText@1000 : Text);
+    VAR
+      ServicePassword@1002 : Record 1261;
+    BEGIN
+      IF ISNULLGUID("Password Key") OR NOT ServicePassword.GET("Password Key") THEN BEGIN
+        ServicePassword.SavePassword(PasswordText);
+        ServicePassword.INSERT(TRUE);
+        "Password Key" := ServicePassword.Key;
+      END ELSE BEGIN
+        ServicePassword.SavePassword(PasswordText);
+        ServicePassword.MODIFY;
+      END;
+    END;
+
+    PROCEDURE GetPassword@2() : Text;
+    VAR
+      ServicePassword@1000 : Record 1261;
+    BEGIN
+      ServicePassword.GET("Password Key");
+      EXIT(ServicePassword.GetPassword);
+    END;
+
+    LOCAL PROCEDURE DeletePassword@4();
+    VAR
+      ServicePassword@1001 : Record 1261;
+    BEGIN
+      IF ServicePassword.GET("Password Key") THEN
+        ServicePassword.DELETE;
+    END;
+
+    PROCEDURE HasPassword@3() : Boolean;
+    VAR
+      ServicePassword@1000 : Record 1261;
+    BEGIN
+      EXIT(ServicePassword.GET("Password Key"));
+    END;
+
+    PROCEDURE SetURLsToDefault@5();
+    VAR
+      BankDataConvServMgt@1000 : Codeunit 1265;
+    BEGIN
+      BankDataConvServMgt.SetURLsToDefault(Rec);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

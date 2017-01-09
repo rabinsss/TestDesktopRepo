@@ -1,0 +1,57 @@
+OBJECT Table 5150 Integration Page
+{
+  OBJECT-PROPERTIES
+  {
+    Date=12/02/10;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00.10;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Integration Page;
+               ESM=P gina de integraci¢n;
+               FRC=Page d'int‚gration;
+               ENC=Integration Page];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Service Name        ;Text240       ;TableRelation="Web Service"."Service Name" WHERE (Object Type=CONST(Page));
+                                                   CaptionML=[ENU=Service Name;
+                                                              ESM=Nombre del servicio;
+                                                              FRC=Nom du service;
+                                                              ENC=Service Name] }
+    { 2   ;   ;Page ID             ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("Web Service"."Object ID" WHERE (Object Type=CONST(Page),
+                                                                                                       Service Name=FIELD(Service Name)));
+                                                   CaptionML=[ENU=Page ID;
+                                                              ESM=Id. p gina;
+                                                              FRC=Code page;
+                                                              ENC=Page ID] }
+    { 3   ;   ;Source Table ID     ;Integer       ;CaptionML=[ENU=Source Table ID;
+                                                              ESM=Id. de tabla de origen;
+                                                              FRC=Code table source;
+                                                              ENC=Source Table ID] }
+    { 4   ;   ;Published           ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Web Service" WHERE (Service Name=FIELD(Service Name),
+                                                                                          Published=CONST(Yes)));
+                                                   CaptionML=[ENU=Published;
+                                                              ESM=Publicado;
+                                                              FRC=Publi‚;
+                                                              ENC=Published] }
+  }
+  KEYS
+  {
+    {    ;Service Name                            ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

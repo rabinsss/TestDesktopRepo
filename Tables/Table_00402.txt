@@ -1,0 +1,41 @@
+OBJECT Table 402 Change Log Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/05/08;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Change Log Setup;
+               ESM=Config. log cambio;
+               FRC=Configuration du journal de modification;
+               ENC=Change Log Setup];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=[ENU=Primary Key;
+                                                              ESM=Clave primaria;
+                                                              FRC=Cl‚ primaire;
+                                                              ENC=Primary Key] }
+    { 2   ;   ;Change Log Activated;Boolean       ;CaptionML=[ENU=Change Log Activated;
+                                                              ESM=Log cambio activado;
+                                                              FRC=Journal modification activ‚;
+                                                              ENC=Change Log Activated] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

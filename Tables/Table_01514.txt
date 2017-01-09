@@ -1,0 +1,124 @@
+OBJECT Table 1514 Sent Notification Entry
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Sent Notification Entry;
+               ESM=Enviar mov. notificaci¢n;
+               FRC=êcriture notification envoyÇe;
+               ENC=Sent Notification Entry];
+    LookupPageID=Page1514;
+    DrillDownPageID=Page1514;
+  }
+  FIELDS
+  {
+    { 1   ;   ;ID                  ;Integer       ;CaptionML=[ENU=ID;
+                                                              ESM=Id.;
+                                                              FRC=Code;
+                                                              ENC=ID] }
+    { 3   ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ESM=Tipo;
+                                                              FRC=Type;
+                                                              ENC=Type];
+                                                   OptionCaptionML=[ENU=New Record,Approval,Overdue;
+                                                                    ESM=Nuevo registro,Aprobaci¢n,Vencido;
+                                                                    FRC=Nouvel enregistrement,Approbation,êchu;
+                                                                    ENC=New Record,Approval,Overdue];
+                                                   OptionString=New Record,Approval,Overdue }
+    { 4   ;   ;Recipient User ID   ;Code50        ;CaptionML=[ENU=Recipient User ID;
+                                                              ESM=Id. de usuario destinatario;
+                                                              FRC=Code utilisateur du destinataire;
+                                                              ENC=Recipient User ID] }
+    { 5   ;   ;Triggered By Record ;RecordID      ;CaptionML=[ENU=Triggered By Record;
+                                                              ESM=Activado por registro;
+                                                              FRC=DÇclenchÇ par un enregistrement;
+                                                              ENC=Triggered By Record] }
+    { 6   ;   ;Link Target Page    ;Integer       ;TableRelation="Page Metadata".ID;
+                                                   CaptionML=[ENU=Link Target Page;
+                                                              ESM=P†gina de destino de v°nculo;
+                                                              FRC=Page cible du lien;
+                                                              ENC=Link Target Page] }
+    { 7   ;   ;Custom Link         ;Text250       ;ExtendedDatatype=URL;
+                                                   CaptionML=[ENU=Custom Link;
+                                                              ESM=Personalizar v°nculo;
+                                                              FRC=Lien personnalisÇ;
+                                                              ENC=Custom Link] }
+    { 9   ;   ;Created Date-Time   ;DateTime      ;CaptionML=[ENU=Created Date-Time;
+                                                              ESM=Fecha / hora creaci¢n;
+                                                              FRC=Date/heure crÇation;
+                                                              ENC=Created Date-Time] }
+    { 10  ;   ;Created By          ;Code50        ;TableRelation=User."User Name";
+                                                   CaptionML=[ENU=Created By;
+                                                              ESM=Creado por;
+                                                              FRC=CrÇÇ par;
+                                                              ENC=Created By] }
+    { 11  ;   ;Sent Date-Time      ;DateTime      ;CaptionML=[ENU=Sent Date-Time;
+                                                              ESM=Fecha y hora de env°o;
+                                                              FRC=Date/heure expÇdition;
+                                                              ENC=Sent Date-Time] }
+    { 12  ;   ;Notification Content;BLOB          ;CaptionML=[ENU=Notification Content;
+                                                              ESM=Contenido de la notificaci¢n;
+                                                              FRC=Contenu notification;
+                                                              ENC=Notification Content] }
+    { 13  ;   ;Notification Method ;Option        ;CaptionML=[ENU=Notification Method;
+                                                              ESM=MÇtodo de notificaci¢n;
+                                                              FRC=Mode de notification;
+                                                              ENC=Notification Method];
+                                                   OptionCaptionML=[ENU=E-mail,Note;
+                                                                    ESM=Correo electr¢nico,Nota;
+                                                                    FRC=E-mail,Note;
+                                                                    ENC=E-mail,Note];
+                                                   OptionString=E-mail,Note }
+    { 14  ;   ;Aggregated with Entry;Integer      ;TableRelation="Sent Notification Entry";
+                                                   CaptionML=[ENU=Aggregated with Entry;
+                                                              ESM=Agregado con mov.;
+                                                              FRC=RegroupÇ avec l'Çcriture;
+                                                              ENC=Aggregated with Entry] }
+  }
+  KEYS
+  {
+    {    ;ID                                      ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE NewRecord@11(NotificationEntry@1000 : Record 1511;NotificationContent@1001 : Text;NotificationMethod@1005 : Option);
+    VAR
+      OutStream@1004 : OutStream;
+    BEGIN
+      CLEAR(Rec);
+      TRANSFERFIELDS(NotificationEntry);
+      "Notification Content".CREATEOUTSTREAM(OutStream);
+      OutStream.WRITETEXT(NotificationContent);
+      "Notification Method" := NotificationMethod;
+      "Sent Date-Time" := CURRENTDATETIME;
+      INSERT(TRUE);
+    END;
+
+    PROCEDURE ExportContent@2(UseDialog@1002 : Boolean) : Text;
+    VAR
+      TempBlob@1000 : Record 99008535;
+      FileMgt@1001 : Codeunit 419;
+    BEGIN
+      CALCFIELDS("Notification Content");
+      IF "Notification Content".HASVALUE THEN BEGIN
+        TempBlob.Blob := "Notification Content";
+        IF "Notification Method" = "Notification Method"::Note THEN
+          EXIT(FileMgt.BLOBExport(TempBlob,'*.txt',UseDialog));
+        EXIT(FileMgt.BLOBExport(TempBlob,'*.htm',UseDialog))
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

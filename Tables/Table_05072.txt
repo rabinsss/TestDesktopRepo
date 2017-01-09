@@ -1,0 +1,170 @@
+OBJECT Table 5072 Campaign Entry
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Campaign No.;
+    OnDelete=VAR
+               InteractLogEntry@1000 : Record 5065;
+             BEGIN
+               InteractLogEntry.SETCURRENTKEY("Campaign No.","Campaign Entry No.");
+               InteractLogEntry.SETRANGE("Campaign No.","Campaign No.");
+               InteractLogEntry.SETRANGE("Campaign Entry No.","Entry No.");
+               InteractLogEntry.DELETEALL;
+             END;
+
+    CaptionML=[ENU=Campaign Entry;
+               ESM=Mov. campa§a;
+               FRC=êcriture promotion;
+               ENC=Campaign Entry];
+    LookupPageID=Page5089;
+    DrillDownPageID=Page5089;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;CaptionML=[ENU=Entry No.;
+                                                              ESM=Nß mov.;
+                                                              FRC=N¯ Çcriture;
+                                                              ENC=Entry No.] }
+    { 2   ;   ;Campaign No.        ;Code20        ;TableRelation=Campaign;
+                                                   CaptionML=[ENU=Campaign No.;
+                                                              ESM=Nß campa§a;
+                                                              FRC=N¯ promotion;
+                                                              ENC=Campaign No.] }
+    { 3   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 4   ;   ;Date                ;Date          ;CaptionML=[ENU=Date;
+                                                              ESM=Fecha;
+                                                              FRC=Date;
+                                                              ENC=Date] }
+    { 5   ;   ;User ID             ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=VAR
+                                                              UserMgt@1000 : Codeunit 418;
+                                                            BEGIN
+                                                              UserMgt.LookupUserID("User ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID];
+                                                   Editable=No }
+    { 6   ;   ;Segment No.         ;Code20        ;TableRelation="Segment Header";
+                                                   CaptionML=[ENU=Segment No.;
+                                                              ESM=Nß segmento;
+                                                              FRC=N¯ segment;
+                                                              ENC=Segment No.] }
+    { 7   ;   ;Canceled            ;Boolean       ;CaptionML=[ENU=Canceled;
+                                                              ESM=Cancelado;
+                                                              FRC=AnnulÇe;
+                                                              ENC=Cancelled];
+                                                   BlankZero=Yes }
+    { 8   ;   ;No. of Interactions ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Interaction Log Entry" WHERE (Campaign No.=FIELD(Campaign No.),
+                                                                                                    Campaign Entry No.=FIELD(Entry No.),
+                                                                                                    Canceled=FIELD(Canceled)));
+                                                   CaptionML=[ENU=No. of Interactions;
+                                                              ESM=Nß de interacciones;
+                                                              FRC=Nbre interactions;
+                                                              ENC=No. of Interactions];
+                                                   Editable=No }
+    { 10  ;   ;Cost (LCY)          ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Interaction Log Entry"."Cost (LCY)" WHERE (Campaign No.=FIELD(Campaign No.),
+                                                                                                               Campaign Entry No.=FIELD(Entry No.),
+                                                                                                               Canceled=FIELD(Canceled)));
+                                                   CaptionML=[ENU=Cost ($);
+                                                              ESM=Costo ($);
+                                                              FRC=Coñt ($);
+                                                              ENC=Cost ($)];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 11  ;   ;Duration (Min.)     ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Interaction Log Entry"."Duration (Min.)" WHERE (Campaign No.=FIELD(Campaign No.),
+                                                                                                                    Campaign Entry No.=FIELD(Entry No.),
+                                                                                                                    Canceled=FIELD(Canceled)));
+                                                   CaptionML=[ENU=Duration (Min.);
+                                                              ESM=Duraci¢n (Min.);
+                                                              FRC=DurÇe (min.);
+                                                              ENC=Duration (Min.)];
+                                                   DecimalPlaces=0:0;
+                                                   Editable=No }
+    { 12  ;   ;Salesperson Code    ;Code10        ;TableRelation=Salesperson/Purchaser;
+                                                   CaptionML=[ENU=Salesperson Code;
+                                                              ESM=C¢d. vendedor;
+                                                              FRC=Code reprÇsentant;
+                                                              ENC=Salesperson Code] }
+    { 13  ;   ;Register No.        ;Integer       ;TableRelation="Logged Segment";
+                                                   CaptionML=[ENU=Register No.;
+                                                              ESM=Nß registro;
+                                                              FRC=N¯ de registre;
+                                                              ENC=Register No.] }
+    { 14  ;   ;Document Type       ;Option        ;CaptionML=[ENU=Document Type;
+                                                              ESM=Tipo documento;
+                                                              FRC=Type de document;
+                                                              ENC=Document Type];
+                                                   OptionCaptionML=[ENU=" ,Sales Qte.,Sales Blnkt. Ord,Sales Ord. Cnfrmn.,Sales Inv.,Sales Shpt. Note,Sales Cr. Memo,Sales Stmnt.,Sales Rmdr.,Serv. Ord. Create,Serv. Ord. Post,Purch.Qte.,Purch. Blnkt. Ord.,Purch. Ord.,Purch. Inv.,Purch. Rcpt.,Purch. Cr. Memo,Cover Sheet";
+                                                                    ESM=" ,Cotizaci¢n vta.,Ped. abierto vta.,Confirm. ped. vta.,Fact. vta.,Remisi¢n vta.,Nota crÇdito vta.,Est. cta. vta.,Record. vta.,Crear ped. serv.,Regis. ped. serv.,Cotizaci¢n compra,Ped. abierto compra,Ped. compra,Fact. compra,Recep. compra,Nota crÇdito compra,Portada";
+                                                                    FRC=" ,Devis vente,Cde ouv. vente,Confirm. cde,Fact. vente,Livr. vente,Note crÇdit vente,Rapport vente,Relance,CrÇation cde serv.,Validation cde serv.,Devis achat,Cde ouv. achat,Cde achat,Fact. achat,RÇcept. achat,Avoir achat,Bord. envoi";
+                                                                    ENC=" ,Sales Qte.,Sales Blnkt. Ord,Sales Ord. Cnfrmn.,Sales Inv.,Sales Shpt. Note,Sales Cr. Memo,Sales Stmnt.,Sales Rmdr.,Serv. Ord. Create,Serv. Ord. Post,Purch.Qte.,Purch. Blnkt. Ord.,Purch. Ord.,Purch. Inv.,Purch. Rcpt.,Purch. Cr. Memo,Cover Sheet"];
+                                                   OptionString=[ ,Sales Qte.,Sales Blnkt. Ord,Sales Ord. Cnfrmn.,Sales Inv.,Sales Shpt. Note,Sales Cr. Memo,Sales Stmnt.,Sales Rmdr.,Serv. Ord. Create,Serv. Ord. Post,Purch.Qte.,Purch. Blnkt. Ord.,Purch. Ord.,Purch. Inv.,Purch. Rcpt.,Purch. Cr. Memo,Cover Sheet] }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;Clustered=Yes }
+    {    ;Campaign No.,Date,Document Type          }
+    {    ;Register No.                             }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;Entry No.,Campaign No.,Description,Date,Document Type }
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=%1 %2 is marked %3.\Do you wish to remove the checkmark?;ESM=%1 %2 est† marcado %3.\®Desea quitar la marca?;FRC=%1 %2 est marquÇ %3.\Souhaitez-vous dÇsactiver le champˇ?;ENC=%1 %2 is marked %3.\Do you wish to remove the checkmark?';
+      Text002@1002 : TextConst 'ENU=Do you wish to mark %1 %2 as %3?;ESM=®Confirma que desea se§alar %1 %2 como %3?;FRC=Souhaitez-vous mettre %1 %2 Ö %3 ?;ENC=Do you wish to mark %1 %2 as %3?';
+
+    PROCEDURE ToggleCanceledCheckmark@2();
+    VAR
+      MasterCanceledCheckmark@1000 : Boolean;
+    BEGIN
+      IF ConfirmToggleCanceledCheckmark THEN BEGIN
+        MasterCanceledCheckmark := NOT Canceled;
+        SetCanceledCheckmark(MasterCanceledCheckmark);
+      END;
+    END;
+
+    PROCEDURE SetCanceledCheckmark@1(CanceledCheckmark@1001 : Boolean);
+    VAR
+      InteractLogEntry@1000 : Record 5065;
+    BEGIN
+      Canceled := CanceledCheckmark;
+      MODIFY;
+
+      InteractLogEntry.SETCURRENTKEY("Campaign No.","Campaign Entry No.");
+      InteractLogEntry.SETRANGE("Campaign No.","Campaign No.");
+      InteractLogEntry.SETRANGE("Campaign Entry No.","Entry No.");
+      InteractLogEntry.MODIFYALL(Canceled,Canceled);
+    END;
+
+    LOCAL PROCEDURE ConfirmToggleCanceledCheckmark@3() : Boolean;
+    BEGIN
+      IF Canceled THEN
+        EXIT(CONFIRM(Text000,TRUE,TABLECAPTION,"Entry No.",FIELDCAPTION(Canceled)));
+
+      EXIT(CONFIRM(Text002,TRUE,TABLECAPTION,"Entry No.",FIELDCAPTION(Canceled)));
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

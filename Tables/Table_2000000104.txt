@@ -1,0 +1,44 @@
+OBJECT Table 2000000104 Debugger Watch
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Debugger Watch;
+               ESM=Inspec. depurador;
+               FRC=Espion du d‚bogueur;
+               ENC=Debugger Watch];
+  }
+  FIELDS
+  {
+    { 1   ;   ;ID                  ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=ID;
+                                                              ESM=Id.;
+                                                              FRC=Code;
+                                                              ENC=ID] }
+    { 7   ;   ;Path                ;Text124       ;CaptionML=[ENU=Path;
+                                                              ESM=Ruta acceso;
+                                                              FRC=Chemin;
+                                                              ENC=Path] }
+  }
+  KEYS
+  {
+    {    ;ID                                      ;Clustered=Yes }
+    {    ;Path                                     }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

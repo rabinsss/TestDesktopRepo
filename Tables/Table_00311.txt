@@ -1,0 +1,348 @@
+OBJECT Table 311 Sales & Receivables Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00,NAVNA9.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Sales & Receivables Setup;
+               ESM=Conf. ventas y cobros;
+               FRC=Config. ventes et … recevoir;
+               ENC=Sales & Receivables Setup];
+    LookupPageID=Page459;
+    DrillDownPageID=Page459;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=[ENU=Primary Key;
+                                                              ESM=Clave primaria;
+                                                              FRC=Cl‚ primaire;
+                                                              ENC=Primary Key] }
+    { 2   ;   ;Discount Posting    ;Option        ;CaptionML=[ENU=Discount Posting;
+                                                              ESM=Registro dto.;
+                                                              FRC=Report escompte;
+                                                              ENC=Discount Posting];
+                                                   OptionCaptionML=[ENU=No Discounts,Invoice Discounts,Line Discounts,All Discounts;
+                                                                    ESM=Ninguno,Dto. factura,Dto. l¡nea,Todos;
+                                                                    FRC=Aucun escompte,Escomptes facture,Escomptes ligne,Tous les escomptes;
+                                                                    ENC=No Discounts,Invoice Discounts,Line Discounts,All Discounts];
+                                                   OptionString=No Discounts,Invoice Discounts,Line Discounts,All Discounts }
+    { 4   ;   ;Credit Warnings     ;Option        ;CaptionML=[ENU=Credit Warnings;
+                                                              ESM=Advertencia cr‚dito;
+                                                              FRC=Avertissement de cr‚dit;
+                                                              ENC=Credit Warnings];
+                                                   OptionCaptionML=[ENU=Both Warnings,Credit Limit,Overdue Balance,No Warning;
+                                                                    ESM=Ambos,L¡mite cr‚dito,Saldo vencido,Ninguno;
+                                                                    FRC=Les deux avertissements,Limite de cr‚dit,Solde pass‚ d–,Aucun avertissement;
+                                                                    ENC=Both Warnings,Credit Limit,Overdue Balance,No Warning];
+                                                   OptionString=Both Warnings,Credit Limit,Overdue Balance,No Warning }
+    { 5   ;   ;Stockout Warning    ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Stockout Warning;
+                                                              ESM=Advertencia falta existencias;
+                                                              FRC=Alerte rupture stock;
+                                                              ENC=Stockout Warning] }
+    { 6   ;   ;Shipment on Invoice ;Boolean       ;AccessByPermission=TableData 110=R;
+                                                   CaptionML=[ENU=Shipment on Invoice;
+                                                              ESM=Remisi¢n al facturar;
+                                                              FRC=Livraison sur facture;
+                                                              ENC=Shipment on Invoice] }
+    { 7   ;   ;Invoice Rounding    ;Boolean       ;CaptionML=[ENU=Invoice Rounding;
+                                                              ESM=Redondeo factura;
+                                                              FRC=Arrondissement facture;
+                                                              ENC=Invoice Rounding] }
+    { 8   ;   ;Ext. Doc. No. Mandatory;Boolean    ;CaptionML=[ENU=Ext. Doc. No. Mandatory;
+                                                              ESM=N§ doc. externo obligatorio;
+                                                              FRC=Nø doc. ext. obligatoire;
+                                                              ENC=Ext. Doc. No. Mandatory] }
+    { 9   ;   ;Customer Nos.       ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Customer Nos.;
+                                                              ESM=N§ serie cliente;
+                                                              FRC=Nø clients;
+                                                              ENC=Customer Nos.] }
+    { 10  ;   ;Quote Nos.          ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Quote Nos.;
+                                                              ESM=N§ serie cotizaci¢n;
+                                                              FRC=Nø devis;
+                                                              ENC=Quote Nos.] }
+    { 11  ;   ;Order Nos.          ;Code10        ;TableRelation="No. Series";
+                                                   AccessByPermission=TableData 110=R;
+                                                   CaptionML=[ENU=Order Nos.;
+                                                              ESM=N§ ser. pedido;
+                                                              FRC=Nø commande;
+                                                              ENC=Order Nos.] }
+    { 12  ;   ;Invoice Nos.        ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Invoice Nos.;
+                                                              ESM=N§ serie factura;
+                                                              FRC=Nø facture;
+                                                              ENC=Invoice Nos.] }
+    { 13  ;   ;Posted Invoice Nos. ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Posted Invoice Nos.;
+                                                              ESM=N§ serie fact. registrada;
+                                                              FRC=Nø facture report‚e;
+                                                              ENC=Posted Invoice Nos.] }
+    { 14  ;   ;Credit Memo Nos.    ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Credit Memo Nos.;
+                                                              ESM=N§ serie nota cr‚dito;
+                                                              FRC=Nø note de cr‚dit;
+                                                              ENC=Credit Memo Nos.] }
+    { 15  ;   ;Posted Credit Memo Nos.;Code10     ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Posted Credit Memo Nos.;
+                                                              ESM=N§ serie nota cr‚dito regis.;
+                                                              FRC=Nø note de cr‚dit report‚e;
+                                                              ENC=Posted Credit Memo Nos.] }
+    { 16  ;   ;Posted Shipment Nos.;Code10        ;TableRelation="No. Series";
+                                                   AccessByPermission=TableData 110=R;
+                                                   CaptionML=[ENU=Posted Shipment Nos.;
+                                                              ESM=N§ serie remisi¢n venta registrado;
+                                                              FRC=Nø livraison report‚e;
+                                                              ENC=Posted Shipment Nos.] }
+    { 17  ;   ;Reminder Nos.       ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Reminder Nos.;
+                                                              ESM=N§ serie recordatorio;
+                                                              FRC=Nos de rappels;
+                                                              ENC=Reminder Nos.] }
+    { 18  ;   ;Issued Reminder Nos.;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Issued Reminder Nos.;
+                                                              ESM=N§ serie recordatorio emitido;
+                                                              FRC=Nø rappel ‚mis;
+                                                              ENC=Issued Reminder Nos.] }
+    { 19  ;   ;Fin. Chrg. Memo Nos.;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Fin. Chrg. Memo Nos.;
+                                                              ESM=N§ serie doc. inter‚s;
+                                                              FRC=Nø note de frais financiers;
+                                                              ENC=Fin. Chrg. Memo Nos.] }
+    { 20  ;   ;Issued Fin. Chrg. M. Nos.;Code10   ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Issued Fin. Chrg. M. Nos.;
+                                                              ESM=N§ serie doc. inter‚s emitido;
+                                                              FRC=Nø note de frais fin. ‚mise;
+                                                              ENC=Issued Fin. Chrg. M. Nos.] }
+    { 21  ;   ;Posted Prepmt. Inv. Nos.;Code10    ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Posted Prepmt. Inv. Nos.;
+                                                              ESM=N§ fact. anticipo registrada;
+                                                              FRC=Nø factures pour paiement anticip‚ report‚;
+                                                              ENC=Posted Prepmt. Inv. Nos.] }
+    { 22  ;   ;Posted Prepmt. Cr. Memo Nos.;Code10;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Posted Prepmt. Cr. Memo Nos.;
+                                                              ESM=N§ nota cr‚dito anticipo registrado;
+                                                              FRC=Nø notes de cr‚dit pour paiement anticip‚ report‚;
+                                                              ENC=Posted Prepmt. Cr. Memo Nos.] }
+    { 23  ;   ;Blanket Order Nos.  ;Code10        ;TableRelation="No. Series";
+                                                   AccessByPermission=TableData 110=R;
+                                                   CaptionML=[ENU=Blanket Order Nos.;
+                                                              ESM=N§ serie pedido abierto;
+                                                              FRC=Nø commande permanente;
+                                                              ENC=Blanket Order Nos.] }
+    { 24  ;   ;Calc. Inv. Discount ;Boolean       ;CaptionML=[ENU=Calc. Inv. Discount;
+                                                              ESM=Calc. dto. factura;
+                                                              FRC=Calculer escompte facture;
+                                                              ENC=Calc. Inv. Discount] }
+    { 25  ;   ;Appln. between Currencies;Option   ;AccessByPermission=TableData 4=R;
+                                                   CaptionML=[ENU=Appln. between Currencies;
+                                                              ESM=Liquidaci¢n entre divisas;
+                                                              FRC=Correction des devises;
+                                                              ENC=Appln. between Currencies];
+                                                   OptionCaptionML=[ENU=None,EMU,All;
+                                                                    ESM=Ninguna,UME,Todas;
+                                                                    FRC=Aucun,UME,Tout;
+                                                                    ENC=None,EMU,All];
+                                                   OptionString=None,EMU,All }
+    { 26  ;   ;Copy Comments Blanket to Order;Boolean;
+                                                   InitValue=Yes;
+                                                   AccessByPermission=TableData 110=R;
+                                                   CaptionML=[ENU=Copy Comments Blanket to Order;
+                                                              ESM=Copiar coment. ped. abto a ped.;
+                                                              FRC=Copier comment.dans commande;
+                                                              ENC=Copy Comments Blanket to Order] }
+    { 27  ;   ;Copy Comments Order to Invoice;Boolean;
+                                                   InitValue=Yes;
+                                                   AccessByPermission=TableData 110=R;
+                                                   CaptionML=[ENU=Copy Comments Order to Invoice;
+                                                              ESM=Copiar coment. pedido a factura;
+                                                              FRC=Copier comment.dans facture;
+                                                              ENC=Copy Comments Order to Invoice] }
+    { 28  ;   ;Copy Comments Order to Shpt.;Boolean;
+                                                   InitValue=Yes;
+                                                   AccessByPermission=TableData 110=R;
+                                                   CaptionML=[ENU=Copy Comments Order to Shpt.;
+                                                              ESM=Copiar coment. ped. a rem. venta;
+                                                              FRC=Copier comm. ds bon livraison;
+                                                              ENC=Copy Comments Order to Shpt.] }
+    { 29  ;   ;Allow VAT Difference;Boolean       ;CaptionML=[ENU=Allow Tax Difference;
+                                                              ESM=Permitir diferen. IVA;
+                                                              FRC=Autoriser diff‚rence TVA;
+                                                              ENC=Allow Tax Difference] }
+    { 30  ;   ;Calc. Inv. Disc. per VAT ID;Boolean;CaptionML=[ENU=Calc. Inv. Disc. per VAT ID;
+                                                              ESM=Calc. dto. fra. por ID IVA;
+                                                              FRC=Calc. remise fact. par ID TVA;
+                                                              ENC=Calc. Inv. Disc. per VAT ID] }
+    { 31  ;   ;Logo Position on Documents;Option  ;CaptionML=[ENU=Logo Position on Documents;
+                                                              ESM=Posici¢n logo documentos;
+                                                              FRC=Position du logo sur les documents;
+                                                              ENC=Logo Position on Documents];
+                                                   OptionCaptionML=[ENU=No Logo,Left,Center,Right;
+                                                                    ESM=Sin logo,Izquierda,Centro,Derecha;
+                                                                    FRC=Aucun logo,Gauche,Centre,Droite;
+                                                                    ENC=No Logo,Left,Centre,Right];
+                                                   OptionString=No Logo,Left,Center,Right }
+    { 32  ;   ;Check Prepmt. when Posting;Boolean ;CaptionML=[ENU=Check Prepmt. when Posting;
+                                                              ESM=Comprobar anticipo al registrar;
+                                                              FRC=V‚rifier paiement anticip‚ au report;
+                                                              ENC=Check Prepmt. when Posting] }
+    { 35  ;   ;Default Posting Date;Option        ;CaptionML=[ENU=Default Posting Date;
+                                                              ESM=Fecha registro predeterminada;
+                                                              FRC=Date de report par d‚faut;
+                                                              ENC=Default Posting Date];
+                                                   OptionCaptionML=[ENU=Work Date,No Date;
+                                                                    ESM=Fecha de trabajo,Sin fecha;
+                                                                    FRC=Date de travail,Aucune date;
+                                                                    ENC=Work Date,No Date];
+                                                   OptionString=Work Date,No Date }
+    { 36  ;   ;Default Quantity to Ship;Option    ;AccessByPermission=TableData 110=R;
+                                                   CaptionML=[ENU=Default Quantity to Ship;
+                                                              ESM=Cantidad predeterminada para enviar;
+                                                              FRC=Qt‚ … livrer par d‚faut;
+                                                              ENC=Default Quantity to Ship];
+                                                   OptionCaptionML=[ENU=Remainder,Blank;
+                                                                    ESM=Restante,En blanco;
+                                                                    FRC=Solde,Vide;
+                                                                    ENC=Remainder,Blank];
+                                                   OptionString=Remainder,Blank }
+    { 37  ;   ;Archive Quotes and Orders;Boolean  ;CaptionML=[ENU=Archive Quotes and Orders;
+                                                              ESM=Archivar cotizaciones y pedidos;
+                                                              FRC=Archiver devis et commandes;
+                                                              ENC=Archive Quotes and Orders] }
+    { 38  ;   ;Post with Job Queue ;Boolean       ;CaptionML=[ENU=Post with Job Queue;
+                                                              ESM=Registrar con cola de proyectos;
+                                                              FRC=Reporter avec la file d'attente des travaux;
+                                                              ENC=Post with Job Queue] }
+    { 39  ;   ;Job Queue Category Code;Code10     ;TableRelation="Job Queue Category";
+                                                   CaptionML=[ENU=Job Queue Category Code;
+                                                              ESM=C¢d. categor¡a cola proyectos;
+                                                              FRC=Code cat‚gorie de la file d'attente des travaux;
+                                                              ENC=Job Queue Category Code] }
+    { 40  ;   ;Job Queue Priority for Post;Integer;InitValue=1000;
+                                                   OnValidate=BEGIN
+                                                                IF "Job Queue Priority for Post" < 0 THEN
+                                                                  ERROR(Text001);
+                                                              END;
+
+                                                   CaptionML=[ENU=Job Queue Priority for Post;
+                                                              ESM=Prioridad cola proyectos para registro;
+                                                              FRC=Priorit‚ de la file d'attente des travaux pour report;
+                                                              ENC=Job Queue Priority for Post];
+                                                   MinValue=0 }
+    { 41  ;   ;Post & Print with Job Queue;Boolean;CaptionML=[ENU=Post & Print with Job Queue;
+                                                              ESM=Registrar e imprimir con cola de proyectos;
+                                                              FRC=Reporter et imprimer avec la file d'attente des travaux;
+                                                              ENC=Post & Print with Job Queue] }
+    { 42  ;   ;Job Q. Prio. for Post & Print;Integer;
+                                                   InitValue=1000;
+                                                   OnValidate=BEGIN
+                                                                IF "Job Queue Priority for Post" < 0 THEN
+                                                                  ERROR(Text001);
+                                                              END;
+
+                                                   CaptionML=[ENU=Job Q. Prio. for Post & Print;
+                                                              ESM=Prio. cola proyectos para registro e impresi¢n;
+                                                              FRC=Priorit‚ de la file d'attente des travaux pour report et impression;
+                                                              ENC=Job Q. Prio. for Post & Print];
+                                                   MinValue=0 }
+    { 43  ;   ;Notify On Success   ;Boolean       ;CaptionML=[ENU=Notify On Success;
+                                                              ESM=Notificar operaci¢n correcta;
+                                                              FRC=Notification si r‚ussite;
+                                                              ENC=Notify On Success] }
+    { 44  ;   ;VAT Bus. Posting Gr. (Price);Code10;TableRelation="VAT Business Posting Group";
+                                                   CaptionML=[ENU=Tax Bus. Posting Gr. (Price);
+                                                              ESM=Gr.regis. IVA negocio (precio);
+                                                              FRC=Gpe compta. march‚ TVA (prix);
+                                                              ENC=Tax Bus. Posting Gr. (Price)] }
+    { 45  ;   ;Direct Debit Mandate Nos.;Code10   ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Direct Debit Mandate Nos.;
+                                                              ESM=N§ de ¢rdenes de domiciliaci¢n de adeudo directo;
+                                                              FRC=Nø de mandats de pr‚lŠvement;
+                                                              ENC=Direct Debit Mandate Nos.] }
+    { 5800;   ;Posted Return Receipt Nos.;Code10  ;TableRelation="No. Series";
+                                                   AccessByPermission=TableData 6660=R;
+                                                   CaptionML=[ENU=Posted Return Receipt Nos.;
+                                                              ESM=N§ serie recep. devol. regis.;
+                                                              FRC=Nø r‚cept. retour report‚e;
+                                                              ENC=Posted Return Receipt Nos.] }
+    { 5801;   ;Copy Cmts Ret.Ord. to Ret.Rcpt;Boolean;
+                                                   InitValue=Yes;
+                                                   AccessByPermission=TableData 6660=R;
+                                                   CaptionML=[ENU=Copy Cmts Ret.Ord. to Ret.Rcpt;
+                                                              ESM=Copiar coment. dev. a recep. dev.;
+                                                              FRC=Cop. com. ret. … r‚cep. retour;
+                                                              ENC=Copy Cmts Ret.Ord. to Ret.Rcpt] }
+    { 5802;   ;Copy Cmts Ret.Ord. to Cr. Memo;Boolean;
+                                                   InitValue=Yes;
+                                                   AccessByPermission=TableData 6660=R;
+                                                   CaptionML=[ENU=Copy Cmts Ret.Ord. to Cr. Memo;
+                                                              ESM=Copiar coment. dev. a nota cr‚dito;
+                                                              FRC=Copier com. ret. … note cr‚dit;
+                                                              ENC=Copy Cmts Ret.Ord. to Cr. Memo] }
+    { 6600;   ;Return Order Nos.   ;Code10        ;TableRelation="No. Series";
+                                                   AccessByPermission=TableData 6660=R;
+                                                   CaptionML=[ENU=Return Order Nos.;
+                                                              ESM=N§ serie devoluci¢n;
+                                                              FRC=Nø retour;
+                                                              ENC=Return Order Nos.] }
+    { 6601;   ;Return Receipt on Credit Memo;Boolean;
+                                                   AccessByPermission=TableData 6660=R;
+                                                   CaptionML=[ENU=Return Receipt on Credit Memo;
+                                                              ESM=Recep. dev. en nota cr‚dito;
+                                                              FRC=R‚cept. retour sur note cr‚dit;
+                                                              ENC=Return Receipt on Credit Memo] }
+    { 6602;   ;Exact Cost Reversing Mandatory;Boolean;
+                                                   CaptionML=[ENU=Exact Cost Reversing Mandatory;
+                                                              ESM=Costo exacto devol. obligatorio;
+                                                              FRC=Co–t retour identique oblig.;
+                                                              ENC=Exact Cost Reversing Mandatory] }
+    { 7101;   ;Customer Group Dimension Code;Code20;
+                                                   TableRelation=Dimension;
+                                                   CaptionML=[ENU=Customer Group Dimension Code;
+                                                              ESM=C¢d. dimensi¢n grupo clientes;
+                                                              FRC=Code de dimension groupe clients;
+                                                              ENC=Customer Group Dimension Code] }
+    { 7102;   ;Salesperson Dimension Code;Code20  ;TableRelation=Dimension;
+                                                   CaptionML=[ENU=Salesperson Dimension Code;
+                                                              ESM=C¢d. dimensi¢n vendedor;
+                                                              FRC=Code de dimension repr‚sentant;
+                                                              ENC=Salesperson Dimension Code] }
+    { 10000;  ;G/L Freight Account No.;Code20     ;TableRelation="G/L Account";
+                                                   CaptionML=[ENU=G/L Freight Account No.;
+                                                              ESM=N§ cuenta de fletes;
+                                                              FRC=Nø de compte transport GL;
+                                                              ENC=G/L Freight Account No.] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text001@1000 : TextConst 'ENU=Job Queue Priority must be zero or positive.;ESM=La prioridad de la cola de proyecto debe ser cero o positiva.;FRC=La priorit‚ de la file d''attente des travaux doit ˆtre nulle ou positive.;ENC=Job Queue Priority must be zero or positive.';
+
+    PROCEDURE GetLegalStatement@11() : Text;
+    BEGIN
+      EXIT('');
+    END;
+
+    PROCEDURE JobQueueActive@1() : Boolean;
+    BEGIN
+      GET;
+      EXIT("Post with Job Queue" OR "Post & Print with Job Queue");
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,72 @@
+OBJECT Table 307 Inventory Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/05/08;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Inventory Buffer;
+               ESM=Mem. int. cdad. dispon.;
+               FRC=Tampon inventaire;
+               ENC=Inventory Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Item No.            ;Code20        ;TableRelation=Item;
+                                                   CaptionML=[ENU=Item No.;
+                                                              ESM=N§ producto;
+                                                              FRC=Nø d'article;
+                                                              ENC=Item No.] }
+    { 4   ;   ;Location Code       ;Code10        ;TableRelation=Location;
+                                                   CaptionML=[ENU=Location Code;
+                                                              ESM=C¢d. almac‚n;
+                                                              FRC=Code d'emplacement;
+                                                              ENC=Location Code] }
+    { 5   ;   ;Quantity            ;Decimal       ;CaptionML=[ENU=Quantity;
+                                                              ESM=Cantidad;
+                                                              FRC=Quantit‚;
+                                                              ENC=Quantity];
+                                                   DecimalPlaces=0:5 }
+    { 6   ;   ;Dimension Entry No. ;Integer       ;CaptionML=[ENU=Dimension Entry No.;
+                                                              ESM=N§ mov. dimensi¢n;
+                                                              FRC=Nø d'‚criture de dimension;
+                                                              ENC=Dimension Entry No.] }
+    { 5400;   ;Variant Code        ;Code10        ;TableRelation="Item Variant".Code WHERE (Item No.=FIELD(Item No.));
+                                                   CaptionML=[ENU=Variant Code;
+                                                              ESM=C¢d. variante;
+                                                              FRC=Code variante;
+                                                              ENC=Variant Code] }
+    { 5401;   ;Bin Code            ;Code20        ;TableRelation=Bin.Code WHERE (Location Code=FIELD(Location Code));
+                                                   CaptionML=[ENU=Bin Code;
+                                                              ESM=C¢d. ubicaci¢n;
+                                                              FRC=Code de zone;
+                                                              ENC=Bin Code] }
+    { 6500;   ;Serial No.          ;Code20        ;CaptionML=[ENU=Serial No.;
+                                                              ESM=N§ serie;
+                                                              FRC=Nø de s‚rie;
+                                                              ENC=Serial No.] }
+    { 6501;   ;Lot No.             ;Code20        ;CaptionML=[ENU=Lot No.;
+                                                              ESM=N§ lote;
+                                                              FRC=Nø de lot;
+                                                              ENC=Lot No.] }
+  }
+  KEYS
+  {
+    {    ;Item No.,Variant Code,Dimension Entry No.,Location Code,Bin Code,Lot No.,Serial No.;
+                                                   Clustered=Yes }
+    {    ;Location Code,Variant Code,Quantity     ;SumIndexFields=Quantity }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

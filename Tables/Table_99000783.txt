@@ -1,0 +1,47 @@
+OBJECT Table 99000783 Standard Task Description
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/05/08;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Standard Task Description;
+               ESM=Descripci¢n tarea est ndar;
+               FRC=Description tƒche standard;
+               ENC=Standard Task Description];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Standard Task Code  ;Code10        ;TableRelation="Standard Task";
+                                                   CaptionML=[ENU=Standard Task Code;
+                                                              ESM=C¢d. tarea est ndar;
+                                                              FRC=Code tƒche standard;
+                                                              ENC=Standard Task Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Line No.            ;Integer       ;CaptionML=[ENU=Line No.;
+                                                              ESM=N§ l¡nea;
+                                                              FRC=Nø ligne;
+                                                              ENC=Line No.] }
+    { 10  ;   ;Text                ;Text50        ;CaptionML=[ENU=Text;
+                                                              ESM=Texto;
+                                                              FRC=Texte;
+                                                              ENC=Text] }
+  }
+  KEYS
+  {
+    {    ;Standard Task Code,Line No.             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

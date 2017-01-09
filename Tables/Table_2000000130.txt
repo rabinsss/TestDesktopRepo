@@ -1,0 +1,55 @@
+OBJECT Table 2000000130 Device
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Device;
+               ESM=Dispositivo;
+               FRC=P‚riph‚rique;
+               ENC=Device];
+  }
+  FIELDS
+  {
+    { 1   ;   ;MAC Address         ;Code20        ;CaptionML=[ENU=MAC Address;
+                                                              ESM=Direcci¢n MAC;
+                                                              FRC=Adresse MAC;
+                                                              ENC=MAC Address] }
+    { 2   ;   ;Name                ;Text80        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+    { 3   ;   ;Device Type         ;Option        ;CaptionML=[ENU=Device Type;
+                                                              ESM=Tipo de dispositivo;
+                                                              FRC=Type p‚riph‚rique;
+                                                              ENC=Device Type];
+                                                   OptionCaptionML=[ENU=Full,Limited,ISV,ISV Functional;
+                                                                    ESM=Completo,Limitado,ISV,ISV funcional;
+                                                                    FRC=Complet,Limit‚,ISV,ISV Fonctionnel;
+                                                                    ENC=Full,Limited,ISV,ISV Functional];
+                                                   OptionString=Full,Limited,ISV,ISV Functional }
+    { 4   ;   ;Enabled             ;Boolean       ;CaptionML=[ENU=Enabled;
+                                                              ESM=Activado;
+                                                              FRC=Activ‚;
+                                                              ENC=Enabled] }
+  }
+  KEYS
+  {
+    {    ;MAC Address                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

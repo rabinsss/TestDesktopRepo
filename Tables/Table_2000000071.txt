@@ -1,0 +1,81 @@
+OBJECT Table 2000000071 Object Metadata
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Object Metadata;
+               ESM=Metadatos de objeto;
+               FRC=M‚tadonn‚es d'objet;
+               ENC=Object Metadata];
+  }
+  FIELDS
+  {
+    { 3   ;   ;Object Type         ;Option        ;CaptionML=[ENU=Object Type;
+                                                              ESM=Tipo objeto;
+                                                              FRC=Type d'objet;
+                                                              ENC=Object Type];
+                                                   OptionCaptionML=[ENU=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber;
+                                                                    ESM=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber;
+                                                                    FRC=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber;
+                                                                    ENC=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber];
+                                                   OptionString=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber }
+    { 6   ;   ;Object ID           ;Integer       ;TableRelation=Object.ID WHERE (Type=FIELD(Object Type));
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Object ID;
+                                                              ESM=Id. objeto;
+                                                              FRC=Code d'objet;
+                                                              ENC=Object ID] }
+    { 9   ;   ;Metadata            ;BLOB          ;Volatile=Yes;
+                                                   CaptionML=[ENU=Metadata;
+                                                              ESM=Metadatos;
+                                                              FRC=M‚tadonn‚es;
+                                                              ENC=Metadata] }
+    { 15  ;   ;User Code           ;BLOB          ;Volatile=Yes;
+                                                   CaptionML=[ENU=User Code;
+                                                              ESM=C¢digo usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User Code] }
+    { 18  ;   ;User AL Code        ;BLOB          ;Volatile=Yes;
+                                                   CaptionML=[ENU=User AL Code;
+                                                              ESM=C¢digo AL del usuario;
+                                                              FRC=Code AL utilisateur;
+                                                              ENC=User AL Code] }
+    { 27  ;   ;Metadata Version    ;Integer       ;Volatile=Yes;
+                                                   CaptionML=[ENU=Metadata Version;
+                                                              ESM=Versi¢n de metadatos;
+                                                              FRC=Version des m‚tadonn‚es;
+                                                              ENC=Metadata Version] }
+    { 30  ;   ;Hash                ;Text32        ;CaptionML=[ENU=Hash;
+                                                              ESM=Hash;
+                                                              FRC=Hachage;
+                                                              ENC=Hash] }
+    { 33  ;   ;Object Subtype      ;Text30        ;CaptionML=[ENU=Object Subtype;
+                                                              ESM=Subtipo de objeto;
+                                                              FRC=Sous-type objet;
+                                                              ENC=Object Subtype] }
+    { 34  ;   ;Has Subscribers     ;Boolean       ;CaptionML=[ENU=Has Subscribers;
+                                                              ESM=Con suscriptores;
+                                                              FRC=A des souscripteurs;
+                                                              ENC=Has Subscribers] }
+  }
+  KEYS
+  {
+    {    ;Object Type,Object ID                   ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

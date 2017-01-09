@@ -1,0 +1,74 @@
+OBJECT Table 2000000079 Object Tracking
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Object Tracking;
+               ESM=Seguimiento de objetos;
+               FRC=Suivi de l'objet;
+               ENC=Object Tracking];
+  }
+  FIELDS
+  {
+    { 3   ;   ;Object Type         ;Option        ;CaptionML=[ENU=Object Type;
+                                                              ESM=Tipo objeto;
+                                                              FRC=Type d'objet;
+                                                              ENC=Object Type];
+                                                   OptionCaptionML=[ENU=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber;
+                                                                    ESM=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber;
+                                                                    FRC=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber;
+                                                                    ENC=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber];
+                                                   OptionString=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber }
+    { 6   ;   ;Object ID           ;Integer       ;TableRelation="Object Metadata"."Object ID" WHERE (Object Type=FIELD(Object Type));
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Object ID;
+                                                              ESM=Id. objeto;
+                                                              FRC=Code d'objet;
+                                                              ENC=Object ID] }
+    { 8   ;   ;Change Type         ;Option        ;CaptionML=[ENU=Change Type;
+                                                              ESM=Tipo de cambio;
+                                                              FRC=Modifier le type;
+                                                              ENC=Change Type];
+                                                   OptionCaptionML=[ENU=Metadata,Breakpoints,ClientAddIn;
+                                                                    ESM=Metadatos,Puntos interrupci¢n,ClientAddIn;
+                                                                    FRC=M‚tadonn‚es,Points d'arrˆt,ClientAddIn;
+                                                                    ENC=Metadata,Breakpoints,ClientAddIn];
+                                                   OptionString=Metadata,Breakpoints,ClientAddIn }
+    { 12  ;   ;Object Timestamp    ;BigInteger    ;Volatile=Yes;
+                                                   CaptionML=[ENU=Object Timestamp;
+                                                              ESM=Marca de hora del objeto;
+                                                              FRC=Horodateur de l'objet;
+                                                              ENC=Object Timestamp] }
+    { 15  ;   ;App Package ID      ;GUID          ;CaptionML=[ENU=App Package ID;
+                                                              ESM=Id. de paquete de aplicaci¢n;
+                                                              FRC=Code package appli;
+                                                              ENC=App Package ID] }
+    { 18  ;   ;Tenant ID           ;Text128       ;CaptionML=[ENU=Tenant ID;
+                                                              ESM=Id. de inquilino;
+                                                              FRC=Code abonn‚;
+                                                              ENC=Tenant ID] }
+  }
+  KEYS
+  {
+    {    ;Object Type,Object ID,Change Type,App Package ID,Tenant ID;
+                                                   Clustered=Yes }
+    {    ;Object Timestamp                         }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

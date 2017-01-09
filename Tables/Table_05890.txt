@@ -1,0 +1,54 @@
+OBJECT Table 5890 Error Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Error Buffer;
+               ESM=Error almacenaje;
+               FRC=Tampon erreur;
+               ENC=Error Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Error No.           ;Integer       ;CaptionML=[ENU=Error No.;
+                                                              ESM=N§ de error;
+                                                              FRC=Nø de l'erreur;
+                                                              ENC=Error No.] }
+    { 2   ;   ;Error Text          ;Text250       ;CaptionML=[ENU=Error Text;
+                                                              ESM=Texto error;
+                                                              FRC=Texte d'erreur;
+                                                              ENC=Error Text] }
+    { 3   ;   ;Source Table        ;Integer       ;CaptionML=[ENU=Source Table;
+                                                              ESM=Tabla origen;
+                                                              FRC=Table source;
+                                                              ENC=Source Table] }
+    { 4   ;   ;Source No.          ;Code20        ;CaptionML=[ENU=Source No.;
+                                                              ESM=C¢d. procedencia mov.;
+                                                              FRC=Nø origine;
+                                                              ENC=Source No.] }
+    { 5   ;   ;Source Ref. No.     ;Integer       ;CaptionML=[ENU=Source Ref. No.;
+                                                              ESM=N§ ref. origen;
+                                                              FRC=Nø de r‚f‚rence source;
+                                                              ENC=Source Ref. No.] }
+  }
+  KEYS
+  {
+    {    ;Error No.                               ;Clustered=Yes }
+    {    ;Source Table,Source No.,Source Ref. No.  }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

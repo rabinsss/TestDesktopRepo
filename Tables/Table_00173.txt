@@ -1,0 +1,91 @@
+OBJECT Table 173 Standard Purchase Code
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Code,Description;
+    OnDelete=BEGIN
+               StdPurchLine.RESET;
+               StdPurchLine.SETRANGE("Standard Purchase Code",Code);
+               StdPurchLine.DELETEALL(TRUE);
+             END;
+
+    CaptionML=[ENU=Standard Purchase Code;
+               ESM=C¢digo compras est ndar;
+               FRC=Code d'achat standard;
+               ENC=Standard Purchase Code];
+    PasteIsValid=No;
+    LookupPageID=Page177;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 3   ;   ;Currency Code       ;Code10        ;TableRelation=Currency;
+                                                   OnValidate=VAR
+                                                                Currency@1000 : Record 4;
+                                                                Currency2@1001 : Record 4;
+                                                              BEGIN
+                                                                IF NOT Currency.GET("Currency Code") THEN
+                                                                  Currency.InitRoundingPrecision;
+                                                                IF NOT Currency2.GET(xRec."Currency Code") THEN
+                                                                  Currency2.InitRoundingPrecision;
+
+                                                                IF Currency."Amount Rounding Precision" <> Currency2."Amount Rounding Precision" THEN BEGIN
+                                                                  StdPurchLine.RESET;
+                                                                  StdPurchLine.SETRANGE("Standard Purchase Code",Code);
+                                                                  StdPurchLine.SETRANGE(Type,StdPurchLine.Type::"G/L Account");
+                                                                  StdPurchLine.SETFILTER("Amount Excl. VAT",'<>%1',0);
+                                                                  IF StdPurchLine.FIND('-') THEN BEGIN
+                                                                    IF NOT CONFIRM(
+                                                                         STRSUBSTNO(
+                                                                           Text001,FIELDCAPTION("Currency Code"),StdPurchLine.FIELDCAPTION("Amount Excl. VAT"),
+                                                                           FIELDCAPTION("Currency Code")),TRUE)
+                                                                    THEN
+                                                                      ERROR(Text002);
+                                                                    REPEAT
+                                                                      StdPurchLine."Amount Excl. VAT" :=
+                                                                        ROUND(StdPurchLine."Amount Excl. VAT",Currency."Amount Rounding Precision");
+                                                                      StdPurchLine.MODIFY;
+                                                                    UNTIL StdPurchLine.NEXT = 0;
+                                                                  END;
+                                                                END;
+                                                                // MODIFY;
+                                                              END;
+
+                                                   CaptionML=[ENU=Currency Code;
+                                                              ESM=C¢d. divisa;
+                                                              FRC=Code devise;
+                                                              ENC=Currency Code] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      StdPurchLine@1000 : Record 174;
+      Text001@1003 : TextConst 'ENU=If you change the %1, the %2 will be rounded according to the new %3.;ESM=Si cambia el %1, el %2 ser  redondeado con el nuevo %3.;FRC=Si vous modifiez le %1, le %2 sera arrondi d''aprŠs le nouveau %3.;ENC=If you change the %1, the %2 will be rounded according to the new %3.';
+      Text002@1002 : TextConst 'ENU=The update has been interrupted to respect the warning.;ESM=Se ha interrumpido la actualizaci¢n para respetar la advertencia.;FRC=La mise … jour a ‚t‚ interrompue pour respecter l''avertissement.;ENC=The update has been interrupted to respect the warning.';
+
+    BEGIN
+    END.
+  }
+}
+

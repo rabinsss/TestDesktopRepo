@@ -1,0 +1,64 @@
+OBJECT Table 1020 Job Usage Link
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Job Usage Link;
+               ESM=V¡nculo uso proyecto;
+               FRC=Lien utilisation projet;
+               ENC=Job Usage Link];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Job No.             ;Code20        ;TableRelation="Job Planning Line"."Job No.";
+                                                   CaptionML=[ENU=Job No.;
+                                                              ESM=N§ proyecto;
+                                                              FRC=Nø projet;
+                                                              ENC=Job No.] }
+    { 2   ;   ;Job Task No.        ;Code20        ;TableRelation="Job Planning Line"."Job Task No.";
+                                                   CaptionML=[ENU=Job Task No.;
+                                                              ESM=N§ tarea proyecto;
+                                                              FRC=Nø tƒche de projet;
+                                                              ENC=Job Task No.] }
+    { 3   ;   ;Line No.            ;Integer       ;TableRelation="Job Planning Line"."Line No.";
+                                                   CaptionML=[ENU=Line No.;
+                                                              ESM=N§ l¡nea;
+                                                              FRC=Nø ligne;
+                                                              ENC=Line No.] }
+    { 4   ;   ;Entry No.           ;Integer       ;CaptionML=[ENU=Entry No.;
+                                                              ESM=N§ mov.;
+                                                              FRC=Nø ‚criture;
+                                                              ENC=Entry No.] }
+  }
+  KEYS
+  {
+    {    ;Job No.,Job Task No.,Line No.,Entry No. ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE Create@1(JobPlanningLine@1000 : Record 1003;JobLedgerEntry@1001 : Record 169);
+    BEGIN
+      IF GET(JobPlanningLine."Job No.",JobPlanningLine."Job Task No.",JobPlanningLine."Line No.",JobLedgerEntry."Entry No.") THEN
+        EXIT;
+
+      VALIDATE("Job No.",JobPlanningLine."Job No.");
+      VALIDATE("Job Task No.",JobPlanningLine."Job Task No.");
+      VALIDATE("Line No.",JobPlanningLine."Line No.");
+      VALIDATE("Entry No.",JobLedgerEntry."Entry No.");
+      INSERT(TRUE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

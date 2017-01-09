@@ -1,0 +1,132 @@
+OBJECT Table 5416 Prod. Order Comp. Cmt Line
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               IF Status = Status::Finished THEN
+                 ERROR(Text000,Status,TABLECAPTION);
+             END;
+
+    OnModify=BEGIN
+               IF Status = Status::Finished THEN
+                 ERROR(Text000,Status,TABLECAPTION);
+             END;
+
+    OnDelete=BEGIN
+               IF Status = Status::Finished THEN
+                 ERROR(Text000,Status,TABLECAPTION);
+             END;
+
+    CaptionML=[ENU=Prod. Order Comp. Cmt Line;
+               ESM=L°n. comt. comp. orden prod.;
+               FRC=Ligne com. composante bon de production;
+               ENC=Prod. Order Comp. Cmt Line];
+    LookupPageID=Page99000843;
+    DrillDownPageID=Page99000843;
+  }
+  FIELDS
+  {
+    { 2   ;   ;Prod. Order BOM Line No.;Integer   ;TableRelation="Prod. Order Component"."Line No." WHERE (Status=FIELD(Status),
+                                                                                                           Prod. Order No.=FIELD(Prod. Order No.),
+                                                                                                           Prod. Order Line No.=FIELD(Prod. Order Line No.));
+                                                   CaptionML=[ENU=Prod. Order BOM Line No.;
+                                                              ESM=Nß l°n. L.M. ord. prod.;
+                                                              FRC=Nß ligne nomencl. bon prod.;
+                                                              ENC=Prod. Order BOM Line No.];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Line No.            ;Integer       ;CaptionML=[ENU=Line No.;
+                                                              ESM=Nß l°nea;
+                                                              FRC=N¯ ligne;
+                                                              ENC=Line No.] }
+    { 10  ;   ;Date                ;Date          ;CaptionML=[ENU=Date;
+                                                              ESM=Fecha;
+                                                              FRC=Date;
+                                                              ENC=Date] }
+    { 12  ;   ;Comment             ;Text80        ;CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment] }
+    { 13  ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code] }
+    { 22  ;   ;Status              ;Option        ;CaptionML=[ENU=Status;
+                                                              ESM=Estado;
+                                                              FRC=êtat;
+                                                              ENC=Status];
+                                                   OptionCaptionML=[ENU=Simulated,Planned,Firm Planned,Released,Finished;
+                                                                    ESM=Simulada,Planificada,Planif. en firme,Lanzada,Terminada;
+                                                                    FRC=SimulÇ,PlanifiÇ,PlanifiÇ ferme,LibÇrÇ,AchevÇ;
+                                                                    ENC=Simulated,Planned,Firm Planned,Released,Finished];
+                                                   OptionString=Simulated,Planned,Firm Planned,Released,Finished }
+    { 23  ;   ;Prod. Order No.     ;Code20        ;TableRelation="Production Order".No. WHERE (Status=FIELD(Status));
+                                                   CaptionML=[ENU=Prod. Order No.;
+                                                              ESM=Nß orden producci¢n;
+                                                              FRC=N¯ bon de prod.;
+                                                              ENC=Prod. Order No.];
+                                                   NotBlank=Yes }
+    { 24  ;   ;Prod. Order Line No.;Integer       ;TableRelation="Prod. Order Line"."Line No." WHERE (Status=FIELD(Status),
+                                                                                                      Prod. Order No.=FIELD(Prod. Order No.));
+                                                   CaptionML=[ENU=Prod. Order Line No.;
+                                                              ESM=Nß l°n. orden producc.;
+                                                              FRC=N¯ ligne bon prod.;
+                                                              ENC=Prod. Order Line No.];
+                                                   NotBlank=Yes }
+  }
+  KEYS
+  {
+    {    ;Status,Prod. Order No.,Prod. Order Line No.,Prod. Order BOM Line No.,Line No.;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=A %1 %2 cannot be inserted, modified, or deleted.;ESM=Un %1 %2 no se puede insertar, modificar o eliminar.;FRC=Un enregistrement %2 %1 ne peut pas àtre insÇrÇ, modifiÇ ou supprimÇ.;ENC=A %1 %2 cannot be inserted, modified, or deleted.';
+
+    PROCEDURE SetupNewLine@1();
+    VAR
+      ProdOrderBOMComment@1000 : Record 5416;
+    BEGIN
+      ProdOrderBOMComment.SETRANGE(Status,Status);
+      ProdOrderBOMComment.SETRANGE("Prod. Order No.","Prod. Order No.");
+      ProdOrderBOMComment.SETRANGE("Prod. Order Line No.","Prod. Order Line No.");
+      ProdOrderBOMComment.SETRANGE(
+        "Prod. Order BOM Line No.","Prod. Order BOM Line No.");
+      ProdOrderBOMComment.SETRANGE(Date,WORKDATE);
+      IF NOT ProdOrderBOMComment.FINDFIRST THEN
+        Date := WORKDATE;
+    END;
+
+    PROCEDURE Caption@2() : Text;
+    VAR
+      ProdOrder@1000 : Record 5405;
+      ProdOrderComp@1001 : Record 5407;
+    BEGIN
+      IF GETFILTERS = '' THEN
+        EXIT('');
+
+      IF NOT ProdOrder.GET(Status,"Prod. Order No.") THEN
+        EXIT('');
+
+      IF NOT ProdOrderComp.GET(Status,"Prod. Order No.","Prod. Order Line No.","Prod. Order BOM Line No.") THEN
+        CLEAR(ProdOrderComp);
+
+      EXIT(
+        STRSUBSTNO('%1 %2 %3 %4 %5',
+          Status,"Prod. Order No.",ProdOrder.Description,ProdOrderComp."Item No.",ProdOrderComp.Description));
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

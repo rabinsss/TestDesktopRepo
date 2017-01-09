@@ -1,0 +1,84 @@
+OBJECT Table 412 IC Dimension Value
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               ICDimension.GET("Dimension Code");
+               "Map-to Dimension Code" := ICDimension."Map-to Dimension Code";
+             END;
+
+    CaptionML=[ENU=IC Dimension Value;
+               ESM=Valor de dimensi¢n IC;
+               FRC=Valeur de dimension IC;
+               ENC=IC Dimension Value];
+    LookupPageID=Page603;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Dimension Code      ;Code20        ;TableRelation="IC Dimension";
+                                                   CaptionML=[ENU=Dimension Code;
+                                                              ESM=C¢d. dimensi¢n;
+                                                              FRC=Code de dimension;
+                                                              ENC=Dimension Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Code                ;Code20        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Name                ;Text50        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+    { 4   ;   ;Dimension Value Type;Option        ;AccessByPermission=TableData 348=R;
+                                                   CaptionML=[ENU=Dimension Value Type;
+                                                              ESM=Tipo valor dimensi¢n;
+                                                              FRC=Type de valeur de dimension;
+                                                              ENC=Dimension Value Type];
+                                                   OptionCaptionML=[ENU=Standard,Heading,Total,Begin-Total,End-Total;
+                                                                    ESM=Est ndar,Principal,Total,Principio-Total,Fin-Total;
+                                                                    FRC=Standard,En-tˆte,Total,D‚but-Total,Fin-Total;
+                                                                    ENC=Standard,Heading,Total,Begin-Total,End-Total];
+                                                   OptionString=Standard,Heading,Total,Begin-Total,End-Total }
+    { 5   ;   ;Blocked             ;Boolean       ;CaptionML=[ENU=Blocked;
+                                                              ESM=Bloqueado;
+                                                              FRC=Bloqu‚;
+                                                              ENC=Blocked] }
+    { 6   ;   ;Map-to Dimension Code;Code20       ;TableRelation=Dimension.Code;
+                                                   CaptionML=[ENU=Map-to Dimension Code;
+                                                              ESM=C¢digo dimensi¢n de asignaci¢n;
+                                                              FRC=Code de dimension de correspondance;
+                                                              ENC=Map-to Dimension Code] }
+    { 7   ;   ;Map-to Dimension Value Code;Code20 ;TableRelation="Dimension Value".Code WHERE (Dimension Code=FIELD(Map-to Dimension Code));
+                                                   CaptionML=[ENU=Map-to Dimension Value Code;
+                                                              ESM=C¢digo valor dimens. asig.;
+                                                              FRC=Code valeur dimension correspondance;
+                                                              ENC=Map-to Dimension Value Code] }
+    { 8   ;   ;Indentation         ;Integer       ;CaptionML=[ENU=Indentation;
+                                                              ESM=Indentar;
+                                                              FRC=Indentation;
+                                                              ENC=Indentation] }
+  }
+  KEYS
+  {
+    {    ;Dimension Code,Code                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      ICDimension@1000 : Record 411;
+
+    BEGIN
+    END.
+  }
+}
+

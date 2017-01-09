@@ -1,0 +1,92 @@
+OBJECT Table 2000000111 Session Event
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Session Event;
+               ESM=Evento de sesi¢n;
+               FRC=êvÇnement de session;
+               ENC=Session Event];
+  }
+  FIELDS
+  {
+    { 1   ;   ;User SID            ;GUID          ;TableRelation=User."User Security ID";
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User SID;
+                                                              ESM=SID usuario;
+                                                              FRC=SID utilisateur;
+                                                              ENC=User SID] }
+    { 2   ;   ;Server Instance ID  ;Integer       ;TableRelation="Server Instance"."Server Instance ID";
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Server Instance ID;
+                                                              ESM=Id. instancia de servidor;
+                                                              FRC=Code instance de serveur;
+                                                              ENC=Server Instance ID] }
+    { 3   ;   ;Session ID          ;Integer       ;CaptionML=[ENU=Session ID;
+                                                              ESM=Id. sesi¢n;
+                                                              FRC=Code session;
+                                                              ENC=Session ID] }
+    { 4   ;   ;Event Type          ;Option        ;CaptionML=[ENU=Event Type;
+                                                              ESM=Tipo evento;
+                                                              FRC=Type d'ÇvÇnement;
+                                                              ENC=Event Type];
+                                                   OptionCaptionML=[ENU=Logon,Logoff,Start,Stop,Close;
+                                                                    ESM=Inicio sesi¢n,Fin sesi¢n,Iniciar,Detener,Cerrar;
+                                                                    FRC=Se connecter,Quitter,DÇmarrer,Arràter,Fermer;
+                                                                    ENC=Logon,Logoff,Start,Stop,Close];
+                                                   OptionString=Logon,Logoff,Start,Stop,Close }
+    { 5   ;   ;Event Datetime      ;DateTime      ;CaptionML=[ENU=Event Datetime;
+                                                              ESM=Valor DateTime evento;
+                                                              FRC=Date et heure de l'ÇvÇnement;
+                                                              ENC=Event Datetime] }
+    { 6   ;   ;Client Type         ;Option        ;CaptionML=[ENU=Client Type;
+                                                              ESM=Tipo cliente;
+                                                              FRC=Type de client;
+                                                              ENC=Client Type];
+                                                   OptionCaptionML=[ENU=Windows Client,SharePoint Client,Web Service,Client Service,NAS,Background,Management Client,Web Client,Unknown,Tablet,Phone,Desktop;
+                                                                    ESM=Cliente Windows,Cliente SharePoint,Servicio web,Servicio cliente,NAS,Segundo plano,Cliente admin.,Cliente web,Desconocido,Tableta,TelÇfono,Escritorio;
+                                                                    FRC=Client Windows,Client SharePoint,Service Web,Service client,NAS,Arriäre-plan,Gestion client,Client web,Inconnu,Tablette,TÇlÇphone,Bureau;
+                                                                    ENC=Windows Client,SharePoint Client,Web Service,Client Service,NAS,Background,Management Client,Web Client,Unknown,Tablet,Phone,Desktop];
+                                                   OptionString=Windows Client,SharePoint Client,Web Service,Client Service,NAS,Background,Management Client,Web Client,Unknown,Tablet,Phone,Desktop }
+    { 7   ;   ;Database Name       ;Text250       ;CaptionML=[ENU=Database Name;
+                                                              ESM=Nombre base de datos;
+                                                              FRC=Nom de la base de donnÇes;
+                                                              ENC=Database Name] }
+    { 8   ;   ;Client Computer Name;Text250       ;CaptionML=[ENU=Client Computer Name;
+                                                              ESM=Nombre equipo cliente;
+                                                              FRC=Nom de l'ordinateur client;
+                                                              ENC=Client Computer Name] }
+    { 9   ;   ;User ID             ;Text132       ;CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 10  ;   ;Comment             ;Text132       ;CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment] }
+  }
+  KEYS
+  {
+    {    ;User SID,Server Instance ID,Session ID,Event Datetime,Event Type;
+                                                   Clustered=Yes }
+    {    ;Event Datetime                           }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,316 @@
+OBJECT Table 10123 Posted Bank Rec. Header
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVNA7.00;
+  }
+  PROPERTIES
+  {
+    OnDelete=BEGIN
+               PostedBankRecDelete.RUN(Rec);
+             END;
+
+    CaptionML=[ENU=Posted Bank Rec. Header;
+               ESM=Cabecera conciliaci¢n reg.;
+               FRC=En-tˆte de rapp. bancaire report‚;
+               ENC=Posted Bank Rec. Header];
+    LookupPageID=Page10129;
+    DrillDownPageID=Page10129;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Bank Account No.    ;Code20        ;TableRelation="Bank Account";
+                                                   CaptionML=[ENU=Bank Account No.;
+                                                              ESM=C¢d. cuenta banco;
+                                                              FRC=Nø de compte bancaire;
+                                                              ENC=Bank Account No.];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Statement No.       ;Code20        ;CaptionML=[ENU=Statement No.;
+                                                              ESM=N§ estado de cta. banco;
+                                                              FRC=Nø de relev‚;
+                                                              ENC=Statement No.] }
+    { 3   ;   ;Statement Date      ;Date          ;CaptionML=[ENU=Statement Date;
+                                                              ESM=Fecha estado de cuenta banco;
+                                                              FRC=Date du relev‚;
+                                                              ENC=Statement Date] }
+    { 4   ;   ;Statement Balance   ;Decimal       ;CaptionML=[ENU=Statement Balance;
+                                                              ESM=Saldo estado de cta. banco;
+                                                              FRC=Solde du relev‚;
+                                                              ENC=Statement Balance] }
+    { 5   ;   ;G/L Balance (LCY)   ;Decimal       ;CaptionML=[ENU=G/L Balance ($);
+                                                              ESM=Saldo C/G ($);
+                                                              FRC=Solde de grand livre ($);
+                                                              ENC=G/L Balance ($)];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 6   ;   ;Positive Adjustments;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Posted Bank Rec. Line".Amount WHERE (Bank Account No.=FIELD(Bank Account No.),
+                                                                                                         Statement No.=FIELD(Statement No.),
+                                                                                                         Record Type=CONST(Adjustment),
+                                                                                                         Positive=CONST(Yes),
+                                                                                                         Account Type=CONST(Bank Account),
+                                                                                                         Account No.=FIELD(Bank Account No.)));
+                                                   CaptionML=[ENU=Positive Adjustments;
+                                                              ESM=Ajustes positivos;
+                                                              FRC=Ajustements positifs;
+                                                              ENC=Positive Adjustments] }
+    { 7   ;   ;Negative Adjustments;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Posted Bank Rec. Line".Amount WHERE (Bank Account No.=FIELD(Bank Account No.),
+                                                                                                         Statement No.=FIELD(Statement No.),
+                                                                                                         Record Type=CONST(Adjustment),
+                                                                                                         Positive=CONST(No),
+                                                                                                         Account Type=CONST(Bank Account),
+                                                                                                         Account No.=FIELD(Bank Account No.)));
+                                                   CaptionML=[ENU=Negative Adjustments;
+                                                              ESM=Ajustes negativos;
+                                                              FRC=Ajustements n‚gatifs;
+                                                              ENC=Negative Adjustments] }
+    { 8   ;   ;Outstanding Deposits;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Posted Bank Rec. Line".Amount WHERE (Bank Account No.=FIELD(Bank Account No.),
+                                                                                                         Statement No.=FIELD(Statement No.),
+                                                                                                         Record Type=CONST(Deposit),
+                                                                                                         Cleared=CONST(No)));
+                                                   CaptionML=[ENU=Outstanding Deposits;
+                                                              ESM=Dep¢sitos pendientes;
+                                                              FRC=D‚p“ts en suspens;
+                                                              ENC=Outstanding Deposits] }
+    { 9   ;   ;Outstanding Checks  ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Posted Bank Rec. Line".Amount WHERE (Bank Account No.=FIELD(Bank Account No.),
+                                                                                                         Statement No.=FIELD(Statement No.),
+                                                                                                         Record Type=CONST(Check),
+                                                                                                         Cleared=CONST(No)));
+                                                   CaptionML=[ENU=Outstanding Checks;
+                                                              ESM=Cheques pendientes;
+                                                              FRC=ChŠques en suspens;
+                                                              ENC=Outstanding Cheques] }
+    { 10  ;   ;Date Created        ;Date          ;CaptionML=[ENU=Date Created;
+                                                              ESM=Fecha creaci¢n;
+                                                              FRC=Date de cr‚ation;
+                                                              ENC=Date Created] }
+    { 11  ;   ;Time Created        ;Time          ;CaptionML=[ENU=Time Created;
+                                                              ESM=Tiempo gener.;
+                                                              FRC=Heure de cr‚ation;
+                                                              ENC=Time Created] }
+    { 12  ;   ;Created By          ;Code50        ;CaptionML=[ENU=Created By;
+                                                              ESM=Creado por;
+                                                              FRC=Cr‚‚ par;
+                                                              ENC=Created By] }
+    { 13  ;   ;Currency Code       ;Code10        ;TableRelation=Currency;
+                                                   CaptionML=[ENU=Currency Code;
+                                                              ESM=C¢d. divisa;
+                                                              FRC=Code de devise;
+                                                              ENC=Currency Code] }
+    { 14  ;   ;Currency Factor     ;Decimal       ;CaptionML=[ENU=Currency Factor;
+                                                              ESM=Factor divisa;
+                                                              FRC=Facteur de devise;
+                                                              ENC=Currency Factor] }
+    { 16  ;   ;Cleared With./Chks. Per Stmnt.;Decimal;
+                                                   CaptionML=[ENU=Cleared With./Chks. Per Stmnt.;
+                                                              ESM=Imp. retir./Cheque comp. por est. cta.;
+                                                              FRC=Retraits/chŠques compens‚s par relev‚;
+                                                              ENC=Cleared With./Chks. Per Stmnt.] }
+    { 17  ;   ;Cleared Inc./Dpsts. Per Stmnt.;Decimal;
+                                                   CaptionML=[ENU=Cleared Inc./Dpsts. Per Stmnt.;
+                                                              ESM=Ingr./Deps. comp. por est. cta.;
+                                                              FRC=Entr‚es/d‚p“ts compens‚s par relev‚;
+                                                              ENC=Cleared Inc./Dpsts. Per Stmnt.] }
+    { 19  ;   ;Total Cleared Checks;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Posted Bank Rec. Line"."Cleared Amount" WHERE (Bank Account No.=FIELD(Bank Account No.),
+                                                                                                                   Statement No.=FIELD(Statement No.),
+                                                                                                                   Record Type=CONST(Check),
+                                                                                                                   Cleared=CONST(Yes)));
+                                                   CaptionML=[ENU=Total Cleared Checks;
+                                                              ESM=Total cheques compensados;
+                                                              FRC=Total des chŠques compens‚s;
+                                                              ENC=Total Cleared Cheques] }
+    { 20  ;   ;Total Cleared Deposits;Decimal     ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Posted Bank Rec. Line"."Cleared Amount" WHERE (Bank Account No.=FIELD(Bank Account No.),
+                                                                                                                   Statement No.=FIELD(Statement No.),
+                                                                                                                   Record Type=CONST(Deposit),
+                                                                                                                   Cleared=CONST(Yes)));
+                                                   CaptionML=[ENU=Total Cleared Deposits;
+                                                              ESM=Total dep¢sitos compensados;
+                                                              FRC=Total des d‚p“ts compens‚s;
+                                                              ENC=Total Cleared Deposits] }
+    { 21  ;   ;Total Adjustments   ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Posted Bank Rec. Line".Amount WHERE (Bank Account No.=FIELD(Bank Account No.),
+                                                                                                         Statement No.=FIELD(Statement No.),
+                                                                                                         Record Type=CONST(Adjustment)));
+                                                   CaptionML=[ENU=Total Adjustments;
+                                                              ESM=Ajustes totales;
+                                                              FRC=Total des ajustements;
+                                                              ENC=Total Adjustments] }
+    { 22  ;   ;G/L Bank Account No.;Code20        ;TableRelation="G/L Account";
+                                                   CaptionML=[ENU=G/L Bank Account No.;
+                                                              ESM=Cta. banco;
+                                                              FRC=Nø de compte bancaire grand livre;
+                                                              ENC=G/L Bank Account No.];
+                                                   Editable=No }
+    { 23  ;   ;Date Filter         ;Date          ;FieldClass=FlowFilter;
+                                                   CaptionML=[ENU=Date Filter;
+                                                              ESM=Filtro fecha;
+                                                              FRC=Filtre date;
+                                                              ENC=Date Filter] }
+    { 24  ;   ;Comment             ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Bank Comment Line" WHERE (Table Name=CONST(Posted Bank Rec.),
+                                                                                                Bank Account No.=FIELD(Bank Account No.),
+                                                                                                No.=FIELD(Statement No.)));
+                                                   CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment];
+                                                   Editable=No }
+    { 25  ;   ;Posting Date        ;Date          ;CaptionML=[ENU=Posting Date;
+                                                              ESM=Fecha registro;
+                                                              FRC=Date de report;
+                                                              ENC=Posting Date] }
+    { 26  ;   ;No. Printed         ;Integer       ;CaptionML=[ENU=No. Printed;
+                                                              ESM=N§ copias impresas;
+                                                              FRC=Nombre d'impressions;
+                                                              ENC=No. Printed];
+                                                   Editable=No }
+    { 27  ;   ;G/L Balance         ;Decimal       ;CaptionML=[ENU=G/L Balance;
+                                                              ESM=Saldo C/G;
+                                                              FRC=Solde du grand livre;
+                                                              ENC=G/L Balance];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 28  ;   ;Total Balanced Adjustments;Decimal ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Posted Bank Rec. Line".Amount WHERE (Bank Account No.=FIELD(Bank Account No.),
+                                                                                                         Statement No.=FIELD(Statement No.),
+                                                                                                         Record Type=CONST(Adjustment),
+                                                                                                         Bal. Account No.=FILTER(<>'')));
+                                                   CaptionML=[ENU=Total Balanced Adjustments;
+                                                              ESM=Ajustes presupuestarios tot.;
+                                                              FRC=Total d'ajustements ‚quilibr‚s;
+                                                              ENC=Total Balanced Adjustments] }
+    { 29  ;   ;Positive Bal. Adjustments;Decimal  ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Posted Bank Rec. Line".Amount WHERE (Bank Account No.=FIELD(Bank Account No.),
+                                                                                                         Statement No.=FIELD(Statement No.),
+                                                                                                         Record Type=CONST(Adjustment),
+                                                                                                         Positive=CONST(Yes),
+                                                                                                         Bal. Account No.=FIELD(Bank Account No.),
+                                                                                                         Bal. Account Type=CONST(Bank Account)));
+                                                   CaptionML=[ENU=Positive Bal. Adjustments;
+                                                              ESM=Ajustes de saldo positivos;
+                                                              FRC=Ajustements solde positifs;
+                                                              ENC=Positive Bal. Adjustments] }
+    { 30  ;   ;Negative Bal. Adjustments;Decimal  ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Posted Bank Rec. Line".Amount WHERE (Bank Account No.=FIELD(Bank Account No.),
+                                                                                                         Statement No.=FIELD(Statement No.),
+                                                                                                         Record Type=CONST(Adjustment),
+                                                                                                         Positive=CONST(No),
+                                                                                                         Bal. Account No.=FIELD(Bank Account No.),
+                                                                                                         Bal. Account Type=CONST(Bank Account)));
+                                                   CaptionML=[ENU=Negative Bal. Adjustments;
+                                                              ESM=Ajustes saldo negativo;
+                                                              FRC=Ajustements solde n‚gatifs;
+                                                              ENC=Negative Bal. Adjustments] }
+    { 480 ;   ;Dimension Set ID    ;Integer       ;TableRelation="Dimension Set Entry";
+                                                   OnLookup=BEGIN
+                                                              ShowDocDim;
+                                                            END;
+
+                                                   CaptionML=[ENU=Dimension Set ID;
+                                                              ESM=Id. grupo dimensiones;
+                                                              FRC=Code ensemble de dimensions;
+                                                              ENC=Dimension Set ID];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Bank Account No.,Statement No.          ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      PostedBankRecHdr@1020001 : Record 10123;
+      PostedBankRecLines@1020004 : Record 10124;
+      PostedBankRecDelete@1020002 : Codeunit 10125;
+      DimMgt@1020000 : Codeunit 408;
+      Text001@1020003 : TextConst 'ENU=You may have changed a dimension.\\Do you want to update the lines?;ESM=Puede que haya cambiado una dimensi¢n.\\¨Desea actualizar las l¡neas?;FRC=Vous avez probablement modifi‚ une dimension.\\Souhaitez-vous mettre … jour les lignesÿ?;ENC=You may have changed a dimension.\\Do you want to update the lines?';
+
+    PROCEDURE PrintRecords@1(ShowRequestForm@1000 : Boolean);
+    VAR
+      ReportSelection@1001 : Record 77;
+    BEGIN
+      WITH PostedBankRecHdr DO BEGIN
+        COPY(Rec);
+        ReportSelection.SETRANGE(Usage,ReportSelection.Usage::"B.Stmt");
+        ReportSelection.SETFILTER("Report ID",'<>0');
+        ReportSelection.FIND('-');
+        REPEAT
+          REPORT.RUNMODAL(ReportSelection."Report ID",ShowRequestForm,FALSE,PostedBankRecHdr);
+        UNTIL ReportSelection.NEXT = 0;
+      END;
+    END;
+
+    PROCEDURE Navigate@2();
+    VAR
+      NavigateForm@1000 : Page 344;
+    BEGIN
+      NavigateForm.SetDoc("Statement Date","Statement No.");
+      NavigateForm.RUN;
+    END;
+
+    PROCEDURE ShowDocDim@1020002();
+    VAR
+      OldDimSetID@1020000 : Integer;
+    BEGIN
+      OldDimSetID := "Dimension Set ID";
+      "Dimension Set ID" :=
+        DimMgt.EditDimensionSet(
+          "Dimension Set ID",STRSUBSTNO('%1 %2',"Bank Account No.","Statement No."));
+      IF OldDimSetID <> "Dimension Set ID" THEN BEGIN
+        MODIFY;
+        IF PostedBankRecLinesExist THEN
+          UpdateAllLineDim("Dimension Set ID",OldDimSetID);
+      END;
+    END;
+
+    PROCEDURE PostedBankRecLinesExist@1020003() : Boolean;
+    BEGIN
+      PostedBankRecLines.RESET;
+      PostedBankRecLines.SETRANGE("Bank Account No.","Bank Account No.");
+      PostedBankRecLines.SETRANGE("Statement No.","Statement No.");
+      EXIT(PostedBankRecLines.FINDFIRST);
+    END;
+
+    LOCAL PROCEDURE UpdateAllLineDim@34(NewParentDimSetID@1000 : Integer;OldParentDimSetID@1001 : Integer);
+    VAR
+      NewDimSetID@1002 : Integer;
+    BEGIN
+      // Update all lines with changed dimensions.
+
+      IF NewParentDimSetID = OldParentDimSetID THEN
+        EXIT;
+      IF NOT CONFIRM(Text001) THEN
+        EXIT;
+
+      PostedBankRecLines.RESET;
+      PostedBankRecLines.SETRANGE("Bank Account No.","Bank Account No.");
+      PostedBankRecLines.SETRANGE("Statement No.","Statement No.");
+      PostedBankRecLines.LOCKTABLE;
+      IF PostedBankRecLines.FIND('-') THEN
+        REPEAT
+          NewDimSetID := DimMgt.GetDeltaDimSetID(PostedBankRecLines."Dimension Set ID",NewParentDimSetID,OldParentDimSetID);
+          IF PostedBankRecLines."Dimension Set ID" <> NewDimSetID THEN BEGIN
+            PostedBankRecLines."Dimension Set ID" := NewDimSetID;
+            DimMgt.UpdateGlobalDimFromDimSetID(
+              PostedBankRecLines."Dimension Set ID",PostedBankRecLines."Shortcut Dimension 1 Code",
+              PostedBankRecLines."Shortcut Dimension 2 Code");
+            PostedBankRecLines.MODIFY;
+          END;
+        UNTIL PostedBankRecLines.NEXT = 0;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

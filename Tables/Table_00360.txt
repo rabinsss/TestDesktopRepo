@@ -1,0 +1,85 @@
+OBJECT Table 360 Dimension Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/05/08;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Dimension Buffer;
+               ESM=Mem. inter. dimensi¢n;
+               FRC=Tampon analytique;
+               ENC=Dimension Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Table ID            ;Integer       ;TableRelation=AllObj."Object ID" WHERE (Object Type=CONST(Table));
+                                                   CaptionML=[ENU=Table ID;
+                                                              ESM=Id. tabla;
+                                                              FRC=Code table;
+                                                              ENC=Table ID] }
+    { 2   ;   ;Entry No.           ;Integer       ;CaptionML=[ENU=Entry No.;
+                                                              ESM=N§ mov.;
+                                                              FRC=Nø ‚criture;
+                                                              ENC=Entry No.] }
+    { 3   ;   ;Dimension Code      ;Code20        ;TableRelation=Dimension;
+                                                   OnValidate=BEGIN
+                                                                IF NOT DimMgt.CheckDim("Dimension Code") THEN
+                                                                  ERROR(DimMgt.GetDimErr);
+                                                              END;
+
+                                                   CaptionML=[ENU=Dimension Code;
+                                                              ESM=C¢d. dimensi¢n;
+                                                              FRC=Code de dimension;
+                                                              ENC=Dimension Code];
+                                                   NotBlank=Yes }
+    { 4   ;   ;Dimension Value Code;Code20        ;TableRelation="Dimension Value".Code WHERE (Dimension Code=FIELD(Dimension Code));
+                                                   OnValidate=BEGIN
+                                                                IF NOT DimMgt.CheckDimValue("Dimension Code","Dimension Value Code") THEN
+                                                                  ERROR(DimMgt.GetDimErr);
+                                                              END;
+
+                                                   CaptionML=[ENU=Dimension Value Code;
+                                                              ESM=C¢d. valor dimensi¢n;
+                                                              FRC=Code section;
+                                                              ENC=Dimension Value Code];
+                                                   NotBlank=Yes }
+    { 5   ;   ;New Dimension Value Code;Code20    ;TableRelation="Dimension Value".Code WHERE (Dimension Code=FIELD(Dimension Code));
+                                                   OnValidate=BEGIN
+                                                                IF NOT DimMgt.CheckDimValue("Dimension Code","New Dimension Value Code") THEN
+                                                                  ERROR(DimMgt.GetDimErr);
+                                                              END;
+
+                                                   CaptionML=[ENU=New Dimension Value Code;
+                                                              ESM=Nuevo c¢d. valor dim.;
+                                                              FRC=Nouveau code valeur dimension;
+                                                              ENC=New Dimension Value Code] }
+    { 6   ;   ;Line No.            ;Integer       ;CaptionML=[ENU=Line No.;
+                                                              ESM=N§ l¡nea;
+                                                              FRC=Nø ligne;
+                                                              ENC=Line No.] }
+    { 7   ;   ;No. Of Dimensions   ;Integer       ;CaptionML=[ENU=No. Of Dimensions;
+                                                              ESM=N§ de dimensiones;
+                                                              FRC=Nbre de dimensions;
+                                                              ENC=No. Of Dimensions] }
+  }
+  KEYS
+  {
+    {    ;Table ID,Entry No.,Dimension Code       ;Clustered=Yes }
+    {    ;No. Of Dimensions                        }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      DimMgt@1000 : Codeunit 408;
+
+    BEGIN
+    END.
+  }
+}
+

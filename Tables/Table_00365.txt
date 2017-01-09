@@ -1,0 +1,196 @@
+OBJECT Table 365 Analysis View Entry
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/09/14;
+    Time=12:00:00 PM;
+    Version List=NAVW18.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Analysis View Entry;
+               ESM=Mov. vista an†lisis;
+               FRC=êcriture vue d'analyse;
+               ENC=Analysis View Entry];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Analysis View Code  ;Code10        ;TableRelation="Analysis View" WHERE (Account Source=FIELD(Account Source));
+                                                   CaptionML=[ENU=Analysis View Code;
+                                                              ESM=C¢d. vista an†lisis;
+                                                              FRC=Code vue d'analyse;
+                                                              ENC=Analysis View Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Business Unit Code  ;Code10        ;TableRelation="Business Unit";
+                                                   CaptionML=[ENU=Business Unit Code;
+                                                              ESM=C¢d. empresa;
+                                                              FRC=Code d'unitÇ fonctionnelle;
+                                                              ENC=Business Unit Code] }
+    { 3   ;   ;Account No.         ;Code20        ;TableRelation=IF (Account Source=CONST(G/L Account)) "G/L Account"
+                                                                 ELSE IF (Account Source=CONST(Cash Flow Account)) "Cash Flow Account";
+                                                   CaptionML=[ENU=Account No.;
+                                                              ESM=Nß cuenta;
+                                                              FRC=N¯ de compte;
+                                                              ENC=Account No.] }
+    { 4   ;   ;Dimension 1 Value Code;Code20      ;AccessByPermission=TableData 348=R;
+                                                   CaptionML=[ENU=Dimension 1 Value Code;
+                                                              ESM=C¢d. valor dimensi¢n 1;
+                                                              FRC=Code de valeur de dimension 1;
+                                                              ENC=Dimension 1 Value Code];
+                                                   CaptionClass=GetCaptionClass(1) }
+    { 5   ;   ;Dimension 2 Value Code;Code20      ;AccessByPermission=TableData 348=R;
+                                                   CaptionML=[ENU=Dimension 2 Value Code;
+                                                              ESM=C¢d. valor dimensi¢n 2;
+                                                              FRC=Code de valeur de dimension 2;
+                                                              ENC=Dimension 2 Value Code];
+                                                   CaptionClass=GetCaptionClass(2) }
+    { 6   ;   ;Dimension 3 Value Code;Code20      ;AccessByPermission=TableData 350=R;
+                                                   CaptionML=[ENU=Dimension 3 Value Code;
+                                                              ESM=C¢d. valor dimensi¢n 3;
+                                                              FRC=Code de valeur de dimension 3;
+                                                              ENC=Dimension 3 Value Code];
+                                                   CaptionClass=GetCaptionClass(3) }
+    { 7   ;   ;Dimension 4 Value Code;Code20      ;AccessByPermission=TableData 350=R;
+                                                   CaptionML=[ENU=Dimension 4 Value Code;
+                                                              ESM=C¢d. valor dimensi¢n 4;
+                                                              FRC=Code de valeur de dimension 4;
+                                                              ENC=Dimension 4 Value Code];
+                                                   CaptionClass=GetCaptionClass(4) }
+    { 8   ;   ;Posting Date        ;Date          ;CaptionML=[ENU=Posting Date;
+                                                              ESM=Fecha registro;
+                                                              FRC=Date de report;
+                                                              ENC=Posting Date] }
+    { 9   ;   ;Entry No.           ;Integer       ;CaptionML=[ENU=Entry No.;
+                                                              ESM=Nß mov.;
+                                                              FRC=N¯ Çcriture;
+                                                              ENC=Entry No.] }
+    { 10  ;   ;Amount              ;Decimal       ;OnLookup=BEGIN
+                                                              DrillDown;
+                                                            END;
+
+                                                   CaptionML=[ENU=Amount;
+                                                              ESM=Importe;
+                                                              FRC=Montant;
+                                                              ENC=Amount];
+                                                   AutoFormatType=1 }
+    { 11  ;   ;Debit Amount        ;Decimal       ;CaptionML=[ENU=Debit Amount;
+                                                              ESM=Importe debe;
+                                                              FRC=Montant de dÇbit;
+                                                              ENC=Debit Amount];
+                                                   AutoFormatType=1 }
+    { 12  ;   ;Credit Amount       ;Decimal       ;CaptionML=[ENU=Credit Amount;
+                                                              ESM=Importe haber;
+                                                              FRC=Montant de crÇdit;
+                                                              ENC=Credit Amount];
+                                                   AutoFormatType=1 }
+    { 13  ;   ;Add.-Curr. Amount   ;Decimal       ;AccessByPermission=TableData 4=R;
+                                                   CaptionML=[ENU=Add.-Curr. Amount;
+                                                              ESM=A§adir-importe div.;
+                                                              FRC=Montant DR;
+                                                              ENC=Add.-Curr. Amount];
+                                                   AutoFormatType=1 }
+    { 14  ;   ;Add.-Curr. Debit Amount;Decimal    ;AccessByPermission=TableData 4=R;
+                                                   CaptionML=[ENU=Add.-Curr. Debit Amount;
+                                                              ESM=A§adir-importe deud. div.;
+                                                              FRC=Montant dÇbit DR;
+                                                              ENC=Add.-Curr. Debit Amount];
+                                                   AutoFormatType=1 }
+    { 15  ;   ;Add.-Curr. Credit Amount;Decimal   ;AccessByPermission=TableData 4=R;
+                                                   CaptionML=[ENU=Add.-Curr. Credit Amount;
+                                                              ESM=A§adir-importe acreed. div.;
+                                                              FRC=Montant crÇdit DR;
+                                                              ENC=Add.-Curr. Credit Amount];
+                                                   AutoFormatType=1 }
+    { 16  ;   ;Account Source      ;Option        ;CaptionML=[ENU=Account Source;
+                                                              ESM=Origen cuenta;
+                                                              FRC=Source du compte;
+                                                              ENC=Account Source];
+                                                   OptionCaptionML=[ENU=G/L Account,Cash Flow Account;
+                                                                    ESM=Cuenta contable,Cuenta flujos efectivo;
+                                                                    FRC=Compte GL,Compte de trÇsorerie;
+                                                                    ENC=G/L Account,Cash Flow Account];
+                                                   OptionString=G/L Account,Cash Flow Account }
+    { 17  ;   ;Cash Flow Forecast No.;Code20      ;TableRelation="Cash Flow Forecast";
+                                                   CaptionML=[ENU=Cash Flow Forecast No.;
+                                                              ESM=Nß previsi¢n flujos efectivo;
+                                                              FRC=N¯ prÇvision de la trÇsorerie;
+                                                              ENC=Cash Flow Forecast No.] }
+  }
+  KEYS
+  {
+    {    ;Analysis View Code,Account No.,Account Source,Dimension 1 Value Code,Dimension 2 Value Code,Dimension 3 Value Code,Dimension 4 Value Code,Business Unit Code,Posting Date,Entry No.,Cash Flow Forecast No.;
+                                                   SumIndexFields=Amount,Debit Amount,Credit Amount,Add.-Curr. Amount,Add.-Curr. Debit Amount,Add.-Curr. Credit Amount;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=1,5,,Dimension 1 Value Code;ESM=1,5,,C¢d. valor dimensi¢n 1;FRC=1,5,,Code de valeur de dimension 1;ENC=1,5,,Dimension 1 Value Code';
+      Text001@1001 : TextConst 'ENU=1,5,,Dimension 2 Value Code;ESM=1,5,,C¢d. valor dimensi¢n 2;FRC=1,5,,Code de valeur de dimension 2;ENC=1,5,,Dimension 2 Value Code';
+      Text002@1002 : TextConst 'ENU=1,5,,Dimension 3 Value Code;ESM=1,5,,C¢d. valor dimensi¢n 3;FRC=1,5,,Code de valeur de dimension 3;ENC=1,5,,Dimension 3 Value Code';
+      Text003@1003 : TextConst 'ENU=1,5,,Dimension 4 Value Code;ESM=1,5,,C¢d. valor dimension 4;FRC=1,5,,Code de valeur de dimension 4;ENC=1,5,,Dimension 4 Value Code';
+      AnalysisView@1004 : Record 363;
+
+    PROCEDURE GetCaptionClass@7(AnalysisViewDimType@1000 : Integer) : Text[250];
+    BEGIN
+      IF AnalysisView.Code <> "Analysis View Code" THEN
+        AnalysisView.GET("Analysis View Code");
+      CASE AnalysisViewDimType OF
+        1:
+          BEGIN
+            IF AnalysisView."Dimension 1 Code" <> '' THEN
+              EXIT('1,5,' + AnalysisView."Dimension 1 Code");
+
+            EXIT(Text000);
+          END;
+        2:
+          BEGIN
+            IF AnalysisView."Dimension 2 Code" <> '' THEN
+              EXIT('1,5,' + AnalysisView."Dimension 2 Code");
+
+            EXIT(Text001);
+          END;
+        3:
+          BEGIN
+            IF AnalysisView."Dimension 3 Code" <> '' THEN
+              EXIT('1,5,' + AnalysisView."Dimension 3 Code");
+
+            EXIT(Text002);
+          END;
+        4:
+          BEGIN
+            IF AnalysisView."Dimension 4 Code" <> '' THEN
+              EXIT('1,5,' + AnalysisView."Dimension 4 Code");
+
+            EXIT(Text003);
+          END;
+      END;
+    END;
+
+    LOCAL PROCEDURE DrillDown@1();
+    VAR
+      TempGLEntry@1000 : TEMPORARY Record 17;
+      TempCFForecastEntry@1002 : TEMPORARY Record 847;
+      AnalysisViewEntryToGLEntries@1001 : Codeunit 413;
+    BEGIN
+      IF "Account Source" = "Account Source"::"G/L Account" THEN BEGIN
+        TempGLEntry.RESET;
+        TempGLEntry.DELETEALL;
+        AnalysisViewEntryToGLEntries.GetGLEntries(Rec,TempGLEntry);
+        PAGE.RUNMODAL(PAGE::"General Ledger Entries",TempGLEntry);
+      END ELSE BEGIN
+        TempCFForecastEntry.RESET;
+        TempCFForecastEntry.DELETEALL;
+        AnalysisViewEntryToGLEntries.GetCFLedgEntries(Rec,TempCFForecastEntry);
+        PAGE.RUNMODAL(PAGE::"Cash Flow Forecast Entries",TempCFForecastEntry);
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

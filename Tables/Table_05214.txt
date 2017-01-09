@@ -1,0 +1,106 @@
+OBJECT Table 5214 Misc. Article Information
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Employee No.;
+    OnInsert=VAR
+               MiscArticleInfo@1000 : Record 5214;
+             BEGIN
+               MiscArticleInfo.SETCURRENTKEY("Line No.");
+               IF MiscArticleInfo.FINDLAST THEN
+                 "Line No." := MiscArticleInfo."Line No." + 1
+               ELSE
+                 "Line No." := 1;
+             END;
+
+    OnDelete=BEGIN
+               IF Comment THEN
+                 ERROR(Text000);
+             END;
+
+    CaptionML=[ENU=Misc. Article Information;
+               ESM=Informaci¢n recs. diversos;
+               FRC=Renseignements divers sur article;
+               ENC=Misc. Article Information];
+    LookupPageID=Page5219;
+    DrillDownPageID=Page5219;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Employee No.        ;Code20        ;TableRelation=Employee;
+                                                   CaptionML=[ENU=Employee No.;
+                                                              ESM=N§ empleado;
+                                                              FRC=Nø d'employ‚;
+                                                              ENC=Employee No.];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Misc. Article Code  ;Code10        ;TableRelation="Misc. Article";
+                                                   OnValidate=BEGIN
+                                                                MiscArticle.GET("Misc. Article Code");
+                                                                Description := MiscArticle.Description;
+                                                              END;
+
+                                                   CaptionML=[ENU=Misc. Article Code;
+                                                              ESM=C¢d. recurso diverso;
+                                                              FRC=Code objet divers;
+                                                              ENC=Misc. Article Code];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Line No.            ;Integer       ;CaptionML=[ENU=Line No.;
+                                                              ESM=N§ l¡nea;
+                                                              FRC=Nø ligne;
+                                                              ENC=Line No.] }
+    { 4   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 5   ;   ;From Date           ;Date          ;CaptionML=[ENU=From Date;
+                                                              ESM=Desde fecha;
+                                                              FRC=· partir du;
+                                                              ENC=From Date] }
+    { 6   ;   ;To Date             ;Date          ;CaptionML=[ENU=To Date;
+                                                              ESM=Hasta fecha;
+                                                              FRC=Jusqu'au;
+                                                              ENC=To Date] }
+    { 7   ;   ;In Use              ;Boolean       ;CaptionML=[ENU=In Use;
+                                                              ESM=Utiliz ndose;
+                                                              FRC=Utilis‚;
+                                                              ENC=In Use] }
+    { 8   ;   ;Comment             ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Human Resource Comment Line" WHERE (Table Name=CONST(Misc. Article Information),
+                                                                                                          No.=FIELD(Employee No.),
+                                                                                                          Alternative Address Code=FIELD(Misc. Article Code),
+                                                                                                          Table Line No.=FIELD(Line No.)));
+                                                   CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment];
+                                                   Editable=No }
+    { 9   ;   ;Serial No.          ;Text30        ;CaptionML=[ENU=Serial No.;
+                                                              ESM=N§ serie;
+                                                              FRC=Nø de s‚rie;
+                                                              ENC=Serial No.] }
+  }
+  KEYS
+  {
+    {    ;Employee No.,Misc. Article Code,Line No.;Clustered=Yes }
+    {    ;Line No.                                 }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=You cannot delete information if there are comments associated with it.;ESM=No se puede eliminar la informaci¢n de recursos diversos si tiene comentarios asociados.;FRC=Vous ne pouvez pas supprimer les donn‚es si des commentaires y sont associ‚s.;ENC=You cannot delete information if there are comments associated with it.';
+      MiscArticle@1001 : Record 5213;
+
+    BEGIN
+    END.
+  }
+}
+

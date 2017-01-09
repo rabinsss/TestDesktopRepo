@@ -1,0 +1,84 @@
+OBJECT Table 2000000150 NAV App Object Metadata
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=NAV App Object Metadata;
+               ESM=Metadatos de objeto aplic. NAV;
+               FRC=M‚tadonn‚es objet appli NAV;
+               ENC=NAV App Object Metadata];
+  }
+  FIELDS
+  {
+    { 1   ;   ;App Package ID      ;GUID          ;CaptionML=[ENU=App Package ID;
+                                                              ESM=Id. de paquete de aplicaci¢n;
+                                                              FRC=Code package appli;
+                                                              ENC=App Package ID] }
+    { 2   ;   ;Object Type         ;Option        ;CaptionML=[ENU=Object Type;
+                                                              ESM=Tipo objeto;
+                                                              FRC=Type d'objet;
+                                                              ENC=Object Type];
+                                                   OptionCaptionML=[ENU=,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query;
+                                                                    ESM=,Tabla,,Informe,,Codeunit,XMLport,MenuSuite,P gina,Consulta;
+                                                                    FRC=,Table,,Rapport,,Codeunit,XMLport,MenuSuite,Page,Requˆte;
+                                                                    ENC=,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query];
+                                                   OptionString=,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query }
+    { 3   ;   ;Object ID           ;Integer       ;CaptionML=[ENU=Object ID;
+                                                              ESM=Id. objeto;
+                                                              FRC=Code d'objet;
+                                                              ENC=Object ID] }
+    { 4   ;   ;Metadata Format     ;Option        ;CaptionML=[ENU=Metadata Format;
+                                                              ESM=Formato de metadatos;
+                                                              FRC=Format m‚tadonn‚es;
+                                                              ENC=Metadata Format];
+                                                   OptionCaptionML=[ENU=Full,Delta;
+                                                                    ESM=Completo,Delta;
+                                                                    FRC=Complet,Delta;
+                                                                    ENC=Full,Delta];
+                                                   OptionString=Full,Delta }
+    { 5   ;   ;Metadata            ;BLOB          ;CaptionML=[ENU=Metadata;
+                                                              ESM=Metadatos;
+                                                              FRC=M‚tadonn‚es;
+                                                              ENC=Metadata] }
+    { 6   ;   ;User Code           ;BLOB          ;CaptionML=[ENU=User Code;
+                                                              ESM=C¢digo usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User Code] }
+    { 7   ;   ;User AL Code        ;BLOB          ;CaptionML=[ENU=User AL Code;
+                                                              ESM=C¢digo AL del usuario;
+                                                              FRC=Code AL utilisateur;
+                                                              ENC=User AL Code] }
+    { 8   ;   ;Metadata Version    ;Integer       ;CaptionML=[ENU=Metadata Version;
+                                                              ESM=Versi¢n de metadatos;
+                                                              FRC=Version des m‚tadonn‚es;
+                                                              ENC=Metadata Version] }
+    { 9   ;   ;Object Subtype      ;Text30        ;CaptionML=[ENU=Object Subtype;
+                                                              ESM=Subtipo de objeto;
+                                                              FRC=Sous-type objet;
+                                                              ENC=Object Subtype] }
+    { 10  ;   ;Object Name         ;Text30        ;CaptionML=[ENU=Object Name;
+                                                              ESM=Nombre objeto;
+                                                              FRC=Nom d'objet;
+                                                              ENC=Object Name] }
+  }
+  KEYS
+  {
+    {    ;App Package ID,Object Type,Object ID    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

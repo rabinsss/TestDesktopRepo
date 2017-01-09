@@ -1,0 +1,167 @@
+OBJECT Table 87 Date Compr. Register
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=No.;
+    CaptionML=[ENU=Date Compr. Register;
+               ESM=Hist. compresi¢n fechas;
+               FRC=Compr. date historique;
+               ENC=Date Compr. Register];
+    LookupPageID=Page107;
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Integer       ;CaptionML=[ENU=No.;
+                                                              ESM=N§;
+                                                              FRC=Nø;
+                                                              ENC=No.] }
+    { 2   ;   ;Creation Date       ;Date          ;CaptionML=[ENU=Creation Date;
+                                                              ESM=Fecha creaci¢n;
+                                                              FRC=Date cr‚ation;
+                                                              ENC=Creation Date] }
+    { 3   ;   ;Table Caption       ;Text250       ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(AllObjWithCaption."Object Caption" WHERE (Object Type=CONST(Table),
+                                                                                                                Object ID=FIELD(Table ID)));
+                                                   CaptionML=[ENU=Table Caption;
+                                                              ESM=T¡tulo tabla;
+                                                              FRC=L‚gende table;
+                                                              ENC=Table Caption];
+                                                   Editable=No }
+    { 4   ;   ;Period Length       ;Option        ;CaptionML=[ENU=Period Length;
+                                                              ESM=Longitud periodo;
+                                                              FRC=Dur‚e de la p‚riode;
+                                                              ENC=Period Length];
+                                                   OptionCaptionML=[ENU=Day,Week,Month,Quarter,Year,Period;
+                                                                    ESM=D¡a,Semana,Mes,Trimestre,A¤o,Periodo;
+                                                                    FRC=Jour,Semaine,Mois,Trimestre,Ann‚e,P‚riode;
+                                                                    ENC=Day,Week,Month,Quarter,Year,Period];
+                                                   OptionString=Day,Week,Month,Quarter,Year,Period }
+    { 5   ;   ;Ending Date         ;Date          ;CaptionML=[ENU=Ending Date;
+                                                              ESM=Fecha final;
+                                                              FRC=Date fin;
+                                                              ENC=Ending Date];
+                                                   ClosingDates=Yes }
+    { 6   ;   ;No. of New Records  ;Integer       ;CaptionML=[ENU=No. of New Records;
+                                                              ESM=N§ mov. nuevos;
+                                                              FRC=Nombre de nouveaux relev‚s;
+                                                              ENC=No. of New Records] }
+    { 7   ;   ;No. Records Deleted ;Integer       ;CaptionML=[ENU=No. Records Deleted;
+                                                              ESM=N§ mov. borrados;
+                                                              FRC=Nombre de relev‚s supprim‚s;
+                                                              ENC=No. Records Deleted] }
+    { 8   ;   ;User ID             ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=VAR
+                                                              UserMgt@1000 : Codeunit 418;
+                                                            BEGIN
+                                                              UserMgt.LookupUserID("User ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 9   ;   ;Filter              ;Text80        ;CaptionML=[ENU=Filter;
+                                                              ESM=Filtro;
+                                                              FRC=Filtre;
+                                                              ENC=Filter] }
+    { 10  ;   ;Starting Date       ;Date          ;CaptionML=[ENU=Starting Date;
+                                                              ESM=Fecha inicial;
+                                                              FRC=Date d‚but;
+                                                              ENC=Starting Date];
+                                                   ClosingDates=Yes }
+    { 11  ;   ;Table ID            ;Integer       ;TableRelation=AllObj."Object ID" WHERE (Object Type=CONST(Table));
+                                                   CaptionML=[ENU=Table ID;
+                                                              ESM=Id. tabla;
+                                                              FRC=Code table;
+                                                              ENC=Table ID] }
+    { 12  ;   ;Register No.        ;Integer       ;TableRelation=IF (Table ID=CONST(17)) "G/L Register"
+                                                                 ELSE IF (Table ID=CONST(21)) "G/L Register"
+                                                                 ELSE IF (Table ID=CONST(25)) "G/L Register"
+                                                                 ELSE IF (Table ID=CONST(254)) "G/L Register"
+                                                                 ELSE IF (Table ID=CONST(32)) "Item Register"
+                                                                 ELSE IF (Table ID=CONST(203)) "Resource Register"
+                                                                 ELSE IF (Table ID=CONST(169)) "Job Register"
+                                                                 ELSE IF (Table ID=CONST(5601)) "FA Register"
+                                                                 ELSE IF (Table ID=CONST(5629)) "Insurance Register"
+                                                                 ELSE IF (Table ID=CONST(5625)) "FA Register"
+                                                                 ELSE IF (Table ID=CONST(7312)) "Warehouse Register";
+                                                   CaptionML=[ENU=Register No.;
+                                                              ESM=N§ registro;
+                                                              FRC=Nø de registre;
+                                                              ENC=Register No.] }
+    { 13  ;   ;Source Code         ;Code10        ;TableRelation="Source Code";
+                                                   CaptionML=[ENU=Source Code;
+                                                              ESM=C¢d. origen;
+                                                              FRC=Code d'origine;
+                                                              ENC=Source Code] }
+    { 14  ;   ;Retain Field Contents;Text80       ;CaptionML=[ENU=Retain Field Contents;
+                                                              ESM=Guardar contenido campo;
+                                                              FRC=Conserver champ;
+                                                              ENC=Retain Field Contents] }
+    { 15  ;   ;Retain Totals       ;Text80        ;CaptionML=[ENU=Retain Totals;
+                                                              ESM=Guardar totales;
+                                                              FRC=Conserver totaux;
+                                                              ENC=Retain Totals] }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+    {    ;Table ID                                 }
+    {    ;Table ID,Ending Date                     }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text000@1001 : TextConst 'ENU=The entry cannot be unapplied, because the %1 has been compressed.;ESM=No es posible desliquidar la entrada, se ha comprimido %1.;FRC="Impossible d''annuler l''affectation de l''‚criture; %1 a ‚t‚ compress‚.";ENC=The entry cannot be unapplied, because the %1 has been compressed.';
+      Text001@1000 : TextConst 'ENU=The transaction cannot be reversed, because the %1 has been compressed.;ESM=No es posible invertir la entrada, se ha comprimido %1.;FRC="Impossible d''inverser la transaction; %1 a ‚t‚ compress‚.";ENC=The transaction cannot be reversed, because the %1 has been compressed.';
+
+    LOCAL PROCEDURE CheckLedgerEntryCompressed@1(PostingDate@1003 : Date;TableID@1002 : Integer;Caption@1001 : Text[50];Type@1000 : 'Unapply,Reversal');
+    BEGIN
+      SETCURRENTKEY("Table ID","Ending Date");
+      SETRANGE("Table ID",TableID);
+      IF FIND('+') THEN
+        IF PostingDate <= "Ending Date" THEN
+          CASE Type OF
+            Type::Unapply:
+              ERROR(Text000,Caption);
+            Type::Reversal:
+              ERROR(Text001,Caption);
+          END;
+    END;
+
+    PROCEDURE CheckMaxDateCompressed@2(MaxPostingDate@1002 : Date;Type@1003 : 'Unapply,Reversal');
+    VAR
+      GLEntry@1004 : Record 17;
+      CustLedgEntry@1010 : Record 21;
+      VendLedgEntry@1009 : Record 25;
+      BankAccLedgEntry@1008 : Record 271;
+      VATEntry@1007 : Record 254;
+      FALedgEntry@1006 : Record 5601;
+      MaintenanceLedgEntry@1005 : Record 5625;
+    BEGIN
+      CheckLedgerEntryCompressed(MaxPostingDate,DATABASE::"Cust. Ledger Entry",CustLedgEntry.TABLECAPTION,Type);
+      CheckLedgerEntryCompressed(MaxPostingDate,DATABASE::"Vendor Ledger Entry",VendLedgEntry.TABLECAPTION,Type);
+      CheckLedgerEntryCompressed(MaxPostingDate,DATABASE::"Bank Account Ledger Entry",BankAccLedgEntry.TABLECAPTION,Type);
+      CheckLedgerEntryCompressed(MaxPostingDate,DATABASE::"VAT Entry",VATEntry.TABLECAPTION,Type);
+      CheckLedgerEntryCompressed(MaxPostingDate,DATABASE::"G/L Entry",GLEntry.TABLECAPTION,Type);
+      IF Type = Type::Reversal THEN BEGIN
+        CheckLedgerEntryCompressed(MaxPostingDate,DATABASE::"FA Ledger Entry",FALedgEntry.TABLECAPTION,Type);
+        CheckLedgerEntryCompressed(MaxPostingDate,DATABASE::"Maintenance Ledger Entry",MaintenanceLedgEntry.TABLECAPTION,Type);
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

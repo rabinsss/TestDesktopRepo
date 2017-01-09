@@ -1,0 +1,104 @@
+OBJECT Table 7159 Analysis Selected Dimension
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Analysis Selected Dimension;
+               ESM=Dimensi¢n seleccionada en el an lisis;
+               FRC=Dimension s‚lectionn‚e;
+               ENC=Analysis Selected Dimension];
+  }
+  FIELDS
+  {
+    { 1   ;   ;User ID             ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=VAR
+                                                              UserMgt@1000 : Codeunit 418;
+                                                            BEGIN
+                                                              UserMgt.LookupUserID("User ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User ID;
+                                                              ESM=Id. de usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 2   ;   ;Object Type         ;Integer       ;CaptionML=[ENU=Object Type;
+                                                              ESM=Tipo objeto;
+                                                              FRC=Type d'objet;
+                                                              ENC=Object Type] }
+    { 3   ;   ;Object ID           ;Integer       ;CaptionML=[ENU=Object ID;
+                                                              ESM=Id. objeto;
+                                                              FRC=Code d'objet;
+                                                              ENC=Object ID] }
+    { 4   ;   ;Dimension Code      ;Text30        ;CaptionML=[ENU=Dimension Code;
+                                                              ESM=C¢d. dimensi¢n;
+                                                              FRC=Code de dimension;
+                                                              ENC=Dimension Code] }
+    { 5   ;   ;New Dimension Value Code;Code20    ;CaptionML=[ENU=New Dimension Value Code;
+                                                              ESM=Nuevo c¢d. valor dim.;
+                                                              FRC=Nouveau code valeur dimension;
+                                                              ENC=New Dimension Value Code] }
+    { 6   ;   ;Dimension Value Filter;Code250     ;CaptionML=[ENU=Dimension Value Filter;
+                                                              ESM=Filtro valor dimensi¢n;
+                                                              FRC=Filtre valeur de dimension;
+                                                              ENC=Dimension Value Filter] }
+    { 7   ;   ;Level               ;Option        ;CaptionML=[ENU=Level;
+                                                              ESM=Nivel;
+                                                              FRC=Niveau;
+                                                              ENC=Level];
+                                                   OptionCaptionML=[ENU=" ,Level 1,Level 2,Level 3";
+                                                                    ESM=" ,Nivel 1,Nivel 2,Nivel 3";
+                                                                    FRC=" ,Niveau 1,Niveau 2,Niveau 3";
+                                                                    ENC=" ,Level 1,Level 2,Level 3"];
+                                                   OptionString=[ ,Level 1,Level 2,Level 3] }
+    { 8   ;   ;Analysis View Code  ;Code10        ;TableRelation="Item Analysis View".Code WHERE (Analysis Area=FIELD(Analysis Area));
+                                                   CaptionML=[ENU=Analysis View Code;
+                                                              ESM=C¢d. vista an lisis;
+                                                              FRC=Code de vue d'analyse;
+                                                              ENC=Analysis View Code] }
+    { 9   ;   ;Analysis Area       ;Option        ;CaptionML=[ENU=Analysis Area;
+                                                              ESM=µrea an lisis;
+                                                              FRC=Zone d'analyse;
+                                                              ENC=Analysis Area];
+                                                   OptionCaptionML=[ENU=Sales,Purchase,Inventory;
+                                                                    ESM=Ventas,Compra,Inventario;
+                                                                    FRC=Vente,Achat,Inventaire;
+                                                                    ENC=Sales,Purchase,Inventory];
+                                                   OptionString=Sales,Purchase,Inventory }
+  }
+  KEYS
+  {
+    {    ;User ID,Object Type,Object ID,Analysis Area,Analysis View Code,Dimension Code;
+                                                   Clustered=Yes }
+    {    ;User ID,Object Type,Object ID,Analysis Area,Analysis View Code,Level,Dimension Code }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE GetSelectedDim@9(UserID2@1000 : Code[50];ObjectType@1001 : Integer;ObjectID@1002 : Integer;AnalysisArea@1005 : Integer;AnalysisViewCode@1003 : Code[10];VAR TempAnalysisSelectedDim@1004 : Record 7159);
+    BEGIN
+      SETRANGE("User ID",UserID2);
+      SETRANGE("Object Type",ObjectType);
+      SETRANGE("Object ID",ObjectID);
+      SETRANGE("Analysis Area",AnalysisArea);
+      SETRANGE("Analysis View Code",AnalysisViewCode);
+      IF FIND('-') THEN
+        REPEAT
+          TempAnalysisSelectedDim := Rec;
+          TempAnalysisSelectedDim.INSERT;
+        UNTIL NEXT = 0;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

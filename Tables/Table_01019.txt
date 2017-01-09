@@ -1,0 +1,108 @@
+OBJECT Table 1019 Job Difference Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/05/08;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00,NAVNA5.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Job Difference Buffer;
+               ESM=Mem. int. diferencias proyecto;
+               FRC=Tampon ‚cart projet;
+               ENC=Job Difference Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Job No.             ;Code20        ;CaptionML=[ENU=Job No.;
+                                                              ESM=N§ proyecto;
+                                                              FRC=Nø projet;
+                                                              ENC=Job No.] }
+    { 2   ;   ;Job Task No.        ;Code20        ;CaptionML=[ENU=Job Task No.;
+                                                              ESM=N§ tarea proyecto;
+                                                              FRC=Nø tƒche de projet;
+                                                              ENC=Job Task No.] }
+    { 3   ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ESM=Tipo;
+                                                              FRC=Type;
+                                                              ENC=Type];
+                                                   OptionCaptionML=[ENU=Resource,Item,G/L Account;
+                                                                    ESM=Recurso,Producto,Cuenta;
+                                                                    FRC=Ressource,Article,Compte (GL);
+                                                                    ENC=Resource,Item,G/L Account];
+                                                   OptionString=Resource,Item,G/L Account }
+    { 4   ;   ;Location Code       ;Code10        ;CaptionML=[ENU=Location Code;
+                                                              ESM=C¢d. almac‚n;
+                                                              FRC=Code d'emplacement;
+                                                              ENC=Location Code] }
+    { 5   ;   ;Variant Code        ;Code10        ;CaptionML=[ENU=Variant Code;
+                                                              ESM=C¢d. variante;
+                                                              FRC=Code variante;
+                                                              ENC=Variant Code] }
+    { 6   ;   ;Unit of Measure code;Code10        ;CaptionML=[ENU=Unit of Measure code;
+                                                              ESM=C¢d. unidad medida;
+                                                              FRC=Code d'unit‚ de mesure;
+                                                              ENC=Unit of Measure code] }
+    { 7   ;   ;Entry type          ;Option        ;CaptionML=[ENU=Entry type;
+                                                              ESM=Tipo movimiento;
+                                                              FRC=Type d'‚criture;
+                                                              ENC=Entry type];
+                                                   OptionCaptionML=[ENU=Schedule,Usage;
+                                                                    ESM=Previsi¢n,Uso;
+                                                                    FRC=Calendrier,Utilisation;
+                                                                    ENC=Schedule,Usage];
+                                                   OptionString=Schedule,Usage }
+    { 8   ;   ;Work Type Code      ;Code10        ;CaptionML=[ENU=Work Type Code;
+                                                              ESM=C¢d. tipo trabajo;
+                                                              FRC=Code type travail;
+                                                              ENC=Work Type Code] }
+    { 9   ;   ;No.                 ;Code20        ;CaptionML=[ENU=No.;
+                                                              ESM=N§;
+                                                              FRC=Nø;
+                                                              ENC=No.] }
+    { 10  ;   ;Quantity            ;Decimal       ;CaptionML=[ENU=Quantity;
+                                                              ESM=Cantidad;
+                                                              FRC=Quantit‚;
+                                                              ENC=Quantity] }
+    { 11  ;   ;Total Cost          ;Decimal       ;CaptionML=[ENU=Total Cost;
+                                                              ESM=Costo total;
+                                                              FRC=Co–t total;
+                                                              ENC=Total Cost] }
+    { 12  ;   ;Line Amount         ;Decimal       ;CaptionML=[ENU=Line Amount;
+                                                              ESM=Importe l¡nea;
+                                                              FRC=Montant ligne;
+                                                              ENC=Line Amount] }
+    { 10010;  ;Budgeted Quantity   ;Decimal       ;CaptionML=[ENU=Budgeted Quantity;
+                                                              ESM=Cantidad presupuestada;
+                                                              FRC=Quantit‚ budg‚t‚e;
+                                                              ENC=Budgeted Quantity] }
+    { 10011;  ;Budgeted Total Cost ;Decimal       ;CaptionML=[ENU=Budgeted Total Cost;
+                                                              ESM=Costo total presupuestado;
+                                                              FRC=Co–t total budg‚t‚;
+                                                              ENC=Budgeted Total Cost] }
+    { 10012;  ;Budgeted Line Amount;Decimal       ;CaptionML=[ENU=Budgeted Line Amount;
+                                                              ESM=Importe l¡nea presupuestada;
+                                                              FRC=Montant de ligne budg‚t‚;
+                                                              ENC=Budgeted Line Amount] }
+    { 10013;  ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+  }
+  KEYS
+  {
+    {    ;Job No.,Job Task No.,Type,Entry type,No.,Location Code,Variant Code,Unit of Measure code,Work Type Code;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

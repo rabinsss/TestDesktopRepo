@@ -1,0 +1,125 @@
+OBJECT Table 7337 Bin Creation Wksh. Name
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Name,Description;
+    OnInsert=BEGIN
+               LOCKTABLE;
+               BinCreateWkshTemplate.GET("Worksheet Template Name");
+             END;
+
+    OnDelete=BEGIN
+               BinCreateWkshLine.SETRANGE("Worksheet Template Name","Worksheet Template Name");
+               BinCreateWkshLine.SETRANGE(Name,Name);
+               BinCreateWkshLine.SETRANGE("Location Code","Location Code");
+               BinCreateWkshLine.DELETEALL(TRUE);
+             END;
+
+    OnRename=BEGIN
+               BinCreateWkshLine.SETRANGE("Worksheet Template Name",xRec."Worksheet Template Name");
+               BinCreateWkshLine.SETRANGE(Name,xRec.Name);
+               BinCreateWkshLine.SETRANGE("Location Code",xRec."Location Code");
+               WHILE BinCreateWkshLine.FINDFIRST DO
+                 BinCreateWkshLine.RENAME("Worksheet Template Name",Name,"Location Code",BinCreateWkshLine."Line No.");
+             END;
+
+    CaptionML=[ENU=Bin Creation Wksh. Name;
+               ESM=Nombre hoj. trab. creac. ubic.;
+               FRC=Nom f. cr‚ation zone;
+               ENC=Bin Creation Wksh. Name];
+    LookupPageID=Page7369;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Worksheet Template Name;Code10     ;TableRelation="Bin Creation Wksh. Template";
+                                                   CaptionML=[ENU=Worksheet Template Name;
+                                                              ESM=Nombre libro hoja dem.;
+                                                              FRC=Nom modŠle feuille de travail;
+                                                              ENC=Worksheet Template Name];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Name                ;Code10        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 7   ;   ;Location Code       ;Code10        ;TableRelation=Location;
+                                                   OnValidate=VAR
+                                                                Location@1000 : Record 14;
+                                                              BEGIN
+                                                                Location.GET("Location Code");
+                                                                Location.TESTFIELD("Bin Mandatory",TRUE);
+                                                              END;
+
+                                                   CaptionML=[ENU=Location Code;
+                                                              ESM=C¢d. almac‚n;
+                                                              FRC=Code d'emplacement;
+                                                              ENC=Location Code];
+                                                   NotBlank=Yes }
+    { 21  ;   ;Template Type       ;Option        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("Bin Creation Wksh. Template".Type WHERE (Name=FIELD(Worksheet Template Name)));
+                                                   CaptionML=[ENU=Template Type;
+                                                              ESM=Tipo plantilla;
+                                                              FRC=Type de modŠle;
+                                                              ENC=Template Type];
+                                                   OptionCaptionML=[ENU=Put-away,Pick,Movement;
+                                                                    ESM=Ubicaci¢n,Picking,Movimiento;
+                                                                    FRC=Rangement,Pr‚lŠvement,Mouvement;
+                                                                    ENC=Put-away,Pick,Movement];
+                                                   OptionString=Put-away,Pick,Movement;
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Worksheet Template Name,Name,Location Code;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      BinCreateWkshTemplate@1000 : Record 7336;
+      BinCreateWkshLine@1001 : Record 7338;
+      Text001@1002 : TextConst 'ENU=The locations for warehouse employee %1 are not enabled for WMS.;ESM=Los almacenes para %1 empleado almac‚n no est n habilitados para WMS.;FRC=Les magasins du magasinier %1 ne sont pas activ‚s dans le module Distribution-Magasins.;ENC=The locations for warehouse employee %1 are not enabled for WMS.';
+
+    PROCEDURE SetupNewName@3();
+    VAR
+      Location@1001 : Record 14;
+      WhseEmployee@1002 : Record 7301;
+      WMSMgt@1000 : Codeunit 7302;
+      FoundLocation@1003 : Boolean;
+    BEGIN
+      BinCreateWkshTemplate.GET("Worksheet Template Name");
+      IF USERID <> '' THEN BEGIN
+        Location.GET(WMSMgt.GetDefaultLocation);
+        IF NOT Location."Bin Mandatory" THEN BEGIN
+          WhseEmployee.SETRANGE("User ID",USERID);
+          WhseEmployee.FIND('-');
+          REPEAT
+            Location.GET(WhseEmployee."Location Code");
+            IF Location."Bin Mandatory" THEN
+              FoundLocation := TRUE;
+          UNTIL (WhseEmployee.NEXT = 0) OR FoundLocation;
+        END;
+        IF NOT Location."Bin Mandatory" THEN
+          ERROR(Text001,USERID);
+      END;
+      "Location Code" := Location.Code;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

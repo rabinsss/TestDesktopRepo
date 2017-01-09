@@ -1,0 +1,211 @@
+OBJECT Table 288 Vendor Bank Account
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974,NAVNA9.00.00.44974;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Vendor No.,Code,Name;
+    OnDelete=VAR
+               VendorLedgerEntry@1000 : Record 25;
+             BEGIN
+               VendorLedgerEntry.SETRANGE("Vendor No.","Vendor No.");
+               VendorLedgerEntry.SETRANGE("Recipient Bank Account",Code);
+               IF NOT VendorLedgerEntry.ISEMPTY THEN
+                 ERROR(BankAccDeleteErr);
+             END;
+
+    CaptionML=[ENU=Vendor Bank Account;
+               ESM=Banco proveedor;
+               FRC=Compte bancaire fournisseur;
+               ENC=Vendor Bank Account];
+    LookupPageID=Page426;
+    DrillDownPageID=Page426;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Vendor No.          ;Code20        ;TableRelation=Vendor;
+                                                   CaptionML=[ENU=Vendor No.;
+                                                              ESM=N§ proveedor;
+                                                              FRC=Nø fournisseur;
+                                                              ENC=Vendor No.];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Name                ;Text50        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+    { 5   ;   ;Name 2              ;Text50        ;CaptionML=[ENU=Name 2;
+                                                              ESM=Nombre 2;
+                                                              FRC=Nom 2;
+                                                              ENC=Name 2] }
+    { 6   ;   ;Address             ;Text50        ;CaptionML=[ENU=Address;
+                                                              ESM=Direcci¢n;
+                                                              FRC=Adresse;
+                                                              ENC=Address] }
+    { 7   ;   ;Address 2           ;Text50        ;CaptionML=[ENU=Address 2;
+                                                              ESM=Colonia;
+                                                              FRC=Adresse 2;
+                                                              ENC=Address 2] }
+    { 8   ;   ;City                ;Text30        ;TableRelation=IF (Country/Region Code=CONST()) "Post Code".City
+                                                                 ELSE IF (Country/Region Code=FILTER(<>'')) "Post Code".City WHERE (Country/Region Code=FIELD(Country/Region Code));
+                                                   OnValidate=BEGIN
+                                                                PostCode.ValidateCity(City,"Post Code",County,"Country/Region Code",(CurrFieldNo <> 0) AND GUIALLOWED);
+                                                              END;
+
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=City;
+                                                              ESM=Municipio/Ciudad;
+                                                              FRC=Ville;
+                                                              ENC=City] }
+    { 9   ;   ;Post Code           ;Code20        ;TableRelation=IF (Country/Region Code=CONST()) "Post Code"
+                                                                 ELSE IF (Country/Region Code=FILTER(<>'')) "Post Code" WHERE (Country/Region Code=FIELD(Country/Region Code));
+                                                   OnValidate=BEGIN
+                                                                PostCode.ValidatePostCode(City,"Post Code",County,"Country/Region Code",(CurrFieldNo <> 0) AND GUIALLOWED);
+                                                              END;
+
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=ZIP Code;
+                                                              ESM=C.P.;
+                                                              FRC=Code postal;
+                                                              ENC=Postal/ZIP Code] }
+    { 10  ;   ;Contact             ;Text50        ;CaptionML=[ENU=Contact;
+                                                              ESM=Contacto;
+                                                              FRC=Contact;
+                                                              ENC=Contact] }
+    { 11  ;   ;Phone No.           ;Text30        ;ExtendedDatatype=Phone No.;
+                                                   CaptionML=[ENU=Phone No.;
+                                                              ESM=N§ tel‚fono;
+                                                              FRC=Nø t‚l‚phone;
+                                                              ENC=Phone No.] }
+    { 12  ;   ;Telex No.           ;Text20        ;CaptionML=[ENU=Telex No.;
+                                                              ESM=N§ t‚lex;
+                                                              FRC=Nø t‚lex;
+                                                              ENC=Telex No.] }
+    { 13  ;   ;Bank Branch No.     ;Text20        ;CaptionML=[ENU=Bank Branch No.;
+                                                              ESM=C¢d. sucursal banco;
+                                                              FRC=Nø de succursale bancaire;
+                                                              ENC=Bank Branch No.] }
+    { 14  ;   ;Bank Account No.    ;Text30        ;CaptionML=[ENU=Bank Account No.;
+                                                              ESM=C¢d. cuenta banco;
+                                                              FRC=Nø compte bancaire;
+                                                              ENC=Bank Account No.] }
+    { 15  ;   ;Transit No.         ;Text20        ;CaptionML=[ENU=Transit No.;
+                                                              ESM=N§ tr nsito;
+                                                              FRC=Nø de transit;
+                                                              ENC=Transit No.] }
+    { 16  ;   ;Currency Code       ;Code10        ;TableRelation=Currency;
+                                                   CaptionML=[ENU=Currency Code;
+                                                              ESM=C¢d. divisa;
+                                                              FRC=Code devise;
+                                                              ENC=Currency Code] }
+    { 17  ;   ;Country/Region Code ;Code10        ;TableRelation=Country/Region;
+                                                   CaptionML=[ENU=Country/Region Code;
+                                                              ESM=C¢d. pa¡s/regi¢n;
+                                                              FRC=Code pays/r‚gion;
+                                                              ENC=Country/Region Code] }
+    { 18  ;   ;County              ;Text30        ;CaptionML=[ENU=State;
+                                                              ESM=Provincia;
+                                                              FRC=Comt‚;
+                                                              ENC=Province/State] }
+    { 19  ;   ;Fax No.             ;Text30        ;CaptionML=[ENU=Fax No.;
+                                                              ESM=N§ fax;
+                                                              FRC=Nø t‚l‚copieur;
+                                                              ENC=Fax No.] }
+    { 20  ;   ;Telex Answer Back   ;Text20        ;CaptionML=[ENU=Telex Answer Back;
+                                                              ESM=N§ t‚lex respuesta;
+                                                              FRC=T‚lex retour;
+                                                              ENC=Telex Answer Back] }
+    { 21  ;   ;Language Code       ;Code10        ;TableRelation=Language;
+                                                   CaptionML=[ENU=Language Code;
+                                                              ESM=C¢d. idioma;
+                                                              FRC=Code langue;
+                                                              ENC=Language Code] }
+    { 22  ;   ;E-Mail              ;Text80        ;ExtendedDatatype=E-Mail;
+                                                   CaptionML=[ENU=E-Mail;
+                                                              ESM=Correo electr¢nico;
+                                                              FRC=Courriel;
+                                                              ENC=E-Mail] }
+    { 23  ;   ;Home Page           ;Text80        ;ExtendedDatatype=URL;
+                                                   CaptionML=[ENU=Home Page;
+                                                              ESM=P gina principal;
+                                                              FRC=Page d'accueil;
+                                                              ENC=Home Page] }
+    { 24  ;   ;IBAN                ;Code50        ;OnValidate=VAR
+                                                                CompanyInfo@1000 : Record 79;
+                                                              BEGIN
+                                                                CompanyInfo.CheckIBAN(IBAN);
+                                                              END;
+
+                                                   CaptionML=[ENU=IBAN;
+                                                              ESM=IBAN;
+                                                              FRC=IBAN;
+                                                              ENC=IBAN] }
+    { 25  ;   ;SWIFT Code          ;Code20        ;CaptionML=[ENU=SWIFT Code;
+                                                              ESM=C¢digo SWIFT;
+                                                              FRC=Code SWIFT;
+                                                              ENC=SWIFT Code] }
+    { 1211;   ;Bank Clearing Code  ;Text50        ;CaptionML=[ENU=Bank Clearing Code;
+                                                              ESM=C¢digo de compensaci¢n bancaria;
+                                                              FRC=Code compensation bancaire;
+                                                              ENC=Bank Clearing Code] }
+    { 1212;   ;Bank Clearing Standard;Text50      ;TableRelation="Bank Clearing Standard";
+                                                   CaptionML=[ENU=Bank Clearing Standard;
+                                                              ESM=Est ndar de compensaci¢n bancaria;
+                                                              FRC=Standard compensation bancaire;
+                                                              ENC=Bank Clearing Standard] }
+    { 10000;  ;Use for Electronic Payments;Boolean;CaptionML=[ENU=Use for Electronic Payments;
+                                                              ESM=Utilizar para pagos electr.;
+                                                              FRC=Utiliser pour les paiements ‚lectroniques;
+                                                              ENC=Use for Electronic Payments] }
+    { 27000;  ;Bank Code           ;Code3         ;CaptionML=[ENU=Bank Code;
+                                                              ESM=C¢digo de banco;
+                                                              FRC=Code de la banque;
+                                                              ENC=Bank Code];
+                                                   Numeric=Yes }
+  }
+  KEYS
+  {
+    {    ;Vendor No.,Code                         ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;Brick               ;Code,Name,Phone No.,Contact              }
+  }
+  CODE
+  {
+    VAR
+      PostCode@1000 : Record 225;
+      BankAccIdentifierIsEmptyErr@1001 : TextConst 'ENU=You must specify either a Bank Account No. or an IBAN.;ESM=Debe especificar un n.§ de cuenta bancaria o un IBAN.;FRC=Vous devez sp‚cifier un nø compte bancaire ou un IBAN.;ENC=You must specify either a Bank Account No. or an IBAN.';
+      BankAccDeleteErr@1002 : TextConst 'ENU=You cannot delete this bank account because there are one or more ledger entries associated with the bank account.;ESM=No se puede eliminar esta cuenta bancaria porque tiene uno o m s movimientos asociados.;FRC=Vous ne pouvez pas supprimer ce compte bancaire car des ‚critures y sont associ‚es.;ENC=You cannot delete this bank account because there are one or more ledger entries associated with the bank account.';
+
+    PROCEDURE GetBankAccountNoWithCheck@14() AccountNo : Text;
+    BEGIN
+      AccountNo := GetBankAccountNo;
+      IF AccountNo = '' THEN
+        ERROR(BankAccIdentifierIsEmptyErr);
+    END;
+
+    PROCEDURE GetBankAccountNo@1() : Text;
+    BEGIN
+      IF IBAN <> '' THEN
+        EXIT(DELCHR(IBAN,'=<>'));
+
+      IF "Bank Account No." <> '' THEN
+        EXIT("Bank Account No.");
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

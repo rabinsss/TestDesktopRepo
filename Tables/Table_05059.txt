@@ -1,0 +1,65 @@
+OBJECT Table 5059 Web Source
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Code,Description;
+    OnDelete=BEGIN
+               RMCommentLine.SETRANGE("Table Name",RMCommentLine."Table Name"::"Web Source");
+               RMCommentLine.SETRANGE("No.",Code);
+               RMCommentLine.DELETEALL;
+             END;
+
+    CaptionML=[ENU=Web Source;
+               ESM=Enlace web;
+               FRC=Recherche Web;
+               ENC=Web Source];
+    LookupPageID=Page5069;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 3   ;   ;URL                 ;Text250       ;CaptionML=[ENU=URL;
+                                                              ESM=URL;
+                                                              FRC=URL;
+                                                              ENC=URL] }
+    { 4   ;   ;Comment             ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Rlshp. Mgt. Comment Line" WHERE (Table Name=CONST(Web Source),
+                                                                                                       No.=FIELD(Code),
+                                                                                                       Sub No.=CONST(0)));
+                                                   CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      RMCommentLine@1000 : Record 5061;
+
+    BEGIN
+    END.
+  }
+}
+

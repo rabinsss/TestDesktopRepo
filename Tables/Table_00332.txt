@@ -1,0 +1,67 @@
+OBJECT Table 332 Currency Total Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/05/08;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Currency Total Buffer;
+               ESM=Mem-int. tot. divisa;
+               FRC=Devise tampon total;
+               ENC=Currency Total Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Currency Code       ;Code10        ;TableRelation=Currency;
+                                                   CaptionML=[ENU=Currency Code;
+                                                              ESM=C¢d. divisa;
+                                                              FRC=Code devise;
+                                                              ENC=Currency Code] }
+    { 2   ;   ;Total Amount        ;Decimal       ;CaptionML=[ENU=Total Amount;
+                                                              ESM=Importe total;
+                                                              FRC=Montant total;
+                                                              ENC=Total Amount];
+                                                   AutoFormatType=1 }
+    { 3   ;   ;Total Amount (LCY)  ;Decimal       ;CaptionML=[ENU=Total Amount ($);
+                                                              ESM=Importe total ($);
+                                                              FRC=Montant total ($);
+                                                              ENC=Total Amount ($)];
+                                                   AutoFormatType=1 }
+    { 4   ;   ;Counter             ;Integer       ;CaptionML=[ENU=Counter;
+                                                              ESM=Contador;
+                                                              FRC=Compteur;
+                                                              ENC=Counter] }
+  }
+  KEYS
+  {
+    {    ;Currency Code                           ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE UpdateTotal@1(CurrencyCode@1000 : Code[10];Amount@1001 : Decimal;AmountLCY@1002 : Decimal;VAR Counter@1003 : Integer);
+    BEGIN
+      IF GET(CurrencyCode) THEN BEGIN
+        "Total Amount" := "Total Amount" + Amount;
+        "Total Amount (LCY)" := "Total Amount (LCY)" + AmountLCY;
+        MODIFY;
+      END ELSE BEGIN
+        "Currency Code" := CurrencyCode;
+        "Total Amount" := Amount;
+        "Total Amount (LCY)" := AmountLCY;
+        Counter := Counter + 1;
+        INSERT;
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

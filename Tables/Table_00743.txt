@@ -1,0 +1,47 @@
+OBJECT Table 743 VAT Report Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Tax Report Setup;
+               ESM=Configuraci¢n informe IVA;
+               FRC=Configuration ‚tat TVA;
+               ENC=Tax Report Setup];
+    LookupPageID=Page743;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary key         ;Code10        ;CaptionML=[ENU=Primary key;
+                                                              ESM=Clave primaria;
+                                                              FRC=Cl‚ primaire;
+                                                              ENC=Primary key] }
+    { 2   ;   ;No. Series          ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=No. Series;
+                                                              ESM=Nos. serie;
+                                                              FRC=S‚ries de nø;
+                                                              ENC=No. Series] }
+    { 3   ;   ;Modify Submitted Reports;Boolean   ;CaptionML=[ENU=Modify Submitted Reports;
+                                                              ESM=Modificar informes enviados;
+                                                              FRC=Modifier les rapports soumis;
+                                                              ENC=Modify Submitted Reports] }
+  }
+  KEYS
+  {
+    {    ;Primary key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

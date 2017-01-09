@@ -1,0 +1,126 @@
+OBJECT Table 830 DO Payment Card Type
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=VAR
+               DOPaymentCardType@1000 : Record 830;
+             BEGIN
+               IF "Sort Order" = 0 THEN BEGIN
+                 DOPaymentCardType.SETCURRENTKEY("Sort Order");
+                 IF DOPaymentCardType.FINDLAST THEN
+                   "Sort Order" := DOPaymentCardType."Sort Order" + 1
+                 ELSE
+                   "Sort Order" := 1;
+               END;
+             END;
+
+    CaptionML=[ENU=Dynamics Online Payment Card Type;
+               ESM=Tipo de tarjeta de cr‚dito de pago de Dynamics Online;
+               FRC=Type de carte de paiement de Dynamics Online;
+               ENC=Dynamics Online Payment Card Type];
+    LookupPageID=Page830;
+    DrillDownPageID=Page830;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Sort Order          ;Integer       ;AutoIncrement=No;
+                                                   CaptionML=[ENU=Sort Order;
+                                                              ESM=Orden;
+                                                              FRC=Ordre de tri;
+                                                              ENC=Sort Order] }
+    { 2   ;   ;Name                ;Code20        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Validation Rule     ;Integer       ;CaptionML=[ENU=Validation Rule;
+                                                              ESM=Regla de validaci¢n;
+                                                              FRC=RŠgle de validation;
+                                                              ENC=Validation Rule];
+                                                   NotBlank=Yes }
+    { 4   ;   ;Numeric Only        ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Numeric Only;
+                                                              ESM=S¢lo num‚rico;
+                                                              FRC=Num‚rique uniquement;
+                                                              ENC=Numeric Only] }
+    { 5   ;   ;Allow Spaces        ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Allow Spaces;
+                                                              ESM=Permitir espacios;
+                                                              FRC=Autoriser des espaces;
+                                                              ENC=Allow Spaces] }
+    { 6   ;   ;Min. Length         ;Integer       ;CaptionML=[ENU=Min. Length;
+                                                              ESM=Longitud m¡n.;
+                                                              FRC=Longueur min.;
+                                                              ENC=Min. Length] }
+    { 7   ;   ;Max. Length         ;Integer       ;CaptionML=[ENU=Max. Length;
+                                                              ESM=Longitud m x.;
+                                                              FRC=Longueur max.;
+                                                              ENC=Max. Length] }
+  }
+  KEYS
+  {
+    {    ;Name                                    ;Clustered=Yes }
+    {    ;Sort Order                               }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE CreateDefaults@1();
+    BEGIN
+      IF NOT FINDFIRST THEN BEGIN
+        INIT;
+        "Sort Order" := 1;
+        Name := 'VISA';
+        "Validation Rule" := 1;
+        "Numeric Only" := TRUE;
+        "Allow Spaces" := FALSE;
+        "Min. Length" := 16;
+        "Max. Length" := 16;
+        INSERT;
+
+        INIT;
+        "Sort Order" := 2;
+        Name := 'MASTER CARD';
+        "Validation Rule" := 1;
+        "Numeric Only" := TRUE;
+        "Allow Spaces" := FALSE;
+        "Min. Length" := 16;
+        "Max. Length" := 16;
+        INSERT;
+
+        INIT;
+        "Sort Order" := 3;
+        Name := 'AMERICAN EXPRESS';
+        "Validation Rule" := 1;
+        "Numeric Only" := TRUE;
+        "Allow Spaces" := FALSE;
+        "Min. Length" := 15;
+        "Max. Length" := 15;
+        INSERT;
+
+        INIT;
+        "Sort Order" := 4;
+        Name := 'DISCOVER';
+        "Validation Rule" := 1;
+        "Numeric Only" := TRUE;
+        "Allow Spaces" := FALSE;
+        "Min. Length" := 16;
+        "Max. Length" := 16;
+        INSERT;
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

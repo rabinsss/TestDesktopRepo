@@ -1,0 +1,55 @@
+OBJECT Table 5641 FA Buffer Projection
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/05/08;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=FA Buffer Projection;
+               ESM=A/F Mem. int. proyecci¢n;
+               FRC=V‚rifier ligne reclass. immo.;
+               ENC=FA Buffer Projection];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;CaptionML=[ENU=Entry No.;
+                                                              ESM=N§ mov.;
+                                                              FRC=Nø ‚criture;
+                                                              ENC=Entry No.] }
+    { 2   ;   ;FA Posting Date     ;Date          ;CaptionML=[ENU=FA Posting Date;
+                                                              ESM=A/F Fecha registro;
+                                                              FRC=Date report immo.;
+                                                              ENC=FA Posting Date] }
+    { 3   ;   ;Depreciation        ;Decimal       ;CaptionML=[ENU=Depreciation;
+                                                              ESM=Amortizaci¢n;
+                                                              FRC=Amortissement;
+                                                              ENC=Depreciation];
+                                                   AutoFormatType=1 }
+    { 4   ;   ;Custom 1            ;Decimal       ;CaptionML=[ENU=Custom 1;
+                                                              ESM=Especial;
+                                                              FRC=ParamŠtre 1;
+                                                              ENC=Custom 1];
+                                                   AutoFormatType=1 }
+    { 5   ;   ;Code Name           ;Code20        ;CaptionML=[ENU=Code Name;
+                                                              ESM=Nombre c¢digo;
+                                                              FRC=Code nom;
+                                                              ENC=Code Name] }
+  }
+  KEYS
+  {
+    {    ;Code Name,FA Posting Date,Entry No.     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

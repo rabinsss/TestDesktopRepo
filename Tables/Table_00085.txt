@@ -1,0 +1,521 @@
+OBJECT Table 85 Acc. Schedule Line
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00,NAVNA9.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               IF xRec."Line No." = 0 THEN
+                 IF NOT AccSchedName.GET("Schedule Name") THEN BEGIN
+                   AccSchedName.INIT;
+                   AccSchedName.Name := "Schedule Name";
+                   IF AccSchedName.Name = '' THEN
+                     AccSchedName.Description := Text000;
+                   AccSchedName.INSERT;
+                 END;
+             END;
+
+    CaptionML=[ENU=Acc. Schedule Line;
+               ESM=L¡n. Estructura de Cuentas;
+               FRC=Ligne tableau d'analyse;
+               ENC=Acc. Schedule Line];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Schedule Name       ;Code10        ;TableRelation="Acc. Schedule Name";
+                                                   CaptionML=[ENU=Schedule Name;
+                                                              ESM=Nombre previsi¢n;
+                                                              FRC=Nom du tableau;
+                                                              ENC=Schedule Name] }
+    { 2   ;   ;Line No.            ;Integer       ;CaptionML=[ENU=Line No.;
+                                                              ESM=N§ l¡nea;
+                                                              FRC=Nø ligne;
+                                                              ENC=Line No.] }
+    { 3   ;   ;Row No.             ;Code10        ;CaptionML=[ENU=Row No.;
+                                                              ESM=N§ fila;
+                                                              FRC=Nø rang‚e;
+                                                              ENC=Row No.] }
+    { 4   ;   ;Description         ;Text80        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 5   ;   ;Totaling            ;Text250       ;TableRelation=IF (Totaling Type=CONST(Posting Accounts)) "G/L Account"
+                                                                 ELSE IF (Totaling Type=CONST(Total Accounts)) "G/L Account"
+                                                                 ELSE IF (Totaling Type=CONST(Cash Flow Entry Accounts)) "Cash Flow Account"
+                                                                 ELSE IF (Totaling Type=CONST(Cash Flow Total Accounts)) "Cash Flow Account"
+                                                                 ELSE IF (Totaling Type=CONST(Cost Type)) "Cost Type"
+                                                                 ELSE IF (Totaling Type=CONST(Cost Type Total)) "Cost Type";
+                                                   OnValidate=BEGIN
+                                                                CASE "Totaling Type" OF
+                                                                  "Totaling Type"::"Posting Accounts","Totaling Type"::"Total Accounts":
+                                                                    BEGIN
+                                                                      GLAcc.SETFILTER("No.",Totaling);
+                                                                      GLAcc.CALCFIELDS(Balance);
+                                                                    END;
+                                                                  "Totaling Type"::Formula,"Totaling Type"::"Set Base For Percent":
+                                                                    BEGIN
+                                                                      Totaling := UPPERCASE(Totaling);
+                                                                      CheckFormula(Totaling);
+                                                                    END;
+                                                                  "Totaling Type"::"Cost Type","Totaling Type"::"Cost Type Total":
+                                                                    BEGIN
+                                                                      CostType.SETFILTER("No.",Totaling);
+                                                                      CostType.CALCFIELDS(Balance);
+                                                                    END;
+                                                                  "Totaling Type"::"Cash Flow Entry Accounts","Totaling Type"::"Cash Flow Total Accounts":
+                                                                    BEGIN
+                                                                      CFAccount.SETFILTER("No.",Totaling);
+                                                                      CFAccount.CALCFIELDS(Amount);
+                                                                    END;
+                                                                END;
+                                                              END;
+
+                                                   OnLookup=BEGIN
+                                                              LookupTotaling;
+                                                            END;
+
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Totaling;
+                                                              ESM=Sumatorio;
+                                                              FRC=Totalisation;
+                                                              ENC=Totalling] }
+    { 6   ;   ;Totaling Type       ;Option        ;OnValidate=BEGIN
+                                                                VALIDATE(Totaling);
+                                                              END;
+
+                                                   CaptionML=[ENU=Totaling Type;
+                                                              ESM=Tipo sumatorio;
+                                                              FRC=Type totalisation;
+                                                              ENC=Totalling Type];
+                                                   OptionCaptionML=[ENU=Posting Accounts,Total Accounts,Formula,Underline,Double Underline,Set Base For Percent,Cost Type,Cost Type Total,Cash Flow Entry Accounts,Cash Flow Total Accounts;
+                                                                    ESM=Cuentas auxiliares,Cuentas mayores,F¢rmula,Subrayado,Subrayado doble,Fijar base para porcentaje,Tipo de costo,Total de tipo de costo,Cuentas de movimiento de flujo de efectivo,Total de cuentas de flujo de efectivo;
+                                                                    FRC=Comptes report,Comptes totaux,Formule,Soulign‚,Double soulign‚,D‚finir base de pourcentage,Type de co–t,Total type de co–t,Comptes d'‚critures de tr‚sorerie,Comptes total tr‚sorerie;
+                                                                    ENC=Posting Accounts,Total Accounts,Formula,Underline,Double Underline,Set Base For Percent,Cost Type,Cost Type Total,Cash Flow Entry Accounts,Cash Flow Total Accounts];
+                                                   OptionString=Posting Accounts,Total Accounts,Formula,Underline,Double Underline,Set Base For Percent,Cost Type,Cost Type Total,Cash Flow Entry Accounts,Cash Flow Total Accounts }
+    { 7   ;   ;New Page            ;Boolean       ;CaptionML=[ENU=New Page;
+                                                              ESM=Cambiar p gina;
+                                                              FRC=Nouvelle page;
+                                                              ENC=New Page] }
+    { 11  ;   ;Date Filter         ;Date          ;FieldClass=FlowFilter;
+                                                   CaptionML=[ENU=Date Filter;
+                                                              ESM=Filtro fecha;
+                                                              FRC=Filtre date;
+                                                              ENC=Date Filter] }
+    { 12  ;   ;Dimension 1 Filter  ;Code20        ;FieldClass=FlowFilter;
+                                                   CaptionML=[ENU=Dimension 1 Filter;
+                                                              ESM=Filtro dimensi¢n 1;
+                                                              FRC=Filtre de dimension 1;
+                                                              ENC=Dimension 1 Filter];
+                                                   CaptionClass=GetCaptionClass(1) }
+    { 13  ;   ;Dimension 2 Filter  ;Code20        ;FieldClass=FlowFilter;
+                                                   CaptionML=[ENU=Dimension 2 Filter;
+                                                              ESM=Filtro dimensi¢n 2;
+                                                              FRC=Filtre de dimension 2;
+                                                              ENC=Dimension 2 Filter];
+                                                   CaptionClass=GetCaptionClass(2) }
+    { 14  ;   ;G/L Budget Filter   ;Code10        ;FieldClass=FlowFilter;
+                                                   TableRelation="G/L Budget Name";
+                                                   CaptionML=[ENU=G/L Budget Filter;
+                                                              ESM=Filtro presupuesto CG;
+                                                              FRC=Filtre budget comptable;
+                                                              ENC=G/L Budget Filter] }
+    { 15  ;   ;Business Unit Filter;Code10        ;FieldClass=FlowFilter;
+                                                   TableRelation="Business Unit";
+                                                   CaptionML=[ENU=Business Unit Filter;
+                                                              ESM=Filtro empresa;
+                                                              FRC=Filtre entit‚s commerciales;
+                                                              ENC=Business Unit Filter] }
+    { 16  ;   ;Show                ;Option        ;CaptionML=[ENU=Show;
+                                                              ESM=Muestra;
+                                                              FRC=Afficher;
+                                                              ENC=Show];
+                                                   OptionCaptionML=[ENU=Yes,No,If Any Column Not Zero,When Positive Balance,When Negative Balance;
+                                                                    ESM=S¡,No,Si ninguna columna es cero,Con saldo positivo,Con saldo negativo;
+                                                                    FRC=Oui,Non,Si colonne n'est pas … 0,Si solde positif,Si solde n‚gatif;
+                                                                    ENC=Yes,No,If Any Column Not Zero,When Positive Balance,When Negative Balance];
+                                                   OptionString=Yes,No,If Any Column Not Zero,When Positive Balance,When Negative Balance }
+    { 17  ;   ;Dimension 3 Filter  ;Code20        ;FieldClass=FlowFilter;
+                                                   CaptionML=[ENU=Dimension 3 Filter;
+                                                              ESM=Filtro dimensi¢n 3;
+                                                              FRC=Filtre de dimension 3;
+                                                              ENC=Dimension 3 Filter];
+                                                   CaptionClass=GetCaptionClass(3) }
+    { 18  ;   ;Dimension 4 Filter  ;Code20        ;FieldClass=FlowFilter;
+                                                   CaptionML=[ENU=Dimension 4 Filter;
+                                                              ESM=Filtro dimensi¢n 4;
+                                                              FRC=Filtre de dimension 4;
+                                                              ENC=Dimension 4 Filter];
+                                                   CaptionClass=GetCaptionClass(4) }
+    { 19  ;   ;Dimension 1 Totaling;Text250       ;ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   AccessByPermission=TableData 348=R;
+                                                   CaptionML=[ENU=Dimension 1 Totaling;
+                                                              ESM=Total dimensi¢n 1;
+                                                              FRC=Totalisation de dimension 1;
+                                                              ENC=Dimension 1 Totalling];
+                                                   CaptionClass=GetCaptionClass(5) }
+    { 20  ;   ;Dimension 2 Totaling;Text250       ;ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   AccessByPermission=TableData 348=R;
+                                                   CaptionML=[ENU=Dimension 2 Totaling;
+                                                              ESM=Total dimensi¢n 2;
+                                                              FRC=Totalisation de dimension 2;
+                                                              ENC=Dimension 2 Totalling];
+                                                   CaptionClass=GetCaptionClass(6) }
+    { 21  ;   ;Dimension 3 Totaling;Text250       ;ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   AccessByPermission=TableData 350=R;
+                                                   CaptionML=[ENU=Dimension 3 Totaling;
+                                                              ESM=Total dimensi¢n 3;
+                                                              FRC=Totalisation de dimension 3;
+                                                              ENC=Dimension 3 Totalling];
+                                                   CaptionClass=GetCaptionClass(7) }
+    { 22  ;   ;Dimension 4 Totaling;Text250       ;ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   AccessByPermission=TableData 350=R;
+                                                   CaptionML=[ENU=Dimension 4 Totaling;
+                                                              ESM=Total dimensi¢n 4;
+                                                              FRC=Totalisation de dimension 4;
+                                                              ENC=Dimension 4 Totalling];
+                                                   CaptionClass=GetCaptionClass(8) }
+    { 23  ;   ;Bold                ;Boolean       ;CaptionML=[ENU=Bold;
+                                                              ESM=Negrita;
+                                                              FRC=Gras;
+                                                              ENC=Bold] }
+    { 24  ;   ;Italic              ;Boolean       ;CaptionML=[ENU=Italic;
+                                                              ESM=It lica;
+                                                              FRC=Italique;
+                                                              ENC=Italic] }
+    { 25  ;   ;Underline           ;Boolean       ;OnValidate=BEGIN
+                                                                IF "Double Underline" AND Underline THEN BEGIN
+                                                                  "Double Underline" := FALSE;
+                                                                  MESSAGE(ForceUnderLineMsg,FIELDCAPTION("Double Underline"));
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Underline;
+                                                              ESM=Subrayar;
+                                                              FRC=Soulign‚;
+                                                              ENC=Underline] }
+    { 26  ;   ;Show Opposite Sign  ;Boolean       ;CaptionML=[ENU=Show Opposite Sign;
+                                                              ESM=Muestra signo opuesto;
+                                                              FRC=Afficher le signe oppos‚;
+                                                              ENC=Show Opposite Sign] }
+    { 27  ;   ;Row Type            ;Option        ;CaptionML=[ENU=Row Type;
+                                                              ESM=Tipo fila;
+                                                              FRC=Type de rang‚e;
+                                                              ENC=Row Type];
+                                                   OptionCaptionML=[ENU=Net Change,Balance at Date,Beginning Balance;
+                                                                    ESM=Saldo periodo,Saldo a la fecha,Saldo inicial;
+                                                                    FRC=Variation nette,Solde en date,Solde d'ouverture;
+                                                                    ENC=Net Change,Balance at Date,Beginning Balance];
+                                                   OptionString=Net Change,Balance at Date,Beginning Balance }
+    { 28  ;   ;Amount Type         ;Option        ;CaptionML=[ENU=Amount Type;
+                                                              ESM=Tipo importe;
+                                                              FRC=Type montant;
+                                                              ENC=Amount Type];
+                                                   OptionCaptionML=[ENU=Net Amount,Debit Amount,Credit Amount;
+                                                                    ESM=Saldo,Debe,Haber;
+                                                                    FRC=Montant net,Montant de d‚bit,Montant de cr‚dit;
+                                                                    ENC=Net Amount,Debit Amount,Credit Amount];
+                                                   OptionString=Net Amount,Debit Amount,Credit Amount }
+    { 30  ;   ;Double Underline    ;Boolean       ;OnValidate=BEGIN
+                                                                IF "Double Underline" AND Underline THEN BEGIN
+                                                                  Underline := FALSE;
+                                                                  MESSAGE(ForceUnderLineMsg,FIELDCAPTION(Underline));
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Double Underline;
+                                                              ESM=Aplicar subrayado doble;
+                                                              FRC=Soulign‚ double;
+                                                              ENC=Double Underline] }
+    { 840 ;   ;Cash Flow Forecast Filter;Code20   ;FieldClass=FlowFilter;
+                                                   TableRelation="Cash Flow Forecast";
+                                                   CaptionML=[ENU=Cash Flow Forecast Filter;
+                                                              ESM=Filtro previsi¢n flujos efectivo;
+                                                              FRC=Filtre pr‚vision de la tr‚sorerie;
+                                                              ENC=Cash Flow Forecast Filter] }
+    { 1100;   ;Cost Center Filter  ;Code20        ;FieldClass=FlowFilter;
+                                                   TableRelation="Cost Center";
+                                                   CaptionML=[ENU=Cost Center Filter;
+                                                              ESM=Filtro centro costo;
+                                                              FRC=Filtre centre de co–ts;
+                                                              ENC=Cost Centre Filter] }
+    { 1101;   ;Cost Object Filter  ;Code20        ;FieldClass=FlowFilter;
+                                                   TableRelation="Cost Object";
+                                                   CaptionML=[ENU=Cost Object Filter;
+                                                              ESM=Filtro objeto costo;
+                                                              FRC=Filtre objet de co–ts;
+                                                              ENC=Cost Object Filter] }
+    { 1102;   ;Cost Center Totaling;Text80        ;ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Cost Center Totaling;
+                                                              ESM=Total centro costo;
+                                                              FRC=Totalisation centre de co–ts;
+                                                              ENC=Cost Centre Totalling] }
+    { 1103;   ;Cost Object Totaling;Text80        ;ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Cost Object Totaling;
+                                                              ESM=Total objeto costo;
+                                                              FRC=Totalisation objet de co–ts;
+                                                              ENC=Cost Object Totalling] }
+    { 1104;   ;Cost Budget Filter  ;Code10        ;FieldClass=FlowFilter;
+                                                   TableRelation="Cost Budget Name";
+                                                   CaptionML=[ENU=Cost Budget Filter;
+                                                              ESM=Filtro presupuesto costos;
+                                                              FRC=Filtre de budget des co–ts;
+                                                              ENC=Cost Budget Filter] }
+  }
+  KEYS
+  {
+    {    ;Schedule Name,Line No.                  ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      ForceUnderLineMsg@1022 : TextConst '@@@="%1= Field underline ";ENU=%1 will be set to false.;ESM=%1 se establecer  en False.;FRC=%1 sera param‚tr‚ sur False.;ENC=%1 will be set to false.';
+      Text000@1000 : TextConst 'ENU=Default Schedule;ESM=Previsi¢n gen‚r.;FRC=Tableau par d‚faut;ENC=Default Schedule';
+      Text001@1001 : TextConst 'ENU=The parenthesis at position %1 is misplaced.;ESM=El par‚ntesis en la posici¢n %1 es incorrecto.;FRC=La parenthŠse … la position %1 est mal plac‚e.;ENC=The parenthesis at position %1 is misplaced.';
+      Text002@1002 : TextConst 'ENU=You cannot have two consecutive operators. The error occurred at position %1.;ESM=No se puede tener dos operaciones consecutivas. Revise la posici¢n %1.;FRC=Vous ne pouvez avoir deux op‚rateurs cons‚cutifs. L''erreur se trouve … la position %1.;ENC=You cannot have two consecutive operators. The error occurred at position %1.';
+      Text003@1003 : TextConst 'ENU=There is an operand missing after position %1.;ESM=Falta un operando despu‚s de la posici¢n %1.;FRC=Il y a un op‚rateur manquant aprŠs la position %1.;ENC=There is an operand missing after position %1.';
+      Text004@1004 : TextConst 'ENU=There are more left parentheses than right parentheses.;ESM=Hay m s par‚ntesis de apertura que de cierre.;FRC=Il y a plus de parenthŠses gauches que de parenthŠses droites.;ENC=There are more left parentheses than right parentheses.';
+      Text005@1005 : TextConst 'ENU=There are more right parentheses than left parentheses.;ESM=Hay m s par‚ntesis de cierre que de apertura.;FRC=Il y a plus de parenthŠses droites que de parenthŠses gauches.;ENC=There are more right parentheses than left parentheses.';
+      Text006@1006 : TextConst 'ENU=1,6,,Dimension 1 Filter;ESM=1,6,,Filtro dimensi¢n 1;FRC=1,6,,Filtre de dimension 1;ENC=1,6,,Dimension 1 Filter';
+      Text007@1007 : TextConst 'ENU=1,6,,Dimension 2 Filter;ESM=1,6,,Filtro dimensi¢n 2;FRC=1,6,,Filtre de dimension 2;ENC=1,6,,Dimension 2 Filter';
+      Text008@1008 : TextConst 'ENU=1,6,,Dimension 3 Filter;ESM=1,6,,Filtro dimensi¢n 3;FRC=1,6,,Filtre de dimension 3;ENC=1,6,,Dimension 3 Filter';
+      Text009@1009 : TextConst 'ENU=1,6,,Dimension 4 Filter;ESM=1,6,,Filtro dimensi¢n 4;FRC=1,6,,Filtre de dimension 4;ENC=1,6,,Dimension 4 Filter';
+      Text010@1010 : TextConst 'ENU=,, Totaling;ESM=,, Totales;FRC=,, Totalisation;ENC=,, Totalling';
+      Text011@1011 : TextConst 'ENU=1,5,,Dimension 1 Totaling;ESM=1,5,,Total dimensi¢n 1;FRC=1,5,,Totalisation de dimension 1;ENC=1,5,,Dimension 1 Totalling';
+      Text012@1012 : TextConst 'ENU=1,5,,Dimension 2 Totaling;ESM=1,5,,Total dimensi¢n 2;FRC=1,5,,Totalisation de dimension 2;ENC=1,5,,Dimension 2 Totalling';
+      Text013@1013 : TextConst 'ENU=1,5,,Dimension 3 Totaling;ESM=1,5,,Total dimensi¢n 3;FRC=1,5,,Totalisation de dimension 3;ENC=1,5,,Dimension 3 Totalling';
+      Text014@1014 : TextConst 'ENU=1,5,,Dimension 4 Totaling;ESM=1,5,,Total dimensi¢n 4;FRC=1,5,,Totalisation de dimension 4;ENC=1,5,,Dimension 4 Totalling';
+      AccSchedName@1015 : Record 84;
+      GLAcc@1016 : Record 15;
+      CFAccount@1841 : Record 841;
+      AnalysisView@1017 : Record 363;
+      GLSetup@1018 : Record 98;
+      CostType@1021 : Record 1103;
+      HasGLSetup@1019 : Boolean;
+      Text015@1020 : TextConst 'ENU=The %1 refers to %2 %3, which does not exist. The field %4 on table %5 has now been deleted.;ESM=El %1 se refiere a %2 %3, que no existe. El campo %4 en la tabla %5 ha sido borrado.;FRC=Le %1 se r‚fŠre … la %2 %3, qui n''existe pas. Le champ %4 de la table %5 a maintenant ‚t‚ supprim‚.;ENC=The %1 refers to %2 %3, which does not exist. The field %4 on table %5 has now been deleted.';
+
+    PROCEDURE LookUpDimFilter@57(DimNo@1000 : Integer;VAR Text@1001 : Text[250]) : Boolean;
+    VAR
+      DimVal@1002 : Record 349;
+      DimValList@1003 : Page 560;
+    BEGIN
+      GetAccSchedSetup;
+      CASE DimNo OF
+        1:
+          DimVal.SETRANGE("Dimension Code",AnalysisView."Dimension 1 Code");
+        2:
+          DimVal.SETRANGE("Dimension Code",AnalysisView."Dimension 2 Code");
+        3:
+          DimVal.SETRANGE("Dimension Code",AnalysisView."Dimension 3 Code");
+        4:
+          DimVal.SETRANGE("Dimension Code",AnalysisView."Dimension 4 Code");
+      END;
+
+      DimValList.LOOKUPMODE(TRUE);
+      DimValList.SETTABLEVIEW(DimVal);
+      IF DimValList.RUNMODAL = ACTION::LookupOK THEN BEGIN
+        DimValList.GETRECORD(DimVal);
+        Text := DimValList.GetSelectionFilter;
+        EXIT(TRUE);
+      END;
+      EXIT(FALSE)
+    END;
+
+    PROCEDURE CheckFormula@1(Formula@1000 : Code[250]);
+    VAR
+      i@1001 : Integer;
+      ParenthesesLevel@1002 : Integer;
+      HasOperator@1003 : Boolean;
+    BEGIN
+      ParenthesesLevel := 0;
+      FOR i := 1 TO STRLEN(Formula) DO BEGIN
+        IF Formula[i] = '(' THEN
+          ParenthesesLevel := ParenthesesLevel + 1
+        ELSE
+          IF Formula[i] = ')' THEN
+            ParenthesesLevel := ParenthesesLevel - 1;
+        IF ParenthesesLevel < 0 THEN
+          ERROR(Text001,i);
+        IF Formula[i] IN ['+','-','*','/','^'] THEN BEGIN
+          IF HasOperator THEN
+            ERROR(Text002,i);
+
+          HasOperator := TRUE;
+
+          IF i = STRLEN(Formula) THEN
+            ERROR(Text003,i);
+
+          IF Formula[i + 1] = ')' THEN
+            ERROR(Text003,i);
+        END ELSE
+          HasOperator := FALSE;
+      END;
+      IF ParenthesesLevel > 0 THEN
+        ERROR(Text004);
+
+      IF ParenthesesLevel < 0 THEN
+        ERROR(Text005);
+    END;
+
+    LOCAL PROCEDURE GetCaptionClass@7(AnalysisViewDimType@1000 : Integer) : Text[250];
+    BEGIN
+      GetAccSchedSetup;
+      CASE AnalysisViewDimType OF
+        1:
+          BEGIN
+            IF AnalysisView."Dimension 1 Code" <> '' THEN
+              EXIT('1,6,' + AnalysisView."Dimension 1 Code");
+
+            EXIT(Text006);
+          END;
+        2:
+          BEGIN
+            IF AnalysisView."Dimension 2 Code" <> '' THEN
+              EXIT('1,6,' + AnalysisView."Dimension 2 Code");
+
+            EXIT(Text007);
+          END;
+        3:
+          BEGIN
+            IF AnalysisView."Dimension 3 Code" <> '' THEN
+              EXIT('1,6,' + AnalysisView."Dimension 3 Code");
+
+            EXIT(Text008);
+          END;
+        4:
+          BEGIN
+            IF AnalysisView."Dimension 4 Code" <> '' THEN
+              EXIT('1,6,' + AnalysisView."Dimension 4 Code");
+
+            EXIT(Text009);
+          END;
+        5:
+          BEGIN
+            IF AnalysisView."Dimension 1 Code" <> '' THEN
+              EXIT('1,5,' + AnalysisView."Dimension 1 Code" + Text010);
+
+            EXIT(Text011);
+          END;
+        6:
+          BEGIN
+            IF AnalysisView."Dimension 2 Code" <> '' THEN
+              EXIT('1,5,' + AnalysisView."Dimension 2 Code" + Text010);
+
+            EXIT(Text012);
+          END;
+        7:
+          BEGIN
+            IF AnalysisView."Dimension 3 Code" <> '' THEN
+              EXIT('1,5,' + AnalysisView."Dimension 3 Code" + Text010);
+
+            EXIT(Text013);
+          END;
+        8:
+          BEGIN
+            IF AnalysisView."Dimension 4 Code" <> '' THEN
+              EXIT('1,5,' + AnalysisView."Dimension 4 Code" + Text010);
+
+            EXIT(Text014);
+          END;
+      END;
+    END;
+
+    LOCAL PROCEDURE GetAccSchedSetup@2();
+    BEGIN
+      IF "Schedule Name" <> AccSchedName.Name THEN
+        AccSchedName.GET("Schedule Name");
+      IF AccSchedName."Analysis View Name" <> '' THEN
+        IF AccSchedName."Analysis View Name" <> AnalysisView.Code THEN
+          IF NOT AnalysisView.GET(AccSchedName."Analysis View Name") THEN BEGIN
+            MESSAGE(
+              Text015,
+              AccSchedName.TABLECAPTION,AnalysisView.TABLECAPTION,AccSchedName."Analysis View Name",
+              AccSchedName.FIELDCAPTION("Analysis View Name"),AccSchedName.TABLECAPTION);
+            AccSchedName."Analysis View Name" := '';
+            AccSchedName.MODIFY;
+          END;
+
+      IF AccSchedName."Analysis View Name" = '' THEN BEGIN
+        IF NOT HasGLSetup THEN BEGIN
+          GLSetup.GET;
+          HasGLSetup := TRUE;
+        END;
+        CLEAR(AnalysisView);
+        AnalysisView."Dimension 1 Code" := GLSetup."Global Dimension 1 Code";
+        AnalysisView."Dimension 2 Code" := GLSetup."Global Dimension 2 Code";
+      END;
+    END;
+
+    LOCAL PROCEDURE LookupTotaling@3();
+    VAR
+      GLAccList@1000 : Page 18;
+      CostTypeList@1001 : Page 1124;
+      CFAccList@1002 : Page 855;
+    BEGIN
+      CASE "Totaling Type" OF
+        "Totaling Type"::"Posting Accounts",
+        "Totaling Type"::"Total Accounts":
+          BEGIN
+            GLAccList.LOOKUPMODE(TRUE);
+            IF GLAccList.RUNMODAL = ACTION::LookupOK THEN
+              VALIDATE(Totaling,GLAccList.GetSelectionFilter);
+          END;
+        "Totaling Type"::"Cost Type",
+        "Totaling Type"::"Cost Type Total":
+          BEGIN
+            CostTypeList.LOOKUPMODE(TRUE);
+            IF CostTypeList.RUNMODAL = ACTION::LookupOK THEN
+              VALIDATE(Totaling,CostTypeList.GetSelectionFilter);
+          END;
+        "Totaling Type"::"Cash Flow Entry Accounts",
+        "Totaling Type"::"Cash Flow Total Accounts":
+          BEGIN
+            CFAccList.LOOKUPMODE(TRUE);
+            IF CFAccList.RUNMODAL = ACTION::LookupOK THEN
+              VALIDATE(Totaling,CFAccList.GetSelectionFilter);
+          END;
+      END;
+    END;
+
+    PROCEDURE LookupGLBudgetFilter@4(VAR Text@1000 : Text[10]) : Boolean;
+    VAR
+      GLBudgetNames@1001 : Page 121;
+    BEGIN
+      GLBudgetNames.LOOKUPMODE(TRUE);
+      IF GLBudgetNames.RUNMODAL = ACTION::LookupOK THEN BEGIN
+        Text := GLBudgetNames.GetSelectionFilter;
+        EXIT(TRUE);
+      END;
+      EXIT(FALSE)
+    END;
+
+    PROCEDURE LookupCostBudgetFilter@5(VAR Text@1000 : Text[10]) : Boolean;
+    VAR
+      CostBudgetNames@1001 : Page 1116;
+    BEGIN
+      CostBudgetNames.LOOKUPMODE(TRUE);
+      IF CostBudgetNames.RUNMODAL = ACTION::LookupOK THEN BEGIN
+        Text := CostBudgetNames.GetSelectionFilter;
+        EXIT(TRUE);
+      END;
+      EXIT(FALSE)
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

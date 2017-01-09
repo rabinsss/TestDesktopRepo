@@ -1,0 +1,230 @@
+OBJECT Table 220 Business Unit
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Business Unit;
+               ESM=C¢digo empresa;
+               FRC=Entit‚ commerciale;
+               ENC=Business Unit];
+    LookupPageID=Page240;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Consolidate         ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Consolidate;
+                                                              ESM=Consolidar;
+                                                              FRC=Consolider;
+                                                              ENC=Consolidate] }
+    { 3   ;   ;Consolidation %     ;Decimal       ;InitValue=100;
+                                                   CaptionML=[ENU=Consolidation %;
+                                                              ESM=% Integraci¢n;
+                                                              FRC=% consolidation;
+                                                              ENC=Consolidation %];
+                                                   DecimalPlaces=1:1;
+                                                   MinValue=0;
+                                                   MaxValue=100 }
+    { 4   ;   ;Starting Date       ;Date          ;CaptionML=[ENU=Starting Date;
+                                                              ESM=Fecha inicial;
+                                                              FRC=Date d‚but;
+                                                              ENC=Starting Date] }
+    { 5   ;   ;Ending Date         ;Date          ;CaptionML=[ENU=Ending Date;
+                                                              ESM=Fecha final;
+                                                              FRC=Date fin;
+                                                              ENC=Ending Date] }
+    { 6   ;   ;Income Currency Factor;Decimal     ;InitValue=1;
+                                                   CaptionML=[ENU=Income Currency Factor;
+                                                              ESM=Factor divisa ingresos/gastos;
+                                                              FRC=Facteur revenus de devises;
+                                                              ENC=Income Currency Factor];
+                                                   DecimalPlaces=0:15;
+                                                   MinValue=0;
+                                                   Editable=No }
+    { 7   ;   ;Balance Currency Factor;Decimal    ;InitValue=1;
+                                                   CaptionML=[ENU=Balance Currency Factor;
+                                                              ESM=Factor divisa saldo;
+                                                              FRC=Facteur devise solde;
+                                                              ENC=Balance Currency Factor];
+                                                   DecimalPlaces=0:15;
+                                                   MinValue=0;
+                                                   Editable=No }
+    { 8   ;   ;Exch. Rate Losses Acc.;Code20      ;TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                CheckGLAcc("Exch. Rate Losses Acc.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Exch. Rate Losses Acc.;
+                                                              ESM=Cta. dif. negativas cambio;
+                                                              FRC=Compte pertes taux change;
+                                                              ENC=Exch. Rate Losses Acc.] }
+    { 9   ;   ;Exch. Rate Gains Acc.;Code20       ;TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                CheckGLAcc("Exch. Rate Gains Acc.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Exch. Rate Gains Acc.;
+                                                              ESM=Cta. dif. positivas cambio;
+                                                              FRC=Compte gains taux change;
+                                                              ENC=Exch. Rate Gains Acc.] }
+    { 10  ;   ;Residual Account    ;Code20        ;TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                CheckGLAcc("Residual Account");
+                                                              END;
+
+                                                   CaptionML=[ENU=Residual Account;
+                                                              ESM=Cta. ajuste residual;
+                                                              FRC=Compte d'attente;
+                                                              ENC=Residual Account] }
+    { 11  ;   ;Last Balance Currency Factor;Decimal;
+                                                   InitValue=1;
+                                                   CaptionML=[ENU=Last Balance Currency Factor;
+                                                              ESM=élt. factor divisa saldo;
+                                                              FRC=Dernier facteur devise bilan;
+                                                              ENC=Last Balance Currency Factor];
+                                                   DecimalPlaces=0:15;
+                                                   Editable=No }
+    { 12  ;   ;Name                ;Text30        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+    { 13  ;   ;Company Name        ;Text30        ;TableRelation=Company.Name;
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Company Name;
+                                                              ESM=Nombre empresa;
+                                                              FRC=Nom de compagnie;
+                                                              ENC=Company Name] }
+    { 14  ;   ;Currency Code       ;Code10        ;TableRelation=Currency;
+                                                   OnValidate=BEGIN
+                                                                "Income Currency Factor" := CurrExchRate.ExchangeRate(WORKDATE,"Currency Code");
+                                                                "Balance Currency Factor" := CurrExchRate.ExchangeRate(WORKDATE,"Currency Code");
+                                                              END;
+
+                                                   CaptionML=[ENU=Currency Code;
+                                                              ESM=C¢d. divisa;
+                                                              FRC=Code devise;
+                                                              ENC=Currency Code] }
+    { 15  ;   ;Comp. Exch. Rate Gains Acc.;Code20 ;TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                CheckGLAcc("Comp. Exch. Rate Gains Acc.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Comp. Exch. Rate Gains Acc.;
+                                                              ESM=Cta. dif. pos. div. compuesto;
+                                                              FRC=Cpte gains taux change comp.;
+                                                              ENC=Comp. Exch. Rate Gains Acc.] }
+    { 16  ;   ;Comp. Exch. Rate Losses Acc.;Code20;TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                CheckGLAcc("Comp. Exch. Rate Losses Acc.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Comp. Exch. Rate Losses Acc.;
+                                                              ESM=Cta. dif. pos. neg. compuesto;
+                                                              FRC=Cpte pertes taux change comp.;
+                                                              ENC=Comp. Exch. Rate Losses Acc.] }
+    { 17  ;   ;Equity Exch. Rate Gains Acc.;Code20;TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                CheckGLAcc("Equity Exch. Rate Gains Acc.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Equity Exch. Rate Gains Acc.;
+                                                              ESM=Cta. b§ neto ejerc. dif. pos.;
+                                                              FRC=Compte gains taux de change sur capital;
+                                                              ENC=Equity Exch. Rate Gains Acc.] }
+    { 18  ;   ;Equity Exch. Rate Losses Acc.;Code20;
+                                                   TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                CheckGLAcc("Equity Exch. Rate Losses Acc.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Equity Exch. Rate Losses Acc.;
+                                                              ESM=Cta. b§ neto ejerc. dif. neg.;
+                                                              FRC=Cpte pertes tx change sur cap.;
+                                                              ENC=Equity Exch. Rate Losses Acc.] }
+    { 19  ;   ;Minority Exch. Rate Gains Acc.;Code20;
+                                                   TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                CheckGLAcc("Minority Exch. Rate Gains Acc.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Minority Exch. Rate Gains Acc.;
+                                                              ESM=Cta. dif. pos. div. minorit.;
+                                                              FRC=Cpte gains taux change minor.;
+                                                              ENC=Minority Exch. Rate Gains Acc.] }
+    { 20  ;   ;Minority Exch. Rate Losses Acc;Code20;
+                                                   TableRelation="G/L Account";
+                                                   OnValidate=BEGIN
+                                                                CheckGLAcc("Minority Exch. Rate Losses Acc");
+                                                              END;
+
+                                                   CaptionML=[ENU=Minority Exch. Rate Losses Acc;
+                                                              ESM=Cta. dif. neg. div. minorit.;
+                                                              FRC=Cpte pertes tx change minorit.;
+                                                              ENC=Minority Exch. Rate Losses Acc] }
+    { 21  ;   ;Currency Exchange Rate Table;Option;AccessByPermission=TableData 4=R;
+                                                   CaptionML=[ENU=Currency Exchange Rate Table;
+                                                              ESM=Tabla de divisas;
+                                                              FRC=Table taux de change devise;
+                                                              ENC=Currency Exchange Rate Table];
+                                                   OptionCaptionML=[ENU=Local,Business Unit;
+                                                                    ESM=Local,Empresa;
+                                                                    FRC=Local,Entit‚ commerciale;
+                                                                    ENC=Local,Business Unit];
+                                                   OptionString=Local,Business Unit }
+    { 22  ;   ;Data Source         ;Option        ;CaptionML=[ENU=Data Source;
+                                                              ESM=Fuente datos ODBC;
+                                                              FRC=Source de donn‚es;
+                                                              ENC=Data Source];
+                                                   OptionCaptionML=[ENU=Local Curr. ($),Add. Rep. Curr. (ACY);
+                                                                    ESM=Moneda local ($),Mon. ad. rep. (DA);
+                                                                    FRC=Dev. locale ($),Dev. add. Rapp. (dev. add.);
+                                                                    ENC=Local Curr. ($),Add. Rep. Curr. (ACY)];
+                                                   OptionString=Local Curr. (LCY),Add. Rep. Curr. (ACY) }
+    { 23  ;   ;File Format         ;Option        ;CaptionML=[ENU=File Format;
+                                                              ESM=Formato de archivo;
+                                                              FRC=Format de fichier;
+                                                              ENC=File Format];
+                                                   OptionCaptionML=[ENU=Version 4.00 or Later (.xml),Version 3.70 or Earlier (.txt);
+                                                                    ESM=Versi¢n 4.00 o posterior (.xml),Versi¢n 3.70 o anterior (.txt);
+                                                                    FRC=Version 4.00 ou ult‚rieure (.xml),Version 3.70 ou ant‚rieure (.txt);
+                                                                    ENC=Version 4.00 or Later (.xml),Version 3.70 or Earlier (.txt)];
+                                                   OptionString=Version 4.00 or Later (.xml),Version 3.70 or Earlier (.txt) }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+    {    ;Company Name                             }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      CurrExchRate@1000 : Record 330;
+
+    LOCAL PROCEDURE CheckGLAcc@2(AccNo@1000 : Code[20]);
+    VAR
+      GLAcc@1001 : Record 15;
+    BEGIN
+      IF AccNo <> '' THEN BEGIN
+        GLAcc.GET(AccNo);
+        GLAcc.CheckGLAcc;
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

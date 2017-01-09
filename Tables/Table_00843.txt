@@ -1,0 +1,160 @@
+OBJECT Table 843 Cash Flow Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Cash Flow Setup;
+               ESM=Configuraci¢n flujos efectivo;
+               FRC=Configuration tr‚sorerie;
+               ENC=Cash Flow Setup];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=[ENU=Primary Key;
+                                                              ESM=Clave primaria;
+                                                              FRC=Cl‚ primaire;
+                                                              ENC=Primary Key] }
+    { 2   ;   ;Cash Flow Forecast No. Series;Code10;
+                                                   TableRelation="No. Series";
+                                                   CaptionML=[ENU=Cash Flow Forecast No. Series;
+                                                              ESM=Serie n§ previsi¢n flujos efectivo;
+                                                              FRC=S‚ries de nø pr‚vision de la tr‚sorerie;
+                                                              ENC=Cash Flow Forecast No. Series] }
+    { 3   ;   ;Receivables CF Account No.;Code20  ;TableRelation="Cash Flow Account";
+                                                   OnValidate=BEGIN
+                                                                CheckAccType("Receivables CF Account No.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Receivables CF Account No.;
+                                                              ESM=N§ cta. flujos efectivo cobros;
+                                                              FRC=Nø compte tr‚sorerie client;
+                                                              ENC=Receivables CF Account No.] }
+    { 4   ;   ;Payables CF Account No.;Code20     ;TableRelation="Cash Flow Account";
+                                                   OnValidate=BEGIN
+                                                                CheckAccType("Payables CF Account No.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Payables CF Account No.;
+                                                              ESM=N§ cta. flujos efectivo pagos;
+                                                              FRC=Nø compte tr‚sorerie fournisseur;
+                                                              ENC=Payables CF Account No.] }
+    { 5   ;   ;Sales Order CF Account No.;Code20  ;TableRelation="Cash Flow Account";
+                                                   OnValidate=BEGIN
+                                                                CheckAccType("Sales Order CF Account No.");
+                                                              END;
+
+                                                   AccessByPermission=TableData 110=R;
+                                                   CaptionML=[ENU=Sales Order CF Account No.;
+                                                              ESM=N§ cta. flujos efectivo pedido ventas;
+                                                              FRC=Nø compte tr‚sorerie document de vente;
+                                                              ENC=Sales Order CF Account No.] }
+    { 6   ;   ;Purch. Order CF Account No.;Code20 ;TableRelation="Cash Flow Account";
+                                                   OnValidate=BEGIN
+                                                                CheckAccType("Purch. Order CF Account No.");
+                                                              END;
+
+                                                   AccessByPermission=TableData 120=R;
+                                                   CaptionML=[ENU=Purch. Order CF Account No.;
+                                                              ESM=N§ cta. flujos efectivo pedido compras;
+                                                              FRC=Nø compte tr‚sorerie bon de commande;
+                                                              ENC=Purch. Order CF Account No.] }
+    { 8   ;   ;FA Budget CF Account No.;Code20    ;TableRelation="Cash Flow Account";
+                                                   OnValidate=BEGIN
+                                                                CheckAccType("FA Budget CF Account No.");
+                                                              END;
+
+                                                   AccessByPermission=TableData 5600=R;
+                                                   CaptionML=[ENU=FA Budget CF Account No.;
+                                                              ESM=N§ cta. flujos efectivo A/F ppto. de pedido ventas;
+                                                              FRC=Nø compte tr‚sorerie budget immo.;
+                                                              ENC=FA Budget CF Account No.] }
+    { 9   ;   ;FA Disposal CF Account No.;Code20  ;TableRelation="Cash Flow Account";
+                                                   OnValidate=BEGIN
+                                                                CheckAccType("FA Disposal CF Account No.");
+                                                              END;
+
+                                                   AccessByPermission=TableData 5600=R;
+                                                   CaptionML=[ENU=FA Disposal CF Account No.;
+                                                              ESM=N§ cta. flujos efectivo A/F venta/baja de pedido ventas;
+                                                              FRC=Nø compte tr‚sorerie cession immo.;
+                                                              ENC=FA Disposal CF Account No.] }
+    { 10  ;   ;Service CF Account No.;Code20      ;TableRelation="Cash Flow Account";
+                                                   OnValidate=BEGIN
+                                                                CheckAccType("Service CF Account No.");
+                                                              END;
+
+                                                   AccessByPermission=TableData 5900=R;
+                                                   CaptionML=[ENU=Service CF Account No.;
+                                                              ESM=N§ cta. A/F servicio;
+                                                              FRC=Nø compte tr‚sorerie service;
+                                                              ENC=Service CF Account No.] }
+    { 11  ;   ;CF No. on Chart in Role Center;Code20;
+                                                   OnValidate=BEGIN
+                                                                IF NOT ConfirmedChartRoleCenterCFNo("CF No. on Chart in Role Center") THEN
+                                                                  "CF No. on Chart in Role Center" := xRec."CF No. on Chart in Role Center";
+                                                              END;
+
+                                                   CaptionML=[ENU=CF No. on Chart in Role Center;
+                                                              ESM=N§ flujos efectivo en gr fico de  rea de tareas;
+                                                              FRC=Nø tr‚sorerie sur graphique dans Tableau de bord;
+                                                              ENC=CF No. on Chart in Role Centre] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text001@1000 : TextConst '@@@=Cash Flow <No.> <Description> is shown in the chart on the Role Center.;ENU=Cash Flow Forecast %1 %2 is shown in the chart on the Role Center. Do you want to show this Cash Flow Forecast instead?;ESM=La previsi¢n de flujo de caja %1 %2 se muestra en el gr fico del  rea de tareas. ¨Desea ver la previsi¢n de flujo de caja en su lugar?;FRC=La pr‚vision de la tr‚sorerie %1 %2 est indiqu‚e dans le graphique du tableau de bord. Voulez-vous afficher cette pr‚vision de la tr‚sorerieÿ?;ENC=Cash Flow Forecast %1 %2 is shown in the chart on the Role Centre. Do you want to show this Cash Flow Forecast instead?';
+
+    LOCAL PROCEDURE CheckAccType@1(Code@1000 : Code[20]);
+    VAR
+      CFAccount@1001 : Record 841;
+    BEGIN
+      IF Code <> '' THEN BEGIN
+        CFAccount.GET(Code);
+        CFAccount.TESTFIELD("Account Type",CFAccount."Account Type"::Entry);
+      END;
+    END;
+
+    PROCEDURE SetChartRoleCenterCFNo@11(CashFlowNo@1000 : Code[20]);
+    BEGIN
+      GET;
+      "CF No. on Chart in Role Center" := CashFlowNo;
+      MODIFY;
+    END;
+
+    PROCEDURE GetChartRoleCenterCFNo@2() : Code[20];
+    BEGIN
+      GET;
+      EXIT("CF No. on Chart in Role Center");
+    END;
+
+    LOCAL PROCEDURE ConfirmedChartRoleCenterCFNo@3(NewCashFlowNo@1000 : Code[20]) : Boolean;
+    VAR
+      CashFlowForecast@1001 : Record 840;
+    BEGIN
+      IF NewCashFlowNo = '' THEN
+        EXIT(TRUE);
+
+      IF NOT (xRec."CF No. on Chart in Role Center" IN ['',NewCashFlowNo]) THEN BEGIN
+        CashFlowForecast.GET(xRec."CF No. on Chart in Role Center");
+        EXIT(CONFIRM(STRSUBSTNO(Text001,CashFlowForecast."No.",CashFlowForecast.Description),TRUE));
+      END;
+      EXIT(TRUE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

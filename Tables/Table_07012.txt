@@ -1,0 +1,117 @@
+OBJECT Table 7012 Purchase Price
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               TESTFIELD("Vendor No.");
+               TESTFIELD("Item No.");
+             END;
+
+    OnRename=BEGIN
+               TESTFIELD("Vendor No.");
+               TESTFIELD("Item No.");
+             END;
+
+    CaptionML=[ENU=Purchase Price;
+               ESM=Precio compra;
+               FRC=Prix achat;
+               ENC=Purchase Price];
+    LookupPageID=Page7012;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Item No.            ;Code20        ;TableRelation=Item;
+                                                   OnValidate=BEGIN
+                                                                IF "Item No." <> xRec."Item No." THEN BEGIN
+                                                                  "Unit of Measure Code" := '';
+                                                                  "Variant Code" := '';
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Item No.;
+                                                              ESM=N§ producto;
+                                                              FRC=Nø d'article;
+                                                              ENC=Item No.];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Vendor No.          ;Code20        ;TableRelation=Vendor;
+                                                   OnValidate=BEGIN
+                                                                IF Vend.GET("Vendor No.") THEN
+                                                                  "Currency Code" := Vend."Currency Code";
+                                                              END;
+
+                                                   CaptionML=[ENU=Vendor No.;
+                                                              ESM=N§ proveedor;
+                                                              FRC=Nø fournisseur;
+                                                              ENC=Vendor No.];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Currency Code       ;Code10        ;TableRelation=Currency;
+                                                   CaptionML=[ENU=Currency Code;
+                                                              ESM=C¢d. divisa;
+                                                              FRC=Code devise;
+                                                              ENC=Currency Code] }
+    { 4   ;   ;Starting Date       ;Date          ;OnValidate=BEGIN
+                                                                IF ("Starting Date" > "Ending Date") AND ("Ending Date" <> 0D) THEN
+                                                                  ERROR(Text000,FIELDCAPTION("Starting Date"),FIELDCAPTION("Ending Date"));
+                                                              END;
+
+                                                   CaptionML=[ENU=Starting Date;
+                                                              ESM=Fecha inicial;
+                                                              FRC=Date d‚but;
+                                                              ENC=Starting Date] }
+    { 5   ;   ;Direct Unit Cost    ;Decimal       ;CaptionML=[ENU=Direct Unit Cost;
+                                                              ESM=Costo unit. directo;
+                                                              FRC=Co–t unitaire direct;
+                                                              ENC=Direct Unit Cost];
+                                                   MinValue=0;
+                                                   AutoFormatType=2;
+                                                   AutoFormatExpr="Currency Code" }
+    { 14  ;   ;Minimum Quantity    ;Decimal       ;CaptionML=[ENU=Minimum Quantity;
+                                                              ESM=Cantidad m¡nima;
+                                                              FRC=Quantit‚ minimum;
+                                                              ENC=Minimum Quantity];
+                                                   MinValue=0 }
+    { 15  ;   ;Ending Date         ;Date          ;OnValidate=BEGIN
+                                                                VALIDATE("Starting Date");
+                                                              END;
+
+                                                   CaptionML=[ENU=Ending Date;
+                                                              ESM=Fecha final;
+                                                              FRC=Date fin;
+                                                              ENC=Ending Date] }
+    { 5400;   ;Unit of Measure Code;Code10        ;TableRelation="Item Unit of Measure".Code WHERE (Item No.=FIELD(Item No.));
+                                                   CaptionML=[ENU=Unit of Measure Code;
+                                                              ESM=C¢d. unidad medida;
+                                                              FRC=Code unit‚ de mesure;
+                                                              ENC=Unit of Measure Code] }
+    { 5700;   ;Variant Code        ;Code10        ;TableRelation="Item Variant".Code WHERE (Item No.=FIELD(Item No.));
+                                                   CaptionML=[ENU=Variant Code;
+                                                              ESM=C¢d. variante;
+                                                              FRC=Code variante;
+                                                              ENC=Variant Code] }
+  }
+  KEYS
+  {
+    {    ;Item No.,Vendor No.,Starting Date,Currency Code,Variant Code,Unit of Measure Code,Minimum Quantity;
+                                                   Clustered=Yes }
+    {    ;Vendor No.,Item No.,Starting Date,Currency Code,Variant Code,Unit of Measure Code,Minimum Quantity }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Vend@1000 : Record 23;
+      Text000@1004 : TextConst 'ENU=%1 cannot be after %2;ESM=%1 no puede ser posterior %2;FRC=%1 ne peut pas ˆtre post‚rieur(e) … %2;ENC=%1 cannot be after %2';
+
+    BEGIN
+    END.
+  }
+}
+

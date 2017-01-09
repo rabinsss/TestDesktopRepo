@@ -1,0 +1,205 @@
+OBJECT Table 7602 Customized Calendar Change
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               CheckEntryLine;
+             END;
+
+    OnModify=BEGIN
+               CheckEntryLine;
+             END;
+
+    OnRename=BEGIN
+               CheckEntryLine;
+             END;
+
+    CaptionML=[ENU=Customized Calendar Change;
+               ESM=Cambio calendario personalizado;
+               FRC=Modification calendrier perso.;
+               ENC=Customized Calendar Change];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Source Type         ;Option        ;CaptionML=[ENU=Source Type;
+                                                              ESM=Tipo procedencia mov.;
+                                                              FRC=Type origine;
+                                                              ENC=Source Type];
+                                                   OptionCaptionML=[ENU=Company,Customer,Vendor,Location,Shipping Agent,Service;
+                                                                    ESM=Empresa,Cliente,Proveedor,Almac‚n,Transportista,Servicio;
+                                                                    FRC=Compagnie,Client,Fournisseur,Emplacement,Agent de livraison,Service;
+                                                                    ENC=Company,Customer,Vendor,Location,Shipping Agent,Service];
+                                                   OptionString=Company,Customer,Vendor,Location,Shipping Agent,Service;
+                                                   Editable=No }
+    { 2   ;   ;Source Code         ;Code20        ;CaptionML=[ENU=Source Code;
+                                                              ESM=C¢d. origen;
+                                                              FRC=Code d'origine;
+                                                              ENC=Source Code];
+                                                   Editable=No }
+    { 3   ;   ;Additional Source Code;Code20      ;CaptionML=[ENU=Additional Source Code;
+                                                              ESM=C¢d. origen adicional;
+                                                              FRC=Code journal suppl‚mentaire;
+                                                              ENC=Additional Source Code] }
+    { 4   ;   ;Base Calendar Code  ;Code10        ;TableRelation="Base Calendar";
+                                                   CaptionML=[ENU=Base Calendar Code;
+                                                              ESM=C¢digo calendario base;
+                                                              FRC=Code calendrier principal;
+                                                              ENC=Base Calendar Code];
+                                                   Editable=No }
+    { 5   ;   ;Recurring System    ;Option        ;OnValidate=BEGIN
+                                                                IF "Recurring System" <> xRec."Recurring System" THEN
+                                                                  CASE "Recurring System" OF
+                                                                    "Recurring System"::"Annual Recurring":
+                                                                      Day := Day::" ";
+                                                                    "Recurring System"::"Weekly Recurring":
+                                                                      Date := 0D;
+                                                                  END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Recurring System;
+                                                              ESM=Sistema peri¢dico;
+                                                              FRC=SystŠme r‚current;
+                                                              ENC=Recurring System];
+                                                   OptionCaptionML=[ENU=" ,Annual Recurring,Weekly Recurring";
+                                                                    ESM=" ,Peri¢dico anual,Peri¢dico semanal";
+                                                                    FRC=" ,Abonnement annuel,Abonnement hebdomadaire";
+                                                                    ENC=" ,Annual Recurring,Weekly Recurring"];
+                                                   OptionString=[ ,Annual Recurring,Weekly Recurring] }
+    { 6   ;   ;Date                ;Date          ;OnValidate=BEGIN
+                                                                IF ("Recurring System" = "Recurring System"::" ") OR
+                                                                   ("Recurring System" = "Recurring System"::"Annual Recurring")
+                                                                THEN
+                                                                  TESTFIELD(Date)
+                                                                ELSE
+                                                                  TESTFIELD(Date,0D);
+                                                                UpdateDayName;
+                                                              END;
+
+                                                   CaptionML=[ENU=Date;
+                                                              ESM=Fecha;
+                                                              FRC=Date;
+                                                              ENC=Date] }
+    { 7   ;   ;Day                 ;Option        ;OnValidate=BEGIN
+                                                                IF "Recurring System" = "Recurring System"::"Weekly Recurring" THEN
+                                                                  TESTFIELD(Day);
+                                                                UpdateDayName;
+                                                              END;
+
+                                                   CaptionML=[ENU=Day;
+                                                              ESM=D¡a;
+                                                              FRC=Jour;
+                                                              ENC=Day];
+                                                   OptionCaptionML=[ENU=" ,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday";
+                                                                    ESM=" ,Lunes,Martes,Mi‚rcoles,Jueves,Viernes,S bado,Domingo";
+                                                                    FRC=" ,Lundi,Mardi,Mercredi,Jeudi,Vendredi,Samedi,Dimanche";
+                                                                    ENC=" ,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"];
+                                                   OptionString=[ ,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday] }
+    { 8   ;   ;Description         ;Text30        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 9   ;   ;Nonworking          ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Nonworking;
+                                                              ESM=No laborables;
+                                                              FRC=Jour ch“m‚;
+                                                              ENC=Nonworking] }
+    { 10  ;   ;Entry No.           ;Integer       ;CaptionML=[ENU=Entry No.;
+                                                              ESM=N§ mov.;
+                                                              FRC=Nø ‚criture;
+                                                              ENC=Entry No.] }
+  }
+  KEYS
+  {
+    {    ;Source Type,Source Code,Additional Source Code,Base Calendar Code,Recurring System,Date,Day,Entry No.;
+                                                   Clustered=Yes }
+    {    ;Entry No.                                }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;Source Type,Source Code,Additional Source Code }
+  }
+  CODE
+  {
+    VAR
+      Customer@1003 : Record 18;
+      Vendor@1002 : Record 23;
+      Location@1001 : Record 14;
+      ShippingAgentService@1000 : Record 5790;
+      DateTable@1005 : Record 2000000007;
+      ServMgtSetup@1004 : Record 5911;
+
+    PROCEDURE GetCaption@1() : Text[250];
+    BEGIN
+      CASE "Source Type" OF
+        "Source Type"::Company:
+          EXIT(COMPANYNAME);
+        "Source Type"::Customer:
+          IF Customer.GET("Source Code") THEN
+            EXIT("Source Code" + ' ' + Customer.Name);
+        "Source Type"::Vendor:
+          IF Vendor.GET("Source Code") THEN
+            EXIT("Source Code" + ' ' + Vendor.Name);
+        "Source Type"::Location:
+          IF Location.GET("Source Code") THEN
+            EXIT("Source Code" + ' ' + Location.Name);
+        "Source Type"::"Shipping Agent":
+          IF ShippingAgentService.GET("Source Code","Additional Source Code") THEN
+            EXIT("Source Code" + ' ' + "Additional Source Code" + ' ' + ShippingAgentService.Description);
+        "Source Type"::Service:
+          IF ServMgtSetup.GET THEN
+            EXIT("Source Code" + ' ' + ServMgtSetup.TABLECAPTION);
+      END;
+    END;
+
+    LOCAL PROCEDURE UpdateDayName@2();
+    BEGIN
+      IF (Date > 0D) AND
+         ("Recurring System" = "Recurring System"::"Annual Recurring")
+      THEN
+        Day := Day::" "
+      ELSE BEGIN
+        DateTable.SETRANGE("Period Type",DateTable."Period Type"::Date);
+        DateTable.SETRANGE("Period Start",Date);
+        IF DateTable.FINDFIRST THEN
+          Day := DateTable."Period No.";
+      END;
+      IF (Date = 0D) AND (Day = Day::" ") THEN BEGIN
+        Day := xRec.Day;
+        Date := xRec.Date;
+      END;
+      IF "Recurring System" = "Recurring System"::"Annual Recurring" THEN
+        TESTFIELD(Day,Day::" ");
+    END;
+
+    LOCAL PROCEDURE CheckEntryLine@3();
+    BEGIN
+      CASE "Recurring System" OF
+        "Recurring System"::" ":
+          BEGIN
+            TESTFIELD(Date);
+            TESTFIELD(Day);
+          END;
+        "Recurring System"::"Annual Recurring":
+          BEGIN
+            TESTFIELD(Date);
+            TESTFIELD(Day,Day::" ");
+          END;
+        "Recurring System"::"Weekly Recurring":
+          BEGIN
+            TESTFIELD(Date,0D);
+            TESTFIELD(Day);
+          END;
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

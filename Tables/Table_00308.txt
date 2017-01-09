@@ -1,0 +1,113 @@
+OBJECT Table 308 No. Series
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Code,Description;
+    OnDelete=BEGIN
+               NoSeriesLine.SETRANGE("Series Code",Code);
+               NoSeriesLine.DELETEALL;
+
+               NoSeriesRelationship.SETRANGE(Code,Code);
+               NoSeriesRelationship.DELETEALL;
+               NoSeriesRelationship.SETRANGE(Code);
+
+               NoSeriesRelationship.SETRANGE("Series Code",Code);
+               NoSeriesRelationship.DELETEALL;
+               NoSeriesRelationship.SETRANGE("Series Code");
+             END;
+
+    CaptionML=[ENU=No. Series;
+               ESM=Nos. serie;
+               FRC=S‚ries de nø;
+               ENC=No. Series];
+    LookupPageID=Page571;
+    DrillDownPageID=Page571;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 3   ;   ;Default Nos.        ;Boolean       ;CaptionML=[ENU=Default Nos.;
+                                                              ESM=Numeraci¢n predet.;
+                                                              FRC=Nø par d‚faut;
+                                                              ENC=Default Nos.] }
+    { 4   ;   ;Manual Nos.         ;Boolean       ;CaptionML=[ENU=Manual Nos.;
+                                                              ESM=Numeraci¢n manual;
+                                                              FRC=Nø manuel;
+                                                              ENC=Manual Nos.] }
+    { 5   ;   ;Date Order          ;Boolean       ;CaptionML=[ENU=Date Order;
+                                                              ESM=Secuencia de fechas;
+                                                              FRC=Ordre chronologique;
+                                                              ENC=Date Order] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      NoSeriesLine@1000 : Record 309;
+      NoSeriesRelationship@1001 : Record 310;
+
+    PROCEDURE DrillDown@6();
+    VAR
+      NoSeriesLine@1000 : Record 309;
+    BEGIN
+      FindNoSeriesLineToShow(NoSeriesLine);
+      IF NoSeriesLine.FIND('-') THEN;
+      NoSeriesLine.SETRANGE("Starting Date");
+      NoSeriesLine.SETRANGE(Open);
+      PAGE.RUNMODAL(0,NoSeriesLine);
+    END;
+
+    PROCEDURE UpdateLine@3(VAR StartDate@1007 : Date;VAR StartNo@1006 : Code[20];VAR EndNo@1005 : Code[20];VAR LastNoUsed@1004 : Code[20];VAR WarningNo@1003 : Code[20];VAR IncrementByNo@1002 : Integer;VAR LastDateUsed@1001 : Date);
+    VAR
+      NoSeriesLine@1000 : Record 309;
+    BEGIN
+      FindNoSeriesLineToShow(NoSeriesLine);
+      IF NOT NoSeriesLine.FIND('-') THEN
+        NoSeriesLine.INIT;
+      StartDate := NoSeriesLine."Starting Date";
+      StartNo := NoSeriesLine."Starting No.";
+      EndNo := NoSeriesLine."Ending No.";
+      LastNoUsed := NoSeriesLine."Last No. Used";
+      WarningNo := NoSeriesLine."Warning No.";
+      IncrementByNo := NoSeriesLine."Increment-by No.";
+      LastDateUsed := NoSeriesLine."Last Date Used"
+    END;
+
+    LOCAL PROCEDURE FindNoSeriesLineToShow@1(VAR NoSeriesLine@1001 : Record 309);
+    VAR
+      NoSeriesMgt@1000 : Codeunit 396;
+    BEGIN
+      NoSeriesMgt.SetNoSeriesLineFilter(NoSeriesLine,Code,0D);
+
+      IF NoSeriesLine.FINDLAST THEN
+        EXIT;
+
+      NoSeriesLine.RESET;
+      NoSeriesLine.SETRANGE("Series Code",Code);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

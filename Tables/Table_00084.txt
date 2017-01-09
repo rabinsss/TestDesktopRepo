@@ -1,0 +1,65 @@
+OBJECT Table 84 Acc. Schedule Name
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00,NAVNA7.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Name,Description;
+    OnDelete=BEGIN
+               AccSchedLine.SETRANGE("Schedule Name",Name);
+               AccSchedLine.DELETEALL;
+             END;
+
+    CaptionML=[ENU=Acc. Schedule Name;
+               ESM=Nombre Estructura de Cuentas;
+               FRC=Nom tableau d'analyse;
+               ENC=Acc. Schedule Name];
+    LookupPageID=Page103;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Name                ;Code10        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text80        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 3   ;   ;Default Column Layout;Code10       ;TableRelation="Column Layout Name";
+                                                   CaptionML=[ENU=Default Column Layout;
+                                                              ESM=Plantilla columna gen‚r.;
+                                                              FRC=Disposition colonne d‚faut;
+                                                              ENC=Default Column Layout] }
+    { 4   ;   ;Analysis View Name  ;Code10        ;TableRelation="Analysis View";
+                                                   CaptionML=[ENU=Analysis View Name;
+                                                              ESM=Nombre vista an lisis;
+                                                              FRC=Nom vue d'analyse;
+                                                              ENC=Analysis View Name] }
+    { 10000;  ;Financial Period Description;Text80;CaptionML=[ENU=Financial Period Description;
+                                                              ESM=Descripci¢n ejercicio econ¢mico;
+                                                              FRC=Description d'exercice financier;
+                                                              ENC=Financial Period Description] }
+  }
+  KEYS
+  {
+    {    ;Name                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      AccSchedLine@1000 : Record 85;
+
+    BEGIN
+    END.
+  }
+}
+

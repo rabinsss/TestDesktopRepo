@@ -1,0 +1,99 @@
+OBJECT Table 551 VAT Rate Change Conversion
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               TESTFIELD("To Code");
+             END;
+
+    OnRename=BEGIN
+               "Converted Date" := 0D;
+             END;
+
+    CaptionML=[ENU=Tax Rate Change Conversion;
+               ESM=Conversi¢n cambio tasa IVA;
+               FRC=Conversion modification taux TVA;
+               ENC=Tax Rate Change Conversion];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ESM=Tipo;
+                                                              FRC=Type;
+                                                              ENC=Type];
+                                                   OptionCaptionML=[ENU=Tax Prod. Posting Group,Gen. Prod. Posting Group;
+                                                                    ESM=Grupo contable IVA prod.,Grupos contables producto gen.;
+                                                                    FRC=Groupe de report produit TVA,Groupe de report produit;
+                                                                    ENC=Tax Prod. Posting Group,Gen. Prod. Posting Group];
+                                                   OptionString=VAT Prod. Posting Group,Gen. Prod. Posting Group }
+    { 2   ;   ;From Code           ;Code10        ;TableRelation=IF (Type=CONST(VAT Prod. Posting Group)) "VAT Product Posting Group"
+                                                                 ELSE IF (Type=CONST(Gen. Prod. Posting Group)) "Gen. Product Posting Group";
+                                                   OnValidate=BEGIN
+                                                                CheckforLoop;
+                                                              END;
+
+                                                   CaptionML=[ENU=From Code;
+                                                              ESM=C¢digo origen;
+                                                              FRC=Code d‚but;
+                                                              ENC=From Code];
+                                                   NotBlank=Yes }
+    { 3   ;   ;To Code             ;Code10        ;TableRelation=IF (Type=CONST(VAT Prod. Posting Group)) "VAT Product Posting Group"
+                                                                 ELSE IF (Type=CONST(Gen. Prod. Posting Group)) "Gen. Product Posting Group";
+                                                   OnValidate=BEGIN
+                                                                IF "To Code" <> xRec."To Code" THEN
+                                                                  "Converted Date" := 0D;
+
+                                                                CheckforLoop;
+                                                              END;
+
+                                                   CaptionML=[ENU=To Code;
+                                                              ESM=C¢digo destino;
+                                                              FRC=Code fin;
+                                                              ENC=To Code];
+                                                   NotBlank=Yes }
+    { 10  ;   ;Converted Date      ;Date          ;CaptionML=[ENU=Converted Date;
+                                                              ESM=Fecha conversi¢n;
+                                                              FRC=Date conversion;
+                                                              ENC=Converted Date];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Type,From Code                          ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text0001@1000 : TextConst 'ENU=This entry will create a loop with the entry where the %1 field is set to %2.;ESM=Este movimiento crear  un bucle con el movimiento en el que el campo %1 se establece en %2.;FRC=Cette ‚criture va cr‚er une boucle avec l''‚criture au niveau de laquelle le champ %1 est d‚fini sur %2.;ENC=This entry will create a loop with the entry where the %1 field is set to %2.';
+
+    LOCAL PROCEDURE CheckforLoop@1002();
+    VAR
+      VATRateChangeConversion@1001 : Record 551;
+    BEGIN
+      VATRateChangeConversion.RESET;
+      VATRateChangeConversion.SETRANGE(Type,Type);
+      VATRateChangeConversion.SETRANGE("From Code","To Code");
+      IF VATRateChangeConversion.FINDFIRST THEN
+        ERROR(Text0001,FIELDCAPTION("From Code"),VATRateChangeConversion."From Code");
+
+      VATRateChangeConversion.RESET;
+      VATRateChangeConversion.SETRANGE(Type,Type);
+      VATRateChangeConversion.SETRANGE("To Code","From Code");
+      IF VATRateChangeConversion.FINDFIRST THEN
+        ERROR(Text0001,FIELDCAPTION("To Code"),VATRateChangeConversion."To Code");
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

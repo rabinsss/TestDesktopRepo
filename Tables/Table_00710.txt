@@ -1,0 +1,104 @@
+OBJECT Table 710 Activity Log
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Activity Log;
+               ESM=Registro de actividad;
+               FRC=Journal des activitÇs;
+               ENC=Activity Log];
+  }
+  FIELDS
+  {
+    { 1   ;   ;ID                  ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=ID;
+                                                              ESM=Id.;
+                                                              FRC=Code;
+                                                              ENC=ID] }
+    { 2   ;   ;Record ID           ;RecordID      ;CaptionML=[ENU=Record ID;
+                                                              ESM=Id. del registro;
+                                                              FRC=Code d'enregistrement;
+                                                              ENC=Record ID] }
+    { 3   ;   ;Activity Date       ;DateTime      ;CaptionML=[ENU=Activity Date;
+                                                              ESM=Fecha de actividad;
+                                                              FRC=Date d'activitÇ;
+                                                              ENC=Activity Date] }
+    { 4   ;   ;User ID             ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=VAR
+                                                              UserMgt@1000 : Codeunit 418;
+                                                            BEGIN
+                                                              UserMgt.LookupUserID("User ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 5   ;   ;Status              ;Option        ;CaptionML=[ENU=Status;
+                                                              ESM=Estado;
+                                                              FRC=êtat;
+                                                              ENC=Status];
+                                                   OptionCaptionML=[ENU=Success,Failed;
+                                                                    ESM=Correcta,Incorrecta;
+                                                                    FRC=Succäs,êchec;
+                                                                    ENC=Success,Failed];
+                                                   OptionString=Success,Failed }
+    { 6   ;   ;Context             ;Text30        ;CaptionML=[ENU=Context;
+                                                              ESM=Contexto;
+                                                              FRC=Contexte;
+                                                              ENC=Context] }
+    { 10  ;   ;Description         ;Text250       ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 20  ;   ;Activity Message    ;Text250       ;CaptionML=[ENU=Activity Message;
+                                                              ESM=Mensaje de actividad;
+                                                              FRC=Message d'activitÇ;
+                                                              ENC=Activity Message] }
+  }
+  KEYS
+  {
+    {    ;ID                                      ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE LogActivity@1(RelatedRecordID@1000 : RecordID;NewStatus@1001 : Option;NewContext@1004 : Text[30];ActivityDescription@1002 : Text[250];ActivityMessage@1003 : Text[250]);
+    BEGIN
+      CLEAR(Rec);
+
+      "Record ID" := RelatedRecordID;
+      "Activity Date" := CURRENTDATETIME;
+      "User ID" := USERID;
+      Status := NewStatus;
+      Context := NewContext;
+      Description := ActivityDescription;
+      "Activity Message" := ActivityMessage;
+
+      INSERT(TRUE);
+    END;
+
+    PROCEDURE ShowEntries@2(RelatedRecID@1000 : RecordID);
+    BEGIN
+      SETRANGE("Record ID",RelatedRecID);
+      SETCURRENTKEY("Activity Date");
+      ASCENDING(FALSE);
+
+      COMMIT;
+      PAGE.RUNMODAL(PAGE::"Activity Log",Rec);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

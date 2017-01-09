@@ -1,0 +1,148 @@
+OBJECT Table 5772 Registered Whse. Activity Hdr.
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    Permissions=TableData 5773=rimd;
+    OnDelete=VAR
+               RgstrdWhseActivLine@1001 : Record 5773;
+               WhseCommentLine@1000 : Record 5770;
+             BEGIN
+               RgstrdWhseActivLine.SETRANGE("Activity Type",Type);
+               RgstrdWhseActivLine.SETRANGE("No.","No.");
+               RgstrdWhseActivLine.DELETEALL;
+
+               WhseCommentLine.SETRANGE("Table Name",WhseCommentLine."Table Name"::"Rgstrd. Whse. Activity Header");
+               WhseCommentLine.SETRANGE(Type,Type);
+               WhseCommentLine.SETRANGE("No.","No.");
+               WhseCommentLine.DELETEALL;
+             END;
+
+    CaptionML=[ENU=Registered Whse. Activity Hdr.;
+               ESM=Cab. actividad almac‚n regis.;
+               FRC=En-tˆte activit‚ mag. enreg.;
+               ENC=Registered Whse. Activity Hdr.];
+    LookupPageID=Page5797;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ESM=Tipo;
+                                                              FRC=Type;
+                                                              ENC=Type];
+                                                   OptionCaptionML=[ENU=" ,Put-away,Pick,Movement";
+                                                                    ESM=" ,Ubicaci¢n,Picking,Movimiento";
+                                                                    FRC=" ,Rangement,Pr‚lŠvement,Mouvement";
+                                                                    ENC=" ,Put-away,Pick,Movement"];
+                                                   OptionString=[ ,Put-away,Pick,Movement] }
+    { 2   ;   ;No.                 ;Code20        ;CaptionML=[ENU=No.;
+                                                              ESM=N§;
+                                                              FRC=Nø;
+                                                              ENC=No.] }
+    { 3   ;   ;Location Code       ;Code10        ;TableRelation=Location;
+                                                   CaptionML=[ENU=Location Code;
+                                                              ESM=C¢d. almac‚n;
+                                                              FRC=Code d'emplacement;
+                                                              ENC=Location Code];
+                                                   NotBlank=Yes }
+    { 4   ;   ;Assigned User ID    ;Code50        ;TableRelation="Warehouse Employee" WHERE (Location Code=FIELD(Location Code));
+                                                   CaptionML=[ENU=Assigned User ID;
+                                                              ESM=Id. usuario asignado;
+                                                              FRC=Code utilisateur affect‚;
+                                                              ENC=Assigned User ID] }
+    { 5   ;   ;Assignment Date     ;Date          ;CaptionML=[ENU=Assignment Date;
+                                                              ESM=Fecha asignaci¢n;
+                                                              FRC=Date affectation;
+                                                              ENC=Assignment Date] }
+    { 6   ;   ;Assignment Time     ;Time          ;CaptionML=[ENU=Assignment Time;
+                                                              ESM=Hora asignaci¢n;
+                                                              FRC=Heure affectation;
+                                                              ENC=Assignment Time] }
+    { 7   ;   ;Sorting Method      ;Option        ;CaptionML=[ENU=Sorting Method;
+                                                              ESM=M‚todo ordenaci¢n;
+                                                              FRC=M‚thode de tri;
+                                                              ENC=Sorting Method];
+                                                   OptionCaptionML=[ENU=" ,Item,Document,Shelf or Bin,Due Date,Ship-To,Bin Ranking,Action Type";
+                                                                    ESM=" ,Prod.,Doc.,Estant. o ubic.,Fecha vto.,Env¡o-a,Ranking ubic.,Tipo acci¢n";
+                                                                    FRC=" ,Article,Document,Tablette ou Zone,Date d'‚ch‚ance,Livrer …,Classement de zone,Type de tƒche";
+                                                                    ENC=" ,Item,Document,Shelf or Bin,Due Date,Ship-To,Bin Ranking,Action Type"];
+                                                   OptionString=[ ,Item,Document,Shelf or Bin,Due Date,Ship-To,Bin Ranking,Action Type] }
+    { 8   ;   ;Registering Date    ;Date          ;CaptionML=[ENU=Registering Date;
+                                                              ESM=Fecha registro;
+                                                              FRC=Date enregistrement;
+                                                              ENC=Registering Date] }
+    { 9   ;   ;No. Series          ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=No. Series;
+                                                              ESM=Nos. serie;
+                                                              FRC=S‚ries de nø;
+                                                              ENC=No. Series];
+                                                   Editable=No }
+    { 10  ;   ;Comment             ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Warehouse Comment Line" WHERE (Table Name=CONST(Rgstrd. Whse. Activity Header),
+                                                                                                     Type=FIELD(Type),
+                                                                                                     No.=FIELD(No.)));
+                                                   CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment];
+                                                   Editable=No }
+    { 11  ;   ;Whse. Activity No.  ;Code20        ;CaptionML=[ENU=Whse. Activity No.;
+                                                              ESM=N§ activ. almac‚n;
+                                                              FRC=Nø activit‚ magasin;
+                                                              ENC=Whse. Activity No.] }
+    { 12  ;   ;No. Printed         ;Integer       ;CaptionML=[ENU=No. Printed;
+                                                              ESM=N§ copias impresas;
+                                                              FRC=Nombre impressions;
+                                                              ENC=No. Printed];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Type,No.                                ;Clustered=Yes }
+    {    ;No.,Type                                 }
+    {    ;Whse. Activity No.                       }
+    {    ;Location Code                            }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE SetWhseLocationFilter@12();
+    VAR
+      WmsManagement@1000 : Codeunit 7302;
+    BEGIN
+      IF USERID <> '' THEN BEGIN
+        FILTERGROUP := 2;
+        SETRANGE("Location Code",WmsManagement.GetAllowedLocation("Location Code"));
+        FILTERGROUP := 0;
+      END;
+    END;
+
+    PROCEDURE LookupRegisteredActivityHeader@1(VAR CurrentLocationCode@1000 : Code[10];VAR RegisteredWhseActivHeader@1001 : Record 5772) : Boolean;
+    BEGIN
+      COMMIT;
+      IF USERID <> '' THEN BEGIN
+        RegisteredWhseActivHeader.FILTERGROUP := 2;
+        RegisteredWhseActivHeader.SETRANGE("Location Code");
+      END;
+      IF PAGE.RUNMODAL(0,RegisteredWhseActivHeader) = ACTION::LookupOK THEN;
+      IF USERID <> '' THEN BEGIN
+        RegisteredWhseActivHeader.FILTERGROUP := 2;
+        RegisteredWhseActivHeader.SETRANGE("Location Code",RegisteredWhseActivHeader."Location Code");
+        RegisteredWhseActivHeader.FILTERGROUP := 0;
+      END;
+      CurrentLocationCode := RegisteredWhseActivHeader."Location Code";
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

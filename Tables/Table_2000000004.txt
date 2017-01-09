@@ -1,0 +1,43 @@
+OBJECT Table 2000000004 Permission Set
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/07/06;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    DataCaptionFields=Role ID,Name;
+    CaptionML=[ENU=Permission Set;
+               ESM=Conjunto de permisos;
+               FRC=Ensemble d'autorisations;
+               ENC=Permission Set];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Role ID             ;Code20        ;CaptionML=[ENU=Role ID;
+                                                              ESM=Id. rol;
+                                                              FRC=Code de r“le;
+                                                              ENC=Role ID] }
+    { 2   ;   ;Name                ;Text30        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+  }
+  KEYS
+  {
+    {    ;Role ID                                 ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

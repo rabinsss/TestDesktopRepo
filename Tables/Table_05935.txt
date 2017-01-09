@@ -1,0 +1,105 @@
+OBJECT Table 5935 Service E-Mail Queue
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               IF "Entry No." = 0 THEN BEGIN
+                 ServEMailQueue.RESET;
+                 IF ServEMailQueue.FINDLAST THEN
+                   "Entry No." := ServEMailQueue."Entry No." + 1
+                 ELSE
+                   "Entry No." := 1;
+               END;
+
+               "Sending Date" := TODAY;
+               "Sending Time" := TIME;
+             END;
+
+    CaptionML=[ENU=Service E-Mail Queue;
+               ESM=Cola correo electr¢nico servicio;
+               FRC=File attente courriels service;
+               ENC=Service E-Mail Queue];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;CaptionML=[ENU=Entry No.;
+                                                              ESM=Nß mov.;
+                                                              FRC=N¯ Çcriture;
+                                                              ENC=Entry No.] }
+    { 2   ;   ;To Address          ;Text80        ;CaptionML=[ENU=To Address;
+                                                              ESM=A direcci¢n;
+                                                              FRC=Adresse destinataire;
+                                                              ENC=To Address] }
+    { 3   ;   ;Copy-to Address     ;Text80        ;CaptionML=[ENU=Copy-to Address;
+                                                              ESM=Copia a-Direcci¢n;
+                                                              FRC=Adresse en copie;
+                                                              ENC=Copy-to Address] }
+    { 4   ;   ;Subject Line        ;Text250       ;CaptionML=[ENU=Subject Line;
+                                                              ESM=L°n. asunto;
+                                                              FRC=Ligne objet;
+                                                              ENC=Subject Line] }
+    { 5   ;   ;Body Line           ;Text250       ;CaptionML=[ENU=Body Line;
+                                                              ESM=L°n. cuerpo;
+                                                              FRC=Ligne corps;
+                                                              ENC=Body Line] }
+    { 6   ;   ;Attachment Filename ;Text80        ;CaptionML=[ENU=Attachment Filename;
+                                                              ESM=Nombre archivo anexo;
+                                                              FRC=Nom de fichier de la piäce jointe;
+                                                              ENC=Attachment Filename] }
+    { 7   ;   ;Sending Date        ;Date          ;CaptionML=[ENU=Sending Date;
+                                                              ESM=Fecha env°o;
+                                                              FRC=Date d'envoi;
+                                                              ENC=Sending Date] }
+    { 8   ;   ;Sending Time        ;Time          ;CaptionML=[ENU=Sending Time;
+                                                              ESM=Hora env°o;
+                                                              FRC=Heure d'envoi;
+                                                              ENC=Sending Time] }
+    { 9   ;   ;Status              ;Option        ;CaptionML=[ENU=Status;
+                                                              ESM=Estado;
+                                                              FRC=êtat;
+                                                              ENC=Status];
+                                                   OptionCaptionML=[ENU=" ,Processed,Error";
+                                                                    ESM=" ,Procesado,Error";
+                                                                    FRC=" ,TraitÇ,Erreur";
+                                                                    ENC=" ,Processed,Error"];
+                                                   OptionString=[ ,Processed,Error];
+                                                   Editable=No }
+    { 10  ;   ;Document Type       ;Option        ;CaptionML=[ENU=Document Type;
+                                                              ESM=Tipo documento;
+                                                              FRC=Type de document;
+                                                              ENC=Document Type];
+                                                   OptionCaptionML=[ENU=" ,Service Order";
+                                                                    ESM=" ,Ped. servicio";
+                                                                    FRC=" ,Commande service";
+                                                                    ENC=" ,Service Order"];
+                                                   OptionString=[ ,Service Order] }
+    { 11  ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ESM=Nß documento;
+                                                              FRC=N¯ de document;
+                                                              ENC=Document No.] }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;Clustered=Yes }
+    {    ;Status,Sending Date,Document Type,Document No. }
+    {    ;Document Type,Document No.,Status,Sending Date }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      ServEMailQueue@1000 : Record 5935;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,83 @@
+OBJECT Table 409 SMTP Mail Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=SMTP Mail Setup;
+               ESM=Configuraci¢n correo SMTP;
+               FRC=Configuration de courrier SMTP;
+               ENC=SMTP Mail Setup];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=[ENU=Primary Key;
+                                                              ESM=Clave primaria;
+                                                              FRC=Cl‚ primaire;
+                                                              ENC=Primary Key] }
+    { 2   ;   ;SMTP Server         ;Text250       ;CaptionML=[ENU=SMTP Server;
+                                                              ESM=Servidor SMTP;
+                                                              FRC=Serveur SMTP;
+                                                              ENC=SMTP Server] }
+    { 3   ;   ;Authentication      ;Option        ;OnValidate=BEGIN
+                                                                IF Authentication <> Authentication::Basic THEN BEGIN
+                                                                  "User ID" := '';
+                                                                  Password := '';
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Authentication;
+                                                              ESM=Autenticaci¢n;
+                                                              FRC=Authentification;
+                                                              ENC=Authentication];
+                                                   OptionCaptionML=[ENU=Anonymous,NTLM,Basic;
+                                                                    ESM=An¢nima,NTLM,B sica;
+                                                                    FRC=Anonyme,NTLM,De base;
+                                                                    ENC=Anonymous,NTLM,Basic];
+                                                   OptionString=Anonymous,NTLM,Basic }
+    { 4   ;   ;User ID             ;Text250       ;OnValidate=BEGIN
+                                                                TESTFIELD(Authentication,Authentication::Basic);
+                                                              END;
+
+                                                   CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 5   ;   ;Password            ;Text250       ;OnValidate=BEGIN
+                                                                TESTFIELD(Authentication,Authentication::Basic);
+                                                              END;
+
+                                                   CaptionML=[ENU=Password;
+                                                              ESM=Contrase¤a;
+                                                              FRC=Mot de passe;
+                                                              ENC=Password] }
+    { 6   ;   ;SMTP Server Port    ;Integer       ;InitValue=25;
+                                                   CaptionML=[ENU=SMTP Server Port;
+                                                              ESM=Puerto servidor SMTP;
+                                                              FRC=Port du serveur SMTP;
+                                                              ENC=SMTP Server Port] }
+    { 7   ;   ;Secure Connection   ;Boolean       ;InitValue=No;
+                                                   CaptionML=[ENU=Secure Connection;
+                                                              ESM=Conexi¢n segura;
+                                                              FRC=S‚curiser la connexion;
+                                                              ENC=Secure Connection] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

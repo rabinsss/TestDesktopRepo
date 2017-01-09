@@ -1,0 +1,178 @@
+OBJECT Table 420 Handled IC Inbox Trans.
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    OnDelete=VAR
+               HndlInboxJnlLine@1000 : Record 421;
+               HndlICInboxSalesHdr@1001 : Record 438;
+               HndlICInboxPurchHdr@1002 : Record 440;
+             BEGIN
+               CASE "Source Type" OF
+                 "Source Type"::Journal:
+                   BEGIN
+                     HndlInboxJnlLine.SETRANGE("Transaction No.","Transaction No.");
+                     HndlInboxJnlLine.SETRANGE("IC Partner Code","IC Partner Code");
+                     HndlInboxJnlLine.SETRANGE("Transaction Source","Transaction Source");
+                     HndlInboxJnlLine.DELETEALL(TRUE);
+                   END;
+                 "Source Type"::"Sales Document":
+                   IF HndlICInboxSalesHdr.GET("Transaction No.","IC Partner Code","Transaction Source") THEN
+                     HndlICInboxSalesHdr.DELETE(TRUE);
+                 "Source Type"::"Purchase Document":
+                   IF HndlICInboxPurchHdr.GET("Transaction No.","IC Partner Code","Transaction Source") THEN
+                     HndlICInboxPurchHdr.DELETE(TRUE);
+               END;
+               DeleteComments("Transaction No.","IC Partner Code");
+             END;
+
+    CaptionML=[ENU=Handled IC Inbox Trans.;
+               ESM=Trans. bandeja entrada IC procesada;
+               FRC=Transaction de boåte de rÇception IC traitÇe;
+               ENC=Handled IC Inbox Trans.];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Transaction No.     ;Integer       ;CaptionML=[ENU=Transaction No.;
+                                                              ESM=Nß asiento;
+                                                              FRC=N¯ de transaction;
+                                                              ENC=Transaction No.];
+                                                   Editable=No }
+    { 2   ;   ;IC Partner Code     ;Code20        ;TableRelation="IC Partner";
+                                                   CaptionML=[ENU=IC Partner Code;
+                                                              ESM=C¢digo socio IC;
+                                                              FRC=Code de partenaire IC;
+                                                              ENC=IC Partner Code];
+                                                   Editable=No }
+    { 3   ;   ;Source Type         ;Option        ;CaptionML=[ENU=Source Type;
+                                                              ESM=Tipo procedencia mov.;
+                                                              FRC=Type d'origine;
+                                                              ENC=Source Type];
+                                                   OptionCaptionML=[ENU=Journal,Sales Document,Purchase Document;
+                                                                    ESM=Diario,Documento venta,Documento compra;
+                                                                    FRC=Journal,Document de vente,Document d'achat;
+                                                                    ENC=Journal,Sales Document,Purchase Document];
+                                                   OptionString=Journal,Sales Document,Purchase Document;
+                                                   Editable=No }
+    { 5   ;   ;Document Type       ;Option        ;CaptionML=[ENU=Document Type;
+                                                              ESM=Tipo documento;
+                                                              FRC=Type de document;
+                                                              ENC=Document Type];
+                                                   OptionCaptionML=[ENU=" ,Payment,Invoice,Credit Memo,Refund,Order,Return Order";
+                                                                    ESM=" ,Pago,Factura,Nota crÇdito,Reembolso,Pedido,Devoluci¢n";
+                                                                    FRC=" ,Paiement,Facture,Note de crÇdit,Remboursement,Commande,Commande de retour";
+                                                                    ENC=" ,Payment,Invoice,Credit Memo,Refund,Order,Return Order"];
+                                                   OptionString=[ ,Payment,Invoice,Credit Memo,Refund,Order,Return Order];
+                                                   Editable=No }
+    { 6   ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ESM=Nß documento;
+                                                              FRC=N¯ de document;
+                                                              ENC=Document No.];
+                                                   Editable=No }
+    { 7   ;   ;Posting Date        ;Date          ;CaptionML=[ENU=Posting Date;
+                                                              ESM=Fecha registro;
+                                                              FRC=Date de report;
+                                                              ENC=Posting Date];
+                                                   Editable=No }
+    { 8   ;   ;Transaction Source  ;Option        ;CaptionML=[ENU=Transaction Source;
+                                                              ESM=Origen de la transacci¢n;
+                                                              FRC=Source de transaction;
+                                                              ENC=Transaction Source];
+                                                   OptionCaptionML=[ENU=Returned by Partner,Created by Partner;
+                                                                    ESM=Devuelta por un socio,Creada por un socio;
+                                                                    FRC=RetournÇ par le partenaire,CrÇÇ par le partenaire;
+                                                                    ENC=Returned by Partner,Created by Partner];
+                                                   OptionString=Returned by Partner,Created by Partner;
+                                                   Editable=No }
+    { 9   ;   ;Document Date       ;Date          ;CaptionML=[ENU=Document Date;
+                                                              ESM=Fecha emisi¢n documento;
+                                                              FRC=Date de document;
+                                                              ENC=Document Date];
+                                                   Editable=No }
+    { 10  ;   ;Status              ;Option        ;CaptionML=[ENU=Status;
+                                                              ESM=Estado;
+                                                              FRC=êtat;
+                                                              ENC=Status];
+                                                   OptionCaptionML=[ENU=Accepted,Posted,,Returned to IC Partner,Canceled;
+                                                                    ESM=Aceptada,Registrada,,Devuelta a IC asociada,Cancelada;
+                                                                    FRC=AcceptÇ,ReportÇ,,RetournÇ au partenaire IC,AnnulÇ;
+                                                                    ENC=Accepted,Posted,,Returned to IC Partner,Cancelled];
+                                                   OptionString=Accepted,Posted,,Returned to IC Partner,Cancelled;
+                                                   Editable=No }
+    { 12  ;   ;IC Partner G/L Acc. No.;Code20     ;CaptionML=[ENU=IC Partner G/L Acc. No.;
+                                                              ESM=Nß cuenta IC asociada;
+                                                              FRC=N¯ compte G/L du partenaire IC;
+                                                              ENC=IC Partner G/L Acc. No.] }
+    { 13  ;   ;Source Line No.     ;Integer       ;CaptionML=[ENU=Source Line No.;
+                                                              ESM=Nß l°n. origen;
+                                                              FRC=N¯ de ligne source;
+                                                              ENC=Source Line No.] }
+  }
+  KEYS
+  {
+    {    ;Transaction No.,IC Partner Code,Transaction Source,Document Type;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE ShowDetails@1();
+    VAR
+      ComplICInBoxJnlLine@1000 : Record 421;
+      ComplICInboxSalesHeader@1001 : Record 438;
+      ComplICInboxPurchHeader@1002 : Record 440;
+      FrmComplICInBoxJnlLine@1005 : Page 618;
+      FrmComplICInboxSalesHeader@1004 : Page 648;
+      FrmComplICInboxPurchHeader@1003 : Page 650;
+    BEGIN
+      CASE "Source Type" OF
+        "Source Type"::Journal:
+          BEGIN
+            ComplICInBoxJnlLine.SETRANGE("Transaction No.","Transaction No.");
+            ComplICInBoxJnlLine.SETRANGE("IC Partner Code","IC Partner Code");
+            ComplICInBoxJnlLine.SETRANGE("Transaction Source","Transaction Source");
+            FrmComplICInBoxJnlLine.SETTABLEVIEW(ComplICInBoxJnlLine);
+            FrmComplICInBoxJnlLine.RUNMODAL;
+          END;
+        "Source Type"::"Sales Document":
+          BEGIN
+            ComplICInboxSalesHeader.SETRANGE("IC Transaction No.","Transaction No.");
+            ComplICInboxSalesHeader.SETRANGE("IC Partner Code","IC Partner Code");
+            ComplICInboxSalesHeader.SETRANGE("Transaction Source","Transaction Source");
+            FrmComplICInboxSalesHeader.SETTABLEVIEW(ComplICInboxSalesHeader);
+            FrmComplICInboxSalesHeader.RUNMODAL;
+          END;
+        "Source Type":
+          BEGIN
+            ComplICInboxPurchHeader.SETRANGE("IC Partner Code","IC Partner Code");
+            ComplICInboxPurchHeader.SETRANGE("IC Transaction No.","Transaction No.");
+            ComplICInboxPurchHeader.SETRANGE("Transaction Source","Transaction Source");
+            FrmComplICInboxPurchHeader.SETTABLEVIEW(ComplICInboxPurchHeader);
+            FrmComplICInboxPurchHeader.RUNMODAL;
+          END;
+      END;
+    END;
+
+    LOCAL PROCEDURE DeleteComments@2(TransactionNo@1001 : Integer;ICPartnerCode@1000 : Code[20]);
+    VAR
+      ICCommentLine@1002 : Record 424;
+    BEGIN
+      ICCommentLine.SETRANGE("Table Name",ICCommentLine."Table Name"::"Handled IC Inbox Transaction");
+      ICCommentLine.SETRANGE("Transaction No.",TransactionNo);
+      ICCommentLine.SETRANGE("IC Partner Code",ICPartnerCode);
+      ICCommentLine.DELETEALL;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

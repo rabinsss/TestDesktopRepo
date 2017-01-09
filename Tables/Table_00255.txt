@@ -1,0 +1,90 @@
+OBJECT Table 255 VAT Statement Template
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               VALIDATE("Page ID");
+             END;
+
+    OnDelete=BEGIN
+               VATStmtLine.SETRANGE("Statement Template Name",Name);
+               VATStmtLine.DELETEALL;
+               VATStmtName.SETRANGE("Statement Template Name",Name);
+               VATStmtName.DELETEALL;
+             END;
+
+    CaptionML=[ENU=Tax Statement Template;
+               ESM=Tipo declaraci¢n IVA;
+               FRC=ModŠle relev‚ d'imp“t;
+               ENC=Tax Statement Template];
+    LookupPageID=Page319;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Name                ;Code10        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text80        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 6   ;   ;Page ID             ;Integer       ;TableRelation=AllObj."Object ID" WHERE (Object Type=CONST(Page));
+                                                   OnValidate=BEGIN
+                                                                IF "Page ID" = 0 THEN
+                                                                  "Page ID" := PAGE::"VAT Statement";
+                                                                "VAT Statement Report ID" := REPORT::"VAT Statement";
+                                                              END;
+
+                                                   CaptionML=[ENU=Page ID;
+                                                              ESM=Id. p gina;
+                                                              FRC=Code page;
+                                                              ENC=Page ID] }
+    { 7   ;   ;VAT Statement Report ID;Integer    ;TableRelation=AllObj."Object ID" WHERE (Object Type=CONST(Report));
+                                                   CaptionML=[ENU=Tax Statement Report ID;
+                                                              ESM=N§ informe declaraci¢n IVA;
+                                                              FRC=Code rapport relev‚ d'imp“t;
+                                                              ENC=Tax Statement Report ID] }
+    { 16  ;   ;Page Caption        ;Text250       ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(AllObjWithCaption."Object Caption" WHERE (Object Type=CONST(Page),
+                                                                                                                Object ID=FIELD(Page ID)));
+                                                   CaptionML=[ENU=Page Caption;
+                                                              ESM=T¡tulo p gina;
+                                                              FRC=L‚gende de la page;
+                                                              ENC=Page Caption];
+                                                   Editable=No }
+    { 17  ;   ;VAT Statement Report Caption;Text250;
+                                                   FieldClass=FlowField;
+                                                   CalcFormula=Lookup(AllObjWithCaption."Object Caption" WHERE (Object Type=CONST(Report),
+                                                                                                                Object ID=FIELD(VAT Statement Report ID)));
+                                                   CaptionML=[ENU=Tax Statement Report Caption;
+                                                              ESM=T¡tulo informe declaraci¢n IVA;
+                                                              FRC=Libell‚ du rapport de relev‚ fiscal;
+                                                              ENC=Tax Statement Report Caption];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Name                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      VATStmtName@1000 : Record 257;
+      VATStmtLine@1001 : Record 256;
+
+    BEGIN
+    END.
+  }
+}
+

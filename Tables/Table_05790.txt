@@ -1,0 +1,70 @@
+OBJECT Table 5790 Shipping Agent Services
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Shipping Agent Services;
+               ESM=Servicios transportista;
+               FRC=Services agent de livraison;
+               ENC=Shipping Agent Services];
+    LookupPageID=Page5790;
+    DrillDownPageID=Page5790;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Shipping Agent Code ;Code10        ;TableRelation="Shipping Agent";
+                                                   CaptionML=[ENU=Shipping Agent Code;
+                                                              ESM=C¢d. transportista;
+                                                              FRC=Code agent de livraison;
+                                                              ENC=Shipping Agent Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 4   ;   ;Shipping Time       ;DateFormula   ;OnValidate=VAR
+                                                                DateTest@1000 : Date;
+                                                              BEGIN
+                                                                DateTest := CALCDATE("Shipping Time",WORKDATE);
+                                                                IF DateTest < WORKDATE THEN
+                                                                  ERROR(Text000,FIELDCAPTION("Shipping Time"));
+                                                              END;
+
+                                                   CaptionML=[ENU=Shipping Time;
+                                                              ESM=Tiempo env¡o;
+                                                              FRC=D‚lai de livraison;
+                                                              ENC=Shipping Time] }
+    { 7600;   ;Base Calendar Code  ;Code10        ;TableRelation="Base Calendar";
+                                                   CaptionML=[ENU=Base Calendar Code;
+                                                              ESM=C¢digo calendario base;
+                                                              FRC=Code calendrier principal;
+                                                              ENC=Base Calendar Code] }
+  }
+  KEYS
+  {
+    {    ;Shipping Agent Code,Code                ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;Code,Description,Shipping Time           }
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=The %1 cannot be negative.;ESM=%1 no puede ser negativo.;FRC=Le %1 ne peut ˆtre n‚gatif.;ENC=The %1 cannot be negative.';
+
+    BEGIN
+    END.
+  }
+}
+

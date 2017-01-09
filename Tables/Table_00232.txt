@@ -1,0 +1,307 @@
+OBJECT Table 232 Gen. Journal Batch
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00,NAVNA9.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Name,Description;
+    OnInsert=BEGIN
+               LOCKTABLE;
+               GenJnlTemplate.GET("Journal Template Name");
+               IF NOT GenJnlTemplate."Copy VAT Setup to Jnl. Lines" THEN
+                 "Copy VAT Setup to Jnl. Lines" := FALSE;
+               "Allow Payment Export" := GenJnlTemplate.Type = GenJnlTemplate.Type::Payments;
+             END;
+
+    OnDelete=BEGIN
+               ApprovalsMgmt.OnCancelGeneralJournalBatchApprovalRequest(Rec);
+
+               GenJnlAlloc.SETRANGE("Journal Template Name","Journal Template Name");
+               GenJnlAlloc.SETRANGE("Journal Batch Name",Name);
+               GenJnlAlloc.DELETEALL;
+               GenJnlLine.SETRANGE("Journal Template Name","Journal Template Name");
+               GenJnlLine.SETRANGE("Journal Batch Name",Name);
+               GenJnlLine.DELETEALL(TRUE);
+               DepositHeader.SETCURRENTKEY("Journal Template Name","Journal Batch Name");
+               DepositHeader.SETRANGE("Journal Template Name","Journal Template Name");
+               DepositHeader.SETRANGE("Journal Batch Name",Name);
+               DepositHeader.DELETEALL(TRUE);
+             END;
+
+    OnRename=BEGIN
+               ApprovalsMgmt.RenameApprovalEntries(xRec.RECORDID,RECORDID);
+             END;
+
+    CaptionML=[ENU=Gen. Journal Batch;
+               ESM=Secci¢n diario general;
+               FRC=Lot journal g‚n‚ral;
+               ENC=Gen. Journal Batch];
+    LookupPageID=Page251;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Journal Template Name;Code10       ;TableRelation="Gen. Journal Template";
+                                                   CaptionML=[ENU=Journal Template Name;
+                                                              ESM=Nombre libro diario;
+                                                              FRC=Nom modŠle journal;
+                                                              ENC=Journal Template Name];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Name                ;Code10        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 4   ;   ;Reason Code         ;Code10        ;TableRelation="Reason Code";
+                                                   OnValidate=BEGIN
+                                                                IF "Reason Code" <> xRec."Reason Code" THEN BEGIN
+                                                                  ModifyLines(FIELDNO("Reason Code"));
+                                                                  MODIFY;
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Reason Code;
+                                                              ESM=C¢d. auditor¡a;
+                                                              FRC=Code motif;
+                                                              ENC=Reason Code] }
+    { 5   ;   ;Bal. Account Type   ;Option        ;OnValidate=BEGIN
+                                                                "Bal. Account No." := '';
+                                                                IF "Bal. Account Type" <> "Bal. Account Type"::"G/L Account" THEN
+                                                                  "Bank Statement Import Format" := '';
+                                                              END;
+
+                                                   CaptionML=[ENU=Bal. Account Type;
+                                                              ESM=Tipo contrapartida;
+                                                              FRC=Type compte contr“le;
+                                                              ENC=Bal. Account Type];
+                                                   OptionCaptionML=[ENU=G/L Account,Customer,Vendor,Bank Account,Fixed Asset;
+                                                                    ESM=Cuenta,Cliente,Proveedor,Banco,Activo;
+                                                                    FRC=Compte du grand livre,Client,Fournisseur,Compte bancaire,Immobilisation;
+                                                                    ENC=G/L Account,Customer,Vendor,Bank Account,Fixed Asset];
+                                                   OptionString=G/L Account,Customer,Vendor,Bank Account,Fixed Asset }
+    { 6   ;   ;Bal. Account No.    ;Code20        ;TableRelation=IF (Bal. Account Type=CONST(G/L Account)) "G/L Account"
+                                                                 ELSE IF (Bal. Account Type=CONST(Customer)) Customer
+                                                                 ELSE IF (Bal. Account Type=CONST(Vendor)) Vendor
+                                                                 ELSE IF (Bal. Account Type=CONST(Bank Account)) "Bank Account"
+                                                                 ELSE IF (Bal. Account Type=CONST(Fixed Asset)) "Fixed Asset";
+                                                   OnValidate=BEGIN
+                                                                IF "Bal. Account Type" = "Bal. Account Type"::"G/L Account" THEN
+                                                                  CheckGLAcc("Bal. Account No.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Bal. Account No.;
+                                                              ESM=Cta. contrapartida;
+                                                              FRC=Nø compte contr“le;
+                                                              ENC=Bal. Account No.] }
+    { 7   ;   ;No. Series          ;Code10        ;TableRelation="No. Series";
+                                                   OnValidate=BEGIN
+                                                                IF "No. Series" <> '' THEN BEGIN
+                                                                  GenJnlTemplate.GET("Journal Template Name");
+                                                                  IF GenJnlTemplate.Recurring THEN
+                                                                    ERROR(
+                                                                      Text000,
+                                                                      FIELDCAPTION("Posting No. Series"));
+                                                                  IF "No. Series" = "Posting No. Series" THEN
+                                                                    VALIDATE("Posting No. Series",'');
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=No. Series;
+                                                              ESM=Nos. serie;
+                                                              FRC=S‚ries de nø;
+                                                              ENC=No. Series] }
+    { 8   ;   ;Posting No. Series  ;Code10        ;TableRelation="No. Series";
+                                                   OnValidate=BEGIN
+                                                                IF ("Posting No. Series" = "No. Series") AND ("Posting No. Series" <> '') THEN
+                                                                  FIELDERROR("Posting No. Series",STRSUBSTNO(Text001,"Posting No. Series"));
+                                                                ModifyLines(FIELDNO("Posting No. Series"));
+                                                                MODIFY;
+                                                              END;
+
+                                                   CaptionML=[ENU=Posting No. Series;
+                                                              ESM=N§ serie registro;
+                                                              FRC=S‚ries de nø report;
+                                                              ENC=Posting No. Series] }
+    { 9   ;   ;Copy VAT Setup to Jnl. Lines;Boolean;
+                                                   InitValue=Yes;
+                                                   CaptionML=[ENU=Copy Tax Setup to Jnl. Lines;
+                                                              ESM=Copiar conf. IVA a l¡n. dia.;
+                                                              FRC=Cop. para. TVA sur lgnes jour.;
+                                                              ENC=Copy VAT Setup to Jnl. Lines] }
+    { 10  ;   ;Allow VAT Difference;Boolean       ;OnValidate=BEGIN
+                                                                IF "Allow VAT Difference" THEN BEGIN
+                                                                  GenJnlTemplate.GET("Journal Template Name");
+                                                                  GenJnlTemplate.TESTFIELD("Allow VAT Difference",TRUE);
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Allow Tax Difference;
+                                                              ESM=Permitir diferen. IVA;
+                                                              FRC=Autoriser diff‚rence TVA;
+                                                              ENC=Allow Tax Difference] }
+    { 11  ;   ;Allow Payment Export;Boolean       ;CaptionML=[ENU=Allow Payment Export;
+                                                              ESM=Permitir exportaci¢n de pagos;
+                                                              FRC=Autoriser exportation paiement;
+                                                              ENC=Allow Payment Export] }
+    { 12  ;   ;Bank Statement Import Format;Code20;TableRelation="Bank Export/Import Setup".Code WHERE (Direction=CONST(Import));
+                                                   OnValidate=BEGIN
+                                                                IF ("Bank Statement Import Format" <> '') AND ("Bal. Account Type" <> "Bal. Account Type"::"G/L Account") THEN
+                                                                  FIELDERROR("Bank Statement Import Format",BankStmtImpFormatBalAccErr);
+                                                              END;
+
+                                                   CaptionML=[ENU=Bank Statement Import Format;
+                                                              ESM=Formato de importaci¢n de estado de cuenta de banco;
+                                                              FRC=Format importation relev‚ bancaire;
+                                                              ENC=Bank Statement Import Format] }
+    { 21  ;   ;Template Type       ;Option        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("Gen. Journal Template".Type WHERE (Name=FIELD(Journal Template Name)));
+                                                   CaptionML=[ENU=Template Type;
+                                                              ESM=Tipo plantilla;
+                                                              FRC=Type de modŠle;
+                                                              ENC=Template Type];
+                                                   OptionCaptionML=[ENU=General,Sales,Purchases,Cash Receipts,Payments,Assets,Intercompany,Jobs;
+                                                                    ESM=General,Ventas,Compras,Cobros,Pagos,Activos,Entre compa¤¡as,Proyectos;
+                                                                    FRC=G‚n‚ral,Ventes,Achats,Caisse recette,Paiements,Actifs,Intercompagnie,Projets;
+                                                                    ENC=General,Sales,Purchases,Cash Receipts,Payments,Assets,Intercompany,Jobs];
+                                                   OptionString=General,Sales,Purchases,Cash Receipts,Payments,Assets,Intercompany,Jobs;
+                                                   Editable=No }
+    { 22  ;   ;Recurring           ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("Gen. Journal Template".Recurring WHERE (Name=FIELD(Journal Template Name)));
+                                                   CaptionML=[ENU=Recurring;
+                                                              ESM=Peri¢dico;
+                                                              FRC=R‚current;
+                                                              ENC=Recurring];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Journal Template Name,Name              ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=Only the %1 field can be filled in on recurring journals.;ESM=S¢lo se debe completar el campo %1 en los diarios peri¢dicos.;FRC=Seul le champ %1 peut ˆtre rempli sur les journaux r‚currents.;ENC=Only the %1 field can be filled in on recurring journals.';
+      Text001@1001 : TextConst 'ENU=must not be %1;ESM=No puede ser %1.;FRC=ne doit pas ˆtre %1;ENC=must not be %1';
+      GenJnlTemplate@1002 : Record 80;
+      GenJnlLine@1003 : Record 81;
+      GenJnlAlloc@1004 : Record 221;
+      DepositHeader@1020000 : Record 10140;
+      BankStmtImpFormatBalAccErr@1005 : TextConst '@@@="FIELDERROR ex: Bank Statement Import Format must be blank. When Bal. Account Type = Bank Account, then Bank Statement Import Format on the Bank Account card will be used in Gen. Journal Batch Journal Template Name=''GENERAL'',Name=''CASH''.";ENU="must be blank. When Bal. Account Type = Bank Account, then Bank Statement Import Format on the Bank Account card will be used";ESM="debe estar en blanco. Cuando Tipo contrapartida = Cuenta bancaria, se utilizar  el Formato de importaci¢n de extractos bancarios en la Ficha Banco.";FRC="doit ˆtre vide. Si Type compte contrepartie = Compte bancaire, c''est le Format importation relev‚ bancaire du compte bancaire qui sera utilis‚.";ENC="must be blank. When Bal. Account Type = Bank Account, then Bank Statement Import Format on the Bank Account card will be used"';
+      ApprovalsMgmt@1006 : Codeunit 1535;
+
+    PROCEDURE SetupNewBatch@1();
+    BEGIN
+      GenJnlTemplate.GET("Journal Template Name");
+      "Bal. Account Type" := GenJnlTemplate."Bal. Account Type";
+      "Bal. Account No." := GenJnlTemplate."Bal. Account No.";
+      "No. Series" := GenJnlTemplate."No. Series";
+      "Posting No. Series" := GenJnlTemplate."Posting No. Series";
+      "Reason Code" := GenJnlTemplate."Reason Code";
+      "Copy VAT Setup to Jnl. Lines" := GenJnlTemplate."Copy VAT Setup to Jnl. Lines";
+      "Allow VAT Difference" := GenJnlTemplate."Allow VAT Difference";
+    END;
+
+    LOCAL PROCEDURE CheckGLAcc@2(AccNo@1000 : Code[20]);
+    VAR
+      GLAcc@1001 : Record 15;
+    BEGIN
+      IF AccNo <> '' THEN BEGIN
+        GLAcc.GET(AccNo);
+        GLAcc.CheckGLAcc;
+        GLAcc.TESTFIELD("Direct Posting",TRUE);
+      END;
+    END;
+
+    LOCAL PROCEDURE ModifyLines@3(i@1000 : Integer);
+    BEGIN
+      GenJnlLine.LOCKTABLE;
+      GenJnlLine.SETRANGE("Journal Template Name","Journal Template Name");
+      GenJnlLine.SETRANGE("Journal Batch Name",Name);
+      IF GenJnlLine.FIND('-') THEN
+        REPEAT
+          CASE i OF
+            FIELDNO("Reason Code"):
+              GenJnlLine.VALIDATE("Reason Code","Reason Code");
+            FIELDNO("Posting No. Series"):
+              GenJnlLine.VALIDATE("Posting No. Series","Posting No. Series");
+          END;
+          GenJnlLine.MODIFY(TRUE);
+        UNTIL GenJnlLine.NEXT = 0;
+    END;
+
+    PROCEDURE ClearDataExchEntries@4();
+    VAR
+      GenJnlLine@1000 : Record 81;
+    BEGIN
+      GenJnlLine.SETRANGE("Journal Template Name","Journal Template Name");
+      GenJnlLine.SETRANGE("Journal Batch Name",Name);
+      IF GenJnlLine.FINDSET THEN
+        REPEAT
+          GenJnlLine.ClearDataExchangeEntries(TRUE);
+        UNTIL GenJnlLine.NEXT = 0;
+    END;
+
+    PROCEDURE LinesExist@5() : Boolean;
+    VAR
+      GenJournalLine@1000 : Record 81;
+    BEGIN
+      GenJournalLine.SETRANGE("Journal Template Name","Journal Template Name");
+      GenJournalLine.SETRANGE("Journal Batch Name",Name);
+      EXIT(NOT GenJournalLine.ISEMPTY);
+    END;
+
+    PROCEDURE GetBalance@6() : Decimal;
+    VAR
+      GenJournalLine@1000 : Record 81;
+    BEGIN
+      GenJournalLine.SETRANGE("Journal Template Name","Journal Template Name");
+      GenJournalLine.SETRANGE("Journal Batch Name",Name);
+      GenJournalLine.CALCSUMS("Balance (LCY)");
+      EXIT(GenJournalLine."Balance (LCY)");
+    END;
+
+    PROCEDURE CheckBalance@11() Balance : Decimal;
+    BEGIN
+      Balance := GetBalance;
+
+      IF Balance = 0 THEN
+        OnGeneralJournalBatchBalanced
+      ELSE
+        OnGeneralJournalBatchNotBalanced;
+    END;
+
+    [Integration(TRUE)]
+    LOCAL PROCEDURE OnGeneralJournalBatchBalanced@15();
+    BEGIN
+    END;
+
+    [Integration(TRUE)]
+    LOCAL PROCEDURE OnGeneralJournalBatchNotBalanced@16();
+    BEGIN
+    END;
+
+    [Integration(TRUE)]
+    PROCEDURE OnCheckGenJournalLineExportRestrictions@7();
+    BEGIN
+    END;
+
+    [Integration(TRUE)]
+    PROCEDURE OnMoveGenJournalBatch@8(ToRecordID@1000 : RecordID);
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

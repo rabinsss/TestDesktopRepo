@@ -1,0 +1,175 @@
+OBJECT Table 1021 Job WIP Total
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    OnDelete=VAR
+               JobWIPWarning@1000 : Record 1007;
+             BEGIN
+               JobWIPWarning.DeleteEntries(Rec);
+             END;
+
+    CaptionML=[ENU=Job WIP Total;
+               ESM=Costo WIP proyecto;
+               FRC=Total TEC projet;
+               ENC=Job WIP Total];
+    LookupPageID=Page1028;
+    DrillDownPageID=Page1028;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Entry No.;
+                                                              ESM=N§ mov.;
+                                                              FRC=Nø ‚criture;
+                                                              ENC=Entry No.] }
+    { 2   ;   ;Job No.             ;Code20        ;TableRelation=Job;
+                                                   CaptionML=[ENU=Job No.;
+                                                              ESM=N§ proyecto;
+                                                              FRC=Nø projet;
+                                                              ENC=Job No.];
+                                                   NotBlank=Yes;
+                                                   Editable=No }
+    { 3   ;   ;Job Task No.        ;Code20        ;TableRelation="Job Task"."Job Task No." WHERE (Job No.=FIELD(Job No.));
+                                                   ValidateTableRelation=No;
+                                                   CaptionML=[ENU=Job Task No.;
+                                                              ESM=N§ tarea proyecto;
+                                                              FRC=Nø tƒche de projet;
+                                                              ENC=Job Task No.];
+                                                   NotBlank=Yes }
+    { 4   ;   ;WIP Method          ;Code20        ;TableRelation="Job WIP Method".Code;
+                                                   CaptionML=[ENU=WIP Method;
+                                                              ESM=M‚todo WIP;
+                                                              FRC=M‚thode TEC;
+                                                              ENC=WIP Method];
+                                                   Editable=No }
+    { 5   ;   ;WIP Posting Date    ;Date          ;CaptionML=[ENU=WIP Posting Date;
+                                                              ESM=Fecha registro WIP;
+                                                              FRC=Date de report TEC;
+                                                              ENC=WIP Posting Date];
+                                                   Editable=No }
+    { 6   ;   ;WIP Posting Date Filter;Text250    ;CaptionML=[ENU=WIP Posting Date Filter;
+                                                              ESM=Filtro fecha registro WIP;
+                                                              FRC=Filtre date de report TEC;
+                                                              ENC=WIP Posting Date Filter];
+                                                   Editable=No }
+    { 7   ;   ;WIP Planning Date Filter;Text250   ;CaptionML=[ENU=WIP Planning Date Filter;
+                                                              ESM=Filtro fecha planif. WIP;
+                                                              FRC=Filtre date planification TEC;
+                                                              ENC=WIP Planning Date Filter];
+                                                   Editable=No }
+    { 8   ;   ;WIP Warnings        ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Job WIP Warning" WHERE (Job WIP Total Entry No.=FIELD(Entry No.)));
+                                                   CaptionML=[ENU=WIP Warnings;
+                                                              ESM=Avisos WIP;
+                                                              FRC=Avertissements TEC;
+                                                              ENC=WIP Warnings] }
+    { 9   ;   ;Posted to G/L       ;Boolean       ;CaptionML=[ENU=Posted to G/L;
+                                                              ESM=Registrado en CG;
+                                                              FRC=Report‚ au GL;
+                                                              ENC=Posted to G/L] }
+    { 10  ;   ;Schedule (Total Cost);Decimal      ;CaptionML=[ENU=Schedule (Total Cost);
+                                                              ESM=Previsi¢n (Costo total);
+                                                              FRC=Calendrier (co–t total);
+                                                              ENC=Schedule (Total Cost)];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 11  ;   ;Schedule (Total Price);Decimal     ;CaptionML=[ENU=Schedule (Total Price);
+                                                              ESM=Previsi¢n (Precio total);
+                                                              FRC=Calendrier (Prix total);
+                                                              ENC=Schedule (Total Price)];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 12  ;   ;Usage (Total Cost)  ;Decimal       ;CaptionML=[ENU=Usage (Total Cost);
+                                                              ESM=Uso (Costo total);
+                                                              FRC=Utilisation (co–t total);
+                                                              ENC=Usage (Total Cost)];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 13  ;   ;Usage (Total Price) ;Decimal       ;CaptionML=[ENU=Usage (Total Price);
+                                                              ESM=Uso (Precio total);
+                                                              FRC=Utilisation (Prix total);
+                                                              ENC=Usage (Total Price)];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 14  ;   ;Contract (Total Cost);Decimal      ;CaptionML=[ENU=Contract (Total Cost);
+                                                              ESM=Contrato (Costo total);
+                                                              FRC=Contrat (co–t total);
+                                                              ENC=Contract (Total Cost)];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 15  ;   ;Contract (Total Price);Decimal     ;CaptionML=[ENU=Contract (Total Price);
+                                                              ESM=Contrato (Precio total);
+                                                              FRC=Contrat (prix total);
+                                                              ENC=Contract (Total Price)];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 16  ;   ;Contract (Invoiced Price);Decimal  ;CaptionML=[ENU=Contract (Invoiced Price);
+                                                              ESM=Contrato (Precio facturado);
+                                                              FRC=Contrat (prix factur‚);
+                                                              ENC=Contract (Invoiced Price)];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 17  ;   ;Contract (Invoiced Cost);Decimal   ;CaptionML=[ENU=Contract (Invoiced Cost);
+                                                              ESM=Contrato (Costo facturado);
+                                                              FRC=Contrat (co–t factur‚);
+                                                              ENC=Contract (Invoiced Cost)];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 20  ;   ;Calc. Recog. Sales Amount;Decimal  ;CaptionML=[ENU=Calc. Recog. Sales Amount;
+                                                              ESM=Calc. importe ventas reconoc.;
+                                                              FRC=Montant vente r‚cep. calc.;
+                                                              ENC=Calc. Recog. Sales Amount];
+                                                   Editable=No }
+    { 21  ;   ;Calc. Recog. Costs Amount;Decimal  ;CaptionML=[ENU=Calc. Recog. Costs Amount;
+                                                              ESM=Calc. importe costos reconoc.;
+                                                              FRC=Montant co–ts r‚cep. calc.;
+                                                              ENC=Calc. Recog. Costs Amount];
+                                                   Editable=No }
+    { 30  ;   ;Cost Completion %   ;Decimal       ;CaptionML=[ENU=Cost Completion %;
+                                                              ESM=Compleci¢n costo %;
+                                                              FRC=% achŠvement des co–ts;
+                                                              ENC=Cost Completion %];
+                                                   BlankZero=Yes;
+                                                   Editable=No;
+                                                   AutoFormatType=2 }
+    { 31  ;   ;Invoiced %          ;Decimal       ;CaptionML=[ENU=Invoiced %;
+                                                              ESM=% Facturado;
+                                                              FRC=% factur‚;
+                                                              ENC=Invoiced %];
+                                                   BlankZero=Yes;
+                                                   Editable=No;
+                                                   AutoFormatType=2 }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;Clustered=Yes }
+    {    ;Job No.,Job Task No.                     }
+    {    ;Job No.,Posted to G/L                   ;SumIndexFields=Calc. Recog. Sales Amount,Calc. Recog. Costs Amount }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE DeleteEntriesForJobTask@1(JobTask@1000 : Record 1001);
+    BEGIN
+      SETCURRENTKEY("Job No.","Job Task No.");
+      SETRANGE("Job No.",JobTask."Job No.");
+      SETRANGE("Job Task No.",JobTask."Job Task No.");
+      SETRANGE("Posted to G/L",FALSE);
+      IF NOT ISEMPTY THEN
+        DELETEALL(TRUE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

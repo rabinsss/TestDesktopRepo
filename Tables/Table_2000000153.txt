@@ -1,0 +1,82 @@
+OBJECT Table 2000000153 NAV App Installed App
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=NAV App Installed App;
+               ESM=Aplic. instalada con NAV App;
+               FRC=Appli NAV App installÇe;
+               ENC=NAV App Installed App];
+  }
+  FIELDS
+  {
+    { 1   ;   ;App ID              ;GUID          ;CaptionML=[ENU=App ID;
+                                                              ESM=Id.ˇaplicaci¢n;
+                                                              FRC=Code appli;
+                                                              ENC=App ID] }
+    { 2   ;   ;Package ID          ;GUID          ;CaptionML=[ENU=Package ID;
+                                                              ESM=Id. de paquete;
+                                                              FRC=Code package;
+                                                              ENC=Package ID] }
+    { 3   ;   ;Name                ;Text250       ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+    { 4   ;   ;Publisher           ;Text250       ;CaptionML=[ENU=Publisher;
+                                                              ESM=Publicador;
+                                                              FRC=êditeur;
+                                                              ENC=Publisher] }
+    { 5   ;   ;Version Major       ;Integer       ;CaptionML=[ENU=Version Major;
+                                                              ESM=Versi¢n principal;
+                                                              FRC=Version majeure;
+                                                              ENC=Version Major] }
+    { 6   ;   ;Version Minor       ;Integer       ;CaptionML=[ENU=Version Minor;
+                                                              ESM=Versi¢n secundaria;
+                                                              FRC=Version mineure;
+                                                              ENC=Version Minor] }
+    { 7   ;   ;Version Build       ;Integer       ;CaptionML=[ENU=Version Build;
+                                                              ESM=Compilaci¢n de versi¢n;
+                                                              FRC=Build version;
+                                                              ENC=Version Build] }
+    { 8   ;   ;Version Revision    ;Integer       ;CaptionML=[ENU=Version Revision;
+                                                              ESM=Revisi¢n de versi¢n;
+                                                              FRC=RÇvision version;
+                                                              ENC=Version Revision] }
+    { 9   ;   ;Compatibility Major ;Integer       ;CaptionML=[ENU=Compatibility Major;
+                                                              ESM=Compatibilidad principal;
+                                                              FRC=CompatibilitÇ majeure;
+                                                              ENC=Compatibility Major] }
+    { 10  ;   ;Compatibility Minor ;Integer       ;CaptionML=[ENU=Compatibility Minor;
+                                                              ESM=Compatibilidad secundaria;
+                                                              FRC=CompatibilitÇ mineure;
+                                                              ENC=Compatibility Minor] }
+    { 11  ;   ;Compatibility Build ;Integer       ;CaptionML=[ENU=Compatibility Build;
+                                                              ESM=Compatibilidad con compilaci¢n;
+                                                              FRC=Build compatibilitÇ;
+                                                              ENC=Compatibility Build] }
+    { 12  ;   ;Compatibility Revision;Integer     ;CaptionML=[ENU=Compatibility Revision;
+                                                              ESM=Revisi¢n de compatibilidad;
+                                                              FRC=RÇvision compatibilitÇ;
+                                                              ENC=Compatibility Revision] }
+  }
+  KEYS
+  {
+    {    ;App ID                                  ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

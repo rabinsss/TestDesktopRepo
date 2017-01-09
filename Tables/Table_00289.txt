@@ -1,0 +1,154 @@
+OBJECT Table 289 Payment Method
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974,NAVNA9.00.00.44974;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Code,Description;
+    CaptionML=[ENU=Payment Method;
+               ESM=Forma pago;
+               FRC=Mode de paiement;
+               ENC=Payment Method];
+    LookupPageID=Page427;
+    DrillDownPageID=Page427;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 3   ;   ;Bal. Account Type   ;Option        ;OnValidate=BEGIN
+                                                                "Bal. Account No." := '';
+                                                              END;
+
+                                                   CaptionML=[ENU=Bal. Account Type;
+                                                              ESM=Tipo contrapartida;
+                                                              FRC=Type compte contr“le;
+                                                              ENC=Bal. Account Type];
+                                                   OptionCaptionML=[ENU=G/L Account,Bank Account;
+                                                                    ESM=Cuenta,Banco;
+                                                                    FRC=Compte GL,Compte bancaire;
+                                                                    ENC=G/L Account,Bank Account];
+                                                   OptionString=G/L Account,Bank Account }
+    { 4   ;   ;Bal. Account No.    ;Code20        ;TableRelation=IF (Bal. Account Type=CONST(G/L Account)) "G/L Account"
+                                                                 ELSE IF (Bal. Account Type=CONST(Bank Account)) "Bank Account";
+                                                   OnValidate=BEGIN
+                                                                IF "Bal. Account No." <> '' THEN
+                                                                  TESTFIELD("Direct Debit",FALSE);
+                                                                IF "Bal. Account Type" = "Bal. Account Type"::"G/L Account" THEN
+                                                                  CheckGLAcc("Bal. Account No.");
+                                                              END;
+
+                                                   CaptionML=[ENU=Bal. Account No.;
+                                                              ESM=Cta. contrapartida;
+                                                              FRC=Nø compte contr“le;
+                                                              ENC=Bal. Account No.] }
+    { 5   ;   ;Payment Processor   ;Option        ;OnValidate=BEGIN
+                                                                IF "Payment Processor" = "Payment Processor"::"Dynamics Online" THEN
+                                                                  TESTFIELD("Bal. Account Type","Bal. Account Type"::"Bank Account");
+                                                              END;
+
+                                                   CaptionML=[ENU=Payment Processor;
+                                                              ESM=Procesador de pagos;
+                                                              FRC=Processeur de paiement;
+                                                              ENC=Payment Processor];
+                                                   OptionCaptionML=[ENU=" ,Dynamics Online";
+                                                                    ESM=" ,Dynamics Online";
+                                                                    FRC=" ,Dynamics Online";
+                                                                    ENC=" ,Dynamics Online"];
+                                                   OptionString=[ ,Dynamics Online] }
+    { 6   ;   ;Direct Debit        ;Boolean       ;OnValidate=BEGIN
+                                                                IF NOT "Direct Debit" THEN
+                                                                  "Direct Debit Pmt. Terms Code" := '';
+                                                                IF "Direct Debit" THEN
+                                                                  TESTFIELD("Bal. Account No.",'');
+                                                              END;
+
+                                                   CaptionML=[ENU=Direct Debit;
+                                                              ESM=Adeudo directo;
+                                                              FRC=Pr‚lŠvement;
+                                                              ENC=Direct Debit] }
+    { 7   ;   ;Direct Debit Pmt. Terms Code;Code10;TableRelation="Payment Terms";
+                                                   OnValidate=BEGIN
+                                                                IF "Direct Debit Pmt. Terms Code" <> '' THEN
+                                                                  TESTFIELD("Direct Debit",TRUE);
+                                                              END;
+
+                                                   CaptionML=[ENU=Direct Debit Pmt. Terms Code;
+                                                              ESM=C¢digo t‚rminos pago adeudo directo;
+                                                              FRC=Code de conditions paiem. de pr‚lŠvement;
+                                                              ENC=Direct Debit Pmt. Terms Code] }
+    { 8   ;   ;Pmt. Export Line Definition;Code20 ;OnLookup=VAR
+                                                              DataExchLineDef@1000 : Record 1227;
+                                                              TempDataExchLineDef@1001 : TEMPORARY Record 1227;
+                                                              DataExchDef@1002 : Record 1222;
+                                                            BEGIN
+                                                              DataExchLineDef.SETFILTER(Code,'<>%1','');
+                                                              IF DataExchLineDef.FINDSET THEN BEGIN
+                                                                REPEAT
+                                                                  DataExchDef.GET(DataExchLineDef."Data Exch. Def Code");
+                                                                  IF DataExchDef.Type = DataExchDef.Type::"Payment Export" THEN BEGIN
+                                                                    TempDataExchLineDef.INIT;
+                                                                    TempDataExchLineDef.Code := DataExchLineDef.Code;
+                                                                    TempDataExchLineDef.Name := DataExchLineDef.Name;
+                                                                    IF TempDataExchLineDef.INSERT THEN;
+                                                                  END;
+                                                                UNTIL DataExchLineDef.NEXT = 0;
+                                                                IF PAGE.RUNMODAL(PAGE::"Pmt. Export Line Definitions",TempDataExchLineDef) = ACTION::LookupOK THEN
+                                                                  "Pmt. Export Line Definition" := TempDataExchLineDef.Code;
+                                                              END;
+                                                            END;
+
+                                                   CaptionML=[ENU=Pmt. Export Line Definition;
+                                                              ESM=Definici¢n de l¡nea de exportaci¢n de pagos;
+                                                              FRC=D‚finition ligne exportation paiem.;
+                                                              ENC=Pmt. Export Line Definition] }
+    { 9   ;   ;Bank Data Conversion Pmt. Type;Text50;
+                                                   TableRelation="Bank Data Conversion Pmt. Type";
+                                                   CaptionML=[ENU=Bank Data Conversion Pmt. Type;
+                                                              ESM=Conversi¢n de datos del banco - Tipo de pagos;
+                                                              FRC=Type paiem. conversion donn‚es bancaires;
+                                                              ENC=Bank Data Conversion Pmt. Type] }
+    { 27000;  ;SAT Payment Method Code;Code20     ;TableRelation="SAT Payment Method Code";
+                                                   CaptionML=[ENU=SAT Payment Method Code;
+                                                              ESM=C¢d. forma pago del SAT;
+                                                              FRC=Code du mode de paiement SAT;
+                                                              ENC=SAT Payment Method Code] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;Brick               ;Code,Description,Bal. Account Type       }
+  }
+  CODE
+  {
+
+    LOCAL PROCEDURE CheckGLAcc@2(AccNo@1000 : Code[20]);
+    VAR
+      GLAcc@1001 : Record 15;
+    BEGIN
+      IF AccNo <> '' THEN BEGIN
+        GLAcc.GET(AccNo);
+        GLAcc.CheckGLAcc;
+        GLAcc.TESTFIELD("Direct Posting",TRUE);
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

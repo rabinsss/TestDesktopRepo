@@ -1,0 +1,79 @@
+OBJECT Table 826 DO Payment Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/09/14;
+    Time=12:00:00 PM;
+    Version List=NAVW18.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Dynamics Online Payment Setup;
+               ESM=Configurac. pagos de Dynamics Online;
+               FRC=Configuration de paiement de Dynamics Online;
+               ENC=Dynamics Online Payment Setup];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=[ENU=Primary Key;
+                                                              ESM=Clave primaria;
+                                                              FRC=Cl‚ primaire;
+                                                              ENC=Primary Key] }
+    { 2   ;   ;Authorization Required;Boolean     ;CaptionML=[ENU=Authorization Required;
+                                                              ESM=Se necesita autorizaci¢n;
+                                                              FRC=Autorisation requise;
+                                                              ENC=Authorization Required] }
+    { 3   ;   ;Days Before Auth. Expiry;Integer   ;CaptionML=[ENU=Days Before Auth. Expiry;
+                                                              ESM=D¡as restantes para expiraci¢n de autoriz.;
+                                                              FRC=Jours avant l'expiration de l'autorisation;
+                                                              ENC=Days Before Auth. Expiry];
+                                                   MinValue=0 }
+    { 4   ;   ;Credit Card Nos.    ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Credit Card Nos.;
+                                                              ESM=N£ms. tarjetas de cr‚dito;
+                                                              FRC=Nø de carte de cr‚dit;
+                                                              ENC=Credit Card Nos.] }
+    { 5   ;   ;Charge Type         ;Option        ;OnValidate=BEGIN
+                                                                IF NOT ("Charge Type" = "Charge Type"::Percent) THEN
+                                                                  "Max. Charge Amount (LCY)" := 0;
+                                                              END;
+
+                                                   CaptionML=[ENU=Charge Type;
+                                                              ESM=Tipo de cargo;
+                                                              FRC=Type de frais;
+                                                              ENC=Charge Type];
+                                                   OptionCaptionML=[ENU=Percent,Fixed;
+                                                                    ESM=Porcentual,Fijo;
+                                                                    FRC=Pourcentage,Fixe;
+                                                                    ENC=Percent,Fixed];
+                                                   OptionString=Percent,Fixed }
+    { 6   ;   ;Charge Value        ;Decimal       ;CaptionML=[ENU=Charge Value;
+                                                              ESM=Valor de cargo;
+                                                              FRC=Valeur de frais;
+                                                              ENC=Charge Value];
+                                                   DecimalPlaces=2:2;
+                                                   MinValue=0;
+                                                   AutoFormatType=1 }
+    { 7   ;   ;Max. Charge Amount (LCY);Decimal   ;CaptionML=[ENU=Max. Charge Amount ($);
+                                                              ESM=Importe m x. de cargo ($);
+                                                              FRC=Montant des frais max. ($);
+                                                              ENC=Max. Charge Amount ($)];
+                                                   DecimalPlaces=2:2;
+                                                   MinValue=0;
+                                                   AutoFormatType=1 }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

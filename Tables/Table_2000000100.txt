@@ -1,0 +1,107 @@
+OBJECT Table 2000000100 Debugger Breakpoint
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Debugger Breakpoint;
+               ESM=Punto interrup. depurador;
+               FRC=Point d'arràt du dÇbogueur;
+               ENC=Debugger Breakpoint];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Breakpoint ID       ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Breakpoint ID;
+                                                              ESM=Id. punto interrup.;
+                                                              FRC=Code de point d'arràt;
+                                                              ENC=Breakpoint ID] }
+    { 7   ;   ;Object Type         ;Option        ;InitValue=Page;
+                                                   CaptionML=[ENU=Object Type;
+                                                              ESM=Tipo objeto;
+                                                              FRC=Type d'objet;
+                                                              ENC=Object Type];
+                                                   OptionCaptionML=[ENU=,Table,,Report,,Codeunit,XMLport,,Page,Query;
+                                                                    ESM=,Table,,Report,,Codeunit,XMLport,,Page,Query;
+                                                                    FRC=,Table,,Report,,Codeunit,XMLport,,Page,Query;
+                                                                    ENC=,Table,,Report,,Codeunit,XMLport,,Page,Query];
+                                                   OptionString=,Table,,Report,,Codeunit,XMLport,,Page,Query }
+    { 9   ;   ;Object ID           ;Integer       ;TableRelation=AllObj."Object ID" WHERE (Object Type=FIELD(Object Type));
+                                                   CaptionML=[ENU=Object ID;
+                                                              ESM=Id. objeto;
+                                                              FRC=Code d'objet;
+                                                              ENC=Object ID] }
+    { 10  ;   ;Object Name         ;Text30        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(AllObjWithCaption."Object Name" WHERE (Object Type=FIELD(Object Type),
+                                                                                                             Object ID=FIELD(Object ID)));
+                                                   CaptionML=[ENU=Object Name;
+                                                              ESM=Nombre objeto;
+                                                              FRC=Nom d'objet;
+                                                              ENC=Object Name] }
+    { 11  ;   ;Line No.            ;Integer       ;CaptionML=[ENU=Line No.;
+                                                              ESM=Nß l°nea;
+                                                              FRC=N¯ ligne;
+                                                              ENC=Line No.] }
+    { 13  ;   ;Column No.          ;Integer       ;CaptionML=[ENU=Column No.;
+                                                              ESM=Nß columna;
+                                                              FRC=N¯ de colonne;
+                                                              ENC=Column No.] }
+    { 15  ;   ;End Line No.        ;Integer       ;CaptionML=[ENU=End Line No.;
+                                                              ESM=Nß l°nea final;
+                                                              FRC=N¯ ligne de fin;
+                                                              ENC=End Line No.] }
+    { 17  ;   ;End Column No.      ;Integer       ;CaptionML=[ENU=End Column No.;
+                                                              ESM=Nß columna final;
+                                                              FRC=N¯ colonne de fin;
+                                                              ENC=End Column No.] }
+    { 19  ;   ;Function Name       ;Text128       ;CaptionML=[ENU=Function Name;
+                                                              ESM=Nombre de funci¢n;
+                                                              FRC=Nom de fonction;
+                                                              ENC=Function Name] }
+    { 21  ;   ;Enabled             ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Enabled;
+                                                              ESM=Activado;
+                                                              FRC=ActivÇ;
+                                                              ENC=Enabled] }
+    { 23  ;   ;Condition           ;Text250       ;CaptionML=[ENU=Condition;
+                                                              ESM=Condici¢n;
+                                                              FRC=êtat;
+                                                              ENC=Condition] }
+    { 27  ;   ;Session Breakpoint ID;BigInteger   ;CaptionML=[ENU=Session Breakpoint ID;
+                                                              ESM=Id. punto interrup. sesi¢n;
+                                                              FRC=Code point d'arràt session;
+                                                              ENC=Session Breakpoint ID] }
+    { 29  ;   ;Relative Line No.   ;Integer       ;CaptionML=[ENU=Relative Line No.;
+                                                              ESM=L°nea relativa nß;
+                                                              FRC=N¯ ligne relative;
+                                                              ENC=Relative Line No.] }
+    { 31  ;   ;Relative End Line No.;Integer      ;CaptionML=[ENU=Relative End Line No.;
+                                                              ESM=L°nea final relativa nß;
+                                                              FRC=N¯ ligne de fin relative;
+                                                              ENC=Relative End Line No.] }
+    { 33  ;   ;Function ID         ;Integer       ;CaptionML=[ENU=Function ID;
+                                                              ESM=Id. funci¢n;
+                                                              FRC=Code fonction;
+                                                              ENC=Function ID] }
+  }
+  KEYS
+  {
+    {    ;Breakpoint ID                           ;Clustered=Yes }
+    {    ;Object Type,Object ID,Line No.,Column No. }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

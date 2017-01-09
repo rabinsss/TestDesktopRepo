@@ -1,0 +1,57 @@
+OBJECT Table 384 Reconcile CV Acc Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/05/08;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Reconcile CV Acc Buffer;
+               ESM=Mem. int. cta. CV concil.;
+               FRC=Tampon rapprochement cpte CF;
+               ENC=Reconcile CV Acc Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Table ID            ;Integer       ;CaptionML=[ENU=Table ID;
+                                                              ESM=Id. tabla;
+                                                              FRC=Code table;
+                                                              ENC=Table ID] }
+    { 2   ;   ;Currency code       ;Code10        ;TableRelation=Currency;
+                                                   CaptionML=[ENU=Currency code;
+                                                              ESM=C¢digo divisa;
+                                                              FRC=Code devise;
+                                                              ENC=Currency code] }
+    { 3   ;   ;Posting Group       ;Code10        ;CaptionML=[ENU=Posting Group;
+                                                              ESM=Grupo contable;
+                                                              FRC=ParamŠtre report;
+                                                              ENC=Posting Group] }
+    { 6   ;   ;Field No.           ;Integer       ;CaptionML=[ENU=Field No.;
+                                                              ESM=N§ campo;
+                                                              FRC=Nø de champ;
+                                                              ENC=Field No.] }
+    { 7   ;   ;G/L Account No.     ;Code20        ;TableRelation="G/L Account";
+                                                   CaptionML=[ENU=G/L Account No.;
+                                                              ESM=N§ cuenta;
+                                                              FRC=Nø de compte du grand livre;
+                                                              ENC=G/L Account No.] }
+  }
+  KEYS
+  {
+    {    ;Table ID,Currency code,Posting Group,Field No.;
+                                                   Clustered=Yes }
+    {    ;G/L Account No.                          }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

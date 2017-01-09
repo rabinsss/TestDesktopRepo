@@ -1,0 +1,238 @@
+OBJECT Table 5848 Cost Share Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/09/14;
+    Time=12:00:00 PM;
+    Version List=NAVW18.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Cost Share Buffer;
+               ESM=Mem. inter. parte costos;
+               FRC=Tampon de partage des coñts;
+               ENC=Cost Share Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Item Ledger Entry No.;Integer      ;CaptionML=[ENU=Item Ledger Entry No.;
+                                                              ESM=Nß mov. producto;
+                                                              FRC=N¯ Çcriture article gr. livre;
+                                                              ENC=Item Ledger Entry No.] }
+    { 2   ;   ;Capacity Ledger Entry No.;Integer  ;CaptionML=[ENU=Capacity Ledger Entry No.;
+                                                              ESM=Nß mov. capacidad;
+                                                              FRC=N¯ Çcriture capacitÇ;
+                                                              ENC=Capacity Ledger Entry No.] }
+    { 3   ;   ;Item No.            ;Code20        ;CaptionML=[ENU=Item No.;
+                                                              ESM=Nß producto;
+                                                              FRC=N¯ d'article;
+                                                              ENC=Item No.] }
+    { 4   ;   ;Location Code       ;Code10        ;CaptionML=[ENU=Location Code;
+                                                              ESM=C¢d. almacÇn;
+                                                              FRC=Code d'emplacement;
+                                                              ENC=Location Code] }
+    { 5   ;   ;Variant Code        ;Code10        ;CaptionML=[ENU=Variant Code;
+                                                              ESM=C¢d. variante;
+                                                              FRC=Code variante;
+                                                              ENC=Variant Code] }
+    { 6   ;   ;Entry Type          ;Option        ;CaptionML=[ENU=Entry Type;
+                                                              ESM=Tipo movimiento;
+                                                              FRC=Type d'Çcriture;
+                                                              ENC=Entry Type];
+                                                   OptionCaptionML=[ENU=Purchase,Sale,Positive Adjmt.,Negative Adjmt.,Transfer,Consumption,Output, ,Assembly Consumption,Assembly Output;
+                                                                    ESM=Compra,Venta,Ajuste positivo,Ajuste negativo,Transferencia,Consumo,Salida desde fab., ,Consumo ensamblado,Salida ensamblado;
+                                                                    FRC=Achat,Vente,Positif (ajust.),NÇgatif (ajust.),Transfert,Consommation,Production, ,Consommation d'assemblage,RÇsultat d'assemblage;
+                                                                    ENC=Purchase,Sale,Positive Adjmt.,Negative Adjmt.,Transfer,Consumption,Output, ,Assembly Consumption,Assembly Output];
+                                                   OptionString=Purchase,Sale,Positive Adjmt.,Negative Adjmt.,Transfer,Consumption,Output, ,Assembly Consumption,Assembly Output }
+    { 7   ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ESM=Nß documento;
+                                                              FRC=N¯ de document;
+                                                              ENC=Document No.] }
+    { 10  ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 20  ;   ;Quantity            ;Decimal       ;CaptionML=[ENU=Quantity;
+                                                              ESM=Cantidad;
+                                                              FRC=QuantitÇ;
+                                                              ENC=Quantity] }
+    { 21  ;   ;Direct Cost         ;Decimal       ;CaptionML=[ENU=Direct Cost;
+                                                              ESM=Costo directo;
+                                                              FRC=Coñt direct;
+                                                              ENC=Direct Cost] }
+    { 22  ;   ;Indirect Cost       ;Decimal       ;CaptionML=[ENU=Indirect Cost;
+                                                              ESM=Costo indirecto;
+                                                              FRC=Coñt indirect;
+                                                              ENC=Indirect Cost] }
+    { 23  ;   ;Revaluation         ;Decimal       ;CaptionML=[ENU=Revaluation;
+                                                              ESM=Reevaluaci¢n;
+                                                              FRC=RÇÇvaluation;
+                                                              ENC=Revaluation] }
+    { 24  ;   ;Rounding            ;Decimal       ;CaptionML=[ENU=Rounding;
+                                                              ESM=Redondeo;
+                                                              FRC=Arrondissement;
+                                                              ENC=Rounding] }
+    { 25  ;   ;Variance            ;Decimal       ;CaptionML=[ENU=Variance;
+                                                              ESM=Desviaci¢n;
+                                                              FRC=êcart;
+                                                              ENC=Variance] }
+    { 26  ;   ;Purchase Variance   ;Decimal       ;CaptionML=[ENU=Purchase Variance;
+                                                              ESM=Desviaci¢n compras;
+                                                              FRC=êcart achat;
+                                                              ENC=Purchase Variance] }
+    { 27  ;   ;Material Variance   ;Decimal       ;CaptionML=[ENU=Material Variance;
+                                                              ESM=Desviac. material;
+                                                              FRC=êcart sur matiäres;
+                                                              ENC=Material Variance] }
+    { 28  ;   ;Capacity Variance   ;Decimal       ;CaptionML=[ENU=Capacity Variance;
+                                                              ESM=Desviaci¢n capacidad;
+                                                              FRC=êcart sur capacitÇ;
+                                                              ENC=Capacity Variance] }
+    { 29  ;   ;Capacity Overhead Variance;Decimal ;CaptionML=[ENU=Capacity Overhead Variance;
+                                                              ESM=Desviaci¢n cost. gen. capdad.;
+                                                              FRC=CapacitÇ - êcart sur frais gÇnÇraux;
+                                                              ENC=Capacity Overhead Variance] }
+    { 30  ;   ;Mfg. Overhead Variance;Decimal     ;CaptionML=[ENU=Mfg. Overhead Variance;
+                                                              ESM=Desv. costo gen. fab.;
+                                                              FRC=Fabric. êcart frais gÇnÇraux;
+                                                              ENC=Mfg. Overhead Variance] }
+    { 31  ;   ;Subcontracted Variance;Decimal     ;CaptionML=[ENU=Subcontracted Variance;
+                                                              ESM=Desviac. subcontratada;
+                                                              FRC=êcart en sous-traitance;
+                                                              ENC=Subcontracted Variance] }
+    { 32  ;   ;Material            ;Decimal       ;CaptionML=[ENU=Material;
+                                                              ESM=Material;
+                                                              FRC=Matiäres;
+                                                              ENC=Material] }
+    { 34  ;   ;Capacity            ;Decimal       ;CaptionML=[ENU=Capacity;
+                                                              ESM=Capacidad;
+                                                              FRC=CapacitÇ;
+                                                              ENC=Capacity] }
+    { 35  ;   ;Capacity Overhead   ;Decimal       ;CaptionML=[ENU=Capacity Overhead;
+                                                              ESM=Cost. gen. capdad.;
+                                                              FRC=Utilisation fixe de capacitÇ;
+                                                              ENC=Capacity Overhead] }
+    { 36  ;   ;Material Overhead   ;Decimal       ;CaptionML=[ENU=Material Overhead;
+                                                              ESM=Costos generales material;
+                                                              FRC=Frais gÇnÇraux matiäres;
+                                                              ENC=Material Overhead] }
+    { 37  ;   ;Subcontracted       ;Decimal       ;AccessByPermission=TableData 99000758=R;
+                                                   CaptionML=[ENU=Subcontracted;
+                                                              ESM=Subcontratado;
+                                                              FRC=En sous-traitance;
+                                                              ENC=Subcontracted] }
+    { 40  ;   ;New Quantity        ;Decimal       ;CaptionML=[ENU=New Quantity;
+                                                              ESM=Nueva cantidad;
+                                                              FRC=Nouvelle quantitÇ;
+                                                              ENC=New Quantity] }
+    { 41  ;   ;New Direct Cost     ;Decimal       ;CaptionML=[ENU=New Direct Cost;
+                                                              ESM=Nuevo costo directo;
+                                                              FRC=Nouveaux coñts directs;
+                                                              ENC=New Direct Cost];
+                                                   AutoFormatType=2 }
+    { 42  ;   ;New Indirect Cost   ;Decimal       ;CaptionML=[ENU=New Indirect Cost;
+                                                              ESM=Nuevo costo indirecto;
+                                                              FRC=Nouveaux coñts indirects;
+                                                              ENC=New Indirect Cost] }
+    { 43  ;   ;New Revaluation     ;Decimal       ;CaptionML=[ENU=New Revaluation;
+                                                              ESM=Nueva reval.;
+                                                              FRC=Nouvelle rÇÇvaluation;
+                                                              ENC=New Revaluation] }
+    { 44  ;   ;New Rounding        ;Decimal       ;CaptionML=[ENU=New Rounding;
+                                                              ESM=Nuevo redondeo;
+                                                              FRC=Nouvel arrondissement;
+                                                              ENC=New Rounding] }
+    { 45  ;   ;New Variance        ;Decimal       ;CaptionML=[ENU=New Variance;
+                                                              ESM=Nueva desviaci¢n;
+                                                              FRC=Nouvel Çcart;
+                                                              ENC=New Variance] }
+    { 46  ;   ;New Purchase Variance;Decimal      ;CaptionML=[ENU=New Purchase Variance;
+                                                              ESM=Nueva desviaci¢n compras;
+                                                              FRC=Nouvel Çcart d'achat;
+                                                              ENC=New Purchase Variance] }
+    { 47  ;   ;New Material Variance;Decimal      ;CaptionML=[ENU=New Material Variance;
+                                                              ESM=Nueva desviaci¢n material;
+                                                              FRC=Nouvel Çcart de matiäres;
+                                                              ENC=New Material Variance] }
+    { 48  ;   ;New Capacity Variance;Decimal      ;CaptionML=[ENU=New Capacity Variance;
+                                                              ESM=Nueva desviaci¢n capacidad;
+                                                              FRC=Nouvel Çcart de capacitÇ;
+                                                              ENC=New Capacity Variance] }
+    { 49  ;   ;New Capacity Overhead Variance;Decimal;
+                                                   CaptionML=[ENU=New Capacity Overhead Variance;
+                                                              ESM=Nueva desv. cost. gen. capdad.;
+                                                              FRC=Nouvel Çcart de frais gÇnÇraux de capacitÇ;
+                                                              ENC=New Capacity Overhead Variance] }
+    { 50  ;   ;New Mfg. Overhead Variance;Decimal ;CaptionML=[ENU=New Mfg. Overhead Variance;
+                                                              ESM=Nueva desv. costo gen. fab.;
+                                                              FRC=Nouvel Çcart frais gÇnÇraux fabr.;
+                                                              ENC=New Mfg. Overhead Variance] }
+    { 51  ;   ;New Subcontracted Variance;Decimal ;AccessByPermission=TableData 99000758=R;
+                                                   CaptionML=[ENU=New Subcontracted Variance;
+                                                              ESM=Nueva desviaci¢n subcontratada;
+                                                              FRC=Nouvel Çcart de sous-traitance;
+                                                              ENC=New Subcontracted Variance] }
+    { 52  ;   ;Share of Cost in Period;Decimal    ;CaptionML=[ENU=Share of Cost in Period;
+                                                              ESM=Participaci¢n en periodo;
+                                                              FRC=Partage des coñts dans pÇriode;
+                                                              ENC=Share of Cost in Period] }
+    { 54  ;   ;New Material        ;Decimal       ;CaptionML=[ENU=New Material;
+                                                              ESM=Nuevo material;
+                                                              FRC=Nouvelles matiäres;
+                                                              ENC=New Material] }
+    { 56  ;   ;New Capacity        ;Decimal       ;CaptionML=[ENU=New Capacity;
+                                                              ESM=Nueva capacidad;
+                                                              FRC=Nouvelle capacitÇ;
+                                                              ENC=New Capacity] }
+    { 57  ;   ;New Capacity Overhead;Decimal      ;CaptionML=[ENU=New Capacity Overhead;
+                                                              ESM=Nuevo costo general capacidad;
+                                                              FRC=Nouveaux frais gÇnÇraux de capacitÇ;
+                                                              ENC=New Capacity Overhead] }
+    { 58  ;   ;New Material Overhead;Decimal      ;CaptionML=[ENU=New Material Overhead;
+                                                              ESM=Nuevo costo general material;
+                                                              FRC=Nouveaux frais gÇnÇraux de matiäres;
+                                                              ENC=New Material Overhead] }
+    { 59  ;   ;New Subcontracted   ;Decimal       ;CaptionML=[ENU=New Subcontracted;
+                                                              ESM=Nuevo subcontratado;
+                                                              FRC=Nouvelle sous-traitance;
+                                                              ENC=New Subcontracted] }
+    { 60  ;   ;Posting Date        ;Date          ;CaptionML=[ENU=Posting Date;
+                                                              ESM=Fecha registro;
+                                                              FRC=Date de report;
+                                                              ENC=Posting Date] }
+    { 90  ;   ;Order Type          ;Option        ;CaptionML=[ENU=Order Type;
+                                                              ESM=Tipo orden;
+                                                              FRC=Type de commande;
+                                                              ENC=Order Type];
+                                                   OptionCaptionML=[ENU=" ,Production,Transfer,Service,Assembly";
+                                                                    ESM=" ,Producci¢n,Transferencia,Servicio,Ensamblado";
+                                                                    FRC=" ,Production,Transfert,Service,Assemblage";
+                                                                    ENC=" ,Production,Transfer,Service,Assembly"];
+                                                   OptionString=[ ,Production,Transfer,Service,Assembly] }
+    { 91  ;   ;Order No.           ;Code20        ;CaptionML=[ENU=Order No.;
+                                                              ESM=Nß pedido;
+                                                              FRC=N¯ commande;
+                                                              ENC=Order No.] }
+    { 92  ;   ;Order Line No.      ;Integer       ;CaptionML=[ENU=Order Line No.;
+                                                              ESM=Nß l°nea pedido;
+                                                              FRC=N¯ ligne commande;
+                                                              ENC=Order Line No.] }
+  }
+  KEYS
+  {
+    {    ;Item Ledger Entry No.,Capacity Ledger Entry No.;
+                                                   Clustered=Yes }
+    {    ;Item No.,Location Code,Variant Code,Entry Type }
+    {    ;Order Type,Order No.,Order Line No.,Entry Type }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

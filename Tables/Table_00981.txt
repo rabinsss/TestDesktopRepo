@@ -1,0 +1,286 @@
+OBJECT Table 981 Payment Registration Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=10/23/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.43402;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Payment Registration Buffer;
+               ESM=B£fer de registro de pago;
+               FRC=Tampon enregistrement de paiement;
+               ENC=Payment Registration Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Ledger Entry No.    ;Integer       ;CaptionML=[ENU=Ledger Entry No.;
+                                                              ESM=N§ mov. cont.;
+                                                              FRC=Nø d'‚criture;
+                                                              ENC=Ledger Entry No.] }
+    { 2   ;   ;Source No.          ;Code20        ;CaptionML=[ENU=Source No.;
+                                                              ESM=C¢d. procedencia mov.;
+                                                              FRC=Nø origine;
+                                                              ENC=Source No.] }
+    { 3   ;   ;Document Type       ;Option        ;CaptionML=[ENU=Document Type;
+                                                              ESM=Tipo documento;
+                                                              FRC=Type de document;
+                                                              ENC=Document Type];
+                                                   OptionCaptionML=[ENU=" ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund";
+                                                                    ESM=" ,Pago,Factura,Nota cr‚dito,Docs. inter‚s,Recordatorio,Reembolso";
+                                                                    FRC=" ,Paiement,Facture,Note de cr‚dit,Note de frais financiers,Rappel,Remboursement";
+                                                                    ENC=" ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund"];
+                                                   OptionString=[ ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund] }
+    { 4   ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ESM=N§ documento;
+                                                              FRC=Nø de document;
+                                                              ENC=Document No.] }
+    { 5   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 6   ;   ;Due Date            ;Date          ;CaptionML=[ENU=Due Date;
+                                                              ESM=Fecha vencimiento;
+                                                              FRC=Date d'‚ch‚ance;
+                                                              ENC=Due Date] }
+    { 7   ;   ;Name                ;Text50        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+    { 8   ;   ;Remaining Amount    ;Decimal       ;CaptionML=[ENU=Remaining Amount;
+                                                              ESM=Importe pendiente;
+                                                              FRC=Solde ouvert;
+                                                              ENC=Remaining Amount] }
+    { 9   ;   ;Payment Made        ;Boolean       ;OnValidate=BEGIN
+                                                                IF NOT "Payment Made" THEN BEGIN
+                                                                  "Amount Received" := 0;
+                                                                  "Date Received" := 0D;
+                                                                  "Remaining Amount" := "Original Remaining Amount";
+                                                                  EXIT;
+                                                                END;
+
+                                                                AutoFillDate;
+                                                                IF "Amount Received" = 0 THEN
+                                                                  SuggestAmountReceivedBasedOnDate;
+                                                                UpdateRemainingAmount;
+                                                              END;
+
+                                                   CaptionML=[ENU=Payment Made;
+                                                              ESM=Pago realizado;
+                                                              FRC=Paiement effectu‚;
+                                                              ENC=Payment Made] }
+    { 10  ;   ;Date Received       ;Date          ;OnValidate=BEGIN
+                                                                IF "Date Received" <> 0D THEN
+                                                                  VALIDATE("Payment Made",TRUE);
+                                                              END;
+
+                                                   CaptionML=[ENU=Date Received;
+                                                              ESM=Fecha recepci¢n;
+                                                              FRC=Date de r‚ception;
+                                                              ENC=Date Received] }
+    { 11  ;   ;Amount Received     ;Decimal       ;OnValidate=BEGIN
+                                                                AutoFillDate;
+                                                                "Payment Made" := TRUE;
+                                                                UpdateRemainingAmount;
+                                                              END;
+
+                                                   CaptionML=[ENU=Amount Received;
+                                                              ESM=Importe recibido;
+                                                              FRC=Montant re‡u;
+                                                              ENC=Amount Received] }
+    { 12  ;   ;Original Remaining Amount;Decimal  ;CaptionML=[ENU=Original Remaining Amount;
+                                                              ESM=Importe restante inicial;
+                                                              FRC=Montant ouvert initial;
+                                                              ENC=Original Remaining Amount] }
+    { 13  ;   ;Rem. Amt. after Discount;Decimal   ;CaptionML=[ENU=Rem. Amt. after Discount;
+                                                              ESM=Imp. restante tras descuento;
+                                                              FRC=Montant restant aprŠs escompte;
+                                                              ENC=Rem. Amt. after Discount] }
+    { 14  ;   ;Pmt. Discount Date  ;Date          ;OnValidate=BEGIN
+                                                                IF "Pmt. Discount Date" <> 0D THEN
+                                                                  VALIDATE("Payment Made",TRUE);
+                                                              END;
+
+                                                   CaptionML=[ENU=Pmt. Discount Date;
+                                                              ESM=Fecha dto. P.P.;
+                                                              FRC=Date d'escompte de paiement;
+                                                              ENC=Pmt. Discount Date] }
+  }
+  KEYS
+  {
+    {    ;Ledger Entry No.                        ;Clustered=Yes }
+    {    ;Due Date                                 }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      DueDateMsg@1000 : TextConst 'ENU=The payment is overdue. You can calculate interest for late payments from customers by choosing the Finance Charge Memo button.;ESM=El pago ha vencido. Para calcular el inter‚s de los pagos vencidos del cliente, haga clic en el bot¢n Documento inter‚s.;FRC=Le paiement est ‚chu. Vous pouvez calculer les int‚rˆts pour retards de paiement des clients en cliquant sur le bouton Note de frais financiers.;ENC=The payment is overdue. You can calculate interest for late payments from customers by choosing the Finance Charge Memo button.';
+      PmtDiscMsg@1001 : TextConst 'ENU=Payment Discount Date is earlier than Date Received. Payment will be registered as partial payment.;ESM=La fecha de descuento de pago es anterior a la fecha de recepci¢n. El pago se registrar  como pago parcial.;FRC=La date d''escompte de paiement est ant‚rieure … la date de r‚ception. Le paiement sera enregistr‚ comme paiement partiel.;ENC=Payment Discount Date is earlier than Date Received. Payment will be registered as partial payment.';
+
+    PROCEDURE PopulateTable@1();
+    VAR
+      CustLedgerEntry@1000 : Record 21;
+      Customer@1001 : Record 18;
+    BEGIN
+      RESET;
+      DELETEALL;
+
+      CustLedgerEntry.SETFILTER("Document Type",'<>%1',CustLedgerEntry."Document Type"::Payment);
+      CustLedgerEntry.SETRANGE(Open,TRUE);
+      IF CustLedgerEntry.FINDSET THEN BEGIN
+        REPEAT
+          CustLedgerEntry.CALCFIELDS("Remaining Amount");
+          Customer.GET(CustLedgerEntry."Customer No.");
+
+          INIT;
+          "Ledger Entry No." := CustLedgerEntry."Entry No.";
+          "Source No." := CustLedgerEntry."Customer No.";
+          Name := Customer.Name;
+          "Document No." := CustLedgerEntry."Document No.";
+          "Document Type" := CustLedgerEntry."Document Type";
+          Description := CustLedgerEntry.Description;
+          "Due Date" := CustLedgerEntry."Due Date";
+          "Remaining Amount" := CustLedgerEntry."Remaining Amount";
+          "Original Remaining Amount" := CustLedgerEntry."Remaining Amount";
+          "Pmt. Discount Date" := CustLedgerEntry."Pmt. Discount Date";
+          "Rem. Amt. after Discount" := "Remaining Amount" - CustLedgerEntry."Remaining Pmt. Disc. Possible";
+          INSERT;
+        UNTIL CustLedgerEntry.NEXT = 0;
+      END;
+
+      IF FINDSET THEN;
+    END;
+
+    PROCEDURE Navigate@3();
+    VAR
+      CustLedgerEntry@1001 : Record 21;
+      Navigate@1000 : Page 344;
+    BEGIN
+      CustLedgerEntry.GET("Ledger Entry No.");
+      Navigate.SetDoc(CustLedgerEntry."Posting Date",CustLedgerEntry."Document No.");
+      Navigate.RUN;
+    END;
+
+    PROCEDURE Reload@15();
+    VAR
+      TempDataSavePmtRegnBuf@1001 : TEMPORARY Record 981;
+      TempRecSavePmtRegnBuf@1000 : TEMPORARY Record 981;
+    BEGIN
+      TempRecSavePmtRegnBuf.COPY(Rec,TRUE);
+
+      SaveUserValues(TempDataSavePmtRegnBuf);
+
+      PopulateTable;
+
+      RestoreUserValues(TempDataSavePmtRegnBuf);
+
+      COPY(TempRecSavePmtRegnBuf);
+      IF GET("Ledger Entry No.") THEN;
+    END;
+
+    LOCAL PROCEDURE SaveUserValues@12(VAR TempSavePmtRegnBuf@1000 : TEMPORARY Record 981);
+    VAR
+      TempWorkPmtRegnBuf@1001 : TEMPORARY Record 981;
+    BEGIN
+      TempWorkPmtRegnBuf.COPY(Rec,TRUE);
+      TempWorkPmtRegnBuf.RESET;
+      TempWorkPmtRegnBuf.SETRANGE("Payment Made",TRUE);
+      IF TempWorkPmtRegnBuf.FINDSET THEN
+        REPEAT
+          TempSavePmtRegnBuf := TempWorkPmtRegnBuf;
+          TempSavePmtRegnBuf.INSERT;
+        UNTIL TempWorkPmtRegnBuf.NEXT = 0;
+    END;
+
+    LOCAL PROCEDURE RestoreUserValues@13(VAR TempSavePmtRegnBuf@1001 : TEMPORARY Record 981);
+    BEGIN
+      IF TempSavePmtRegnBuf.FINDSET THEN
+        REPEAT
+          IF GET(TempSavePmtRegnBuf."Ledger Entry No.") THEN BEGIN
+            "Payment Made" := TempSavePmtRegnBuf."Payment Made";
+            "Date Received" := TempSavePmtRegnBuf."Date Received";
+            "Pmt. Discount Date" := TempSavePmtRegnBuf."Pmt. Discount Date";
+            SuggestAmountReceivedBasedOnDate;
+            "Remaining Amount" := TempSavePmtRegnBuf."Remaining Amount";
+            MODIFY;
+          END;
+        UNTIL TempSavePmtRegnBuf.NEXT = 0;
+    END;
+
+    PROCEDURE GetPmtDiscStyle@5() : Text;
+    BEGIN
+      IF ("Pmt. Discount Date" < "Date Received") AND ("Remaining Amount" <> 0) AND ("Date Received" < "Due Date") THEN
+        EXIT('Unfavorable');
+      EXIT('');
+    END;
+
+    PROCEDURE GetDueDateStyle@8() : Text;
+    BEGIN
+      IF "Due Date" < "Date Received" THEN
+        EXIT('Unfavorable');
+      EXIT('');
+    END;
+
+    PROCEDURE GetWarning@6() : Text;
+    BEGIN
+      IF "Date Received" <= "Pmt. Discount Date" THEN
+        EXIT('');
+
+      IF "Date Received" > "Due Date" THEN
+        EXIT(DueDateMsg);
+
+      IF "Remaining Amount" <> 0 THEN
+        EXIT(PmtDiscMsg);
+
+      EXIT('');
+    END;
+
+    LOCAL PROCEDURE AutoFillDate@2();
+    VAR
+      PaymentRegistrationSetup@1000 : Record 980;
+    BEGIN
+      IF "Date Received" = 0D THEN BEGIN
+        PaymentRegistrationSetup.GET(USERID);
+        IF PaymentRegistrationSetup."Auto Fill Date Received" THEN
+          "Date Received" := WORKDATE;
+      END;
+    END;
+
+    LOCAL PROCEDURE SuggestAmountReceivedBasedOnDate@4();
+    BEGIN
+      IF "Date Received" = 0D THEN
+        "Amount Received" := 0
+      ELSE BEGIN
+        IF "Date Received" <= "Pmt. Discount Date" THEN
+          "Amount Received" := "Rem. Amt. after Discount"
+        ELSE
+          "Amount Received" := "Original Remaining Amount";
+        "Remaining Amount" := 0;
+      END;
+    END;
+
+    LOCAL PROCEDURE UpdateRemainingAmount@7();
+    BEGIN
+      IF "Date Received" = 0D THEN
+        EXIT;
+      IF ABS("Amount Received") >= ABS("Original Remaining Amount") THEN
+        "Remaining Amount" := 0
+      ELSE
+        IF "Date Received" <= "Pmt. Discount Date" THEN BEGIN
+          IF "Amount Received" >= "Rem. Amt. after Discount" THEN
+            "Remaining Amount" := 0
+          ELSE
+            "Remaining Amount" := "Original Remaining Amount" - "Amount Received";
+        END ELSE
+          "Remaining Amount" := "Original Remaining Amount" - "Amount Received";
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

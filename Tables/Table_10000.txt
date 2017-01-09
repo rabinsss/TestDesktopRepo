@@ -1,0 +1,70 @@
+OBJECT Table 10000 PAC Web Service
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVNA7.00;
+  }
+  PROPERTIES
+  {
+    OnDelete=BEGIN
+               ValidateUsage;
+               DeleteSubTables;
+             END;
+
+    CaptionML=[ENU=PAC Web Service;
+               ESM=Servicio web PAC;
+               FRC=Service Web PAC;
+               ENC=PAC Web Service];
+    LookupPageID=Page10455;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code] }
+    { 21  ;   ;Name                ;Text50        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name] }
+    { 22  ;   ;Certificate Thumbprint;Text250     ;CaptionML=[ENU=Certificate Thumbprint;
+                                                              ESM=Huella digital de certificado;
+                                                              FRC=Empreinte de certificat;
+                                                              ENC=Certificate Thumbprint] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text000@1020000 : TextConst 'ENU=You cannot delete the code %1 because it is used in the %2 window.;ESM=Puede eliminar el c¢digo %1 ya que se usa en la ventana %2.;FRC=Vous ne pouvez pas supprimer le code %1 car il est utilis‚ dans la fenˆtre %2.;ENC=You cannot delete the code %1 because it is used in the %2 window.';
+      PACWebServiceDetail@1020001 : Record 10001;
+
+    PROCEDURE ValidateUsage@1020000();
+    VAR
+      GeneralLedgerSetup@1020000 : Record 98;
+    BEGIN
+      GeneralLedgerSetup.GET;
+      IF (GeneralLedgerSetup."PAC Code" <> '') AND (GeneralLedgerSetup."PAC Code" = Code) THEN
+        ERROR(Text000,Code,GeneralLedgerSetup.TABLECAPTION);
+    END;
+
+    PROCEDURE DeleteSubTables@1020002();
+    BEGIN
+      PACWebServiceDetail.SETRANGE("PAC Code",Code);
+      IF NOT PACWebServiceDetail.ISEMPTY THEN
+        PACWebServiceDetail.DELETEALL;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

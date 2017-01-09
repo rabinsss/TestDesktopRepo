@@ -1,0 +1,63 @@
+OBJECT Table 7350 Lot Numbers by Bin Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/09/14;
+    Time=12:00:00 PM;
+    Version List=NAVW18.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Lot Numbers by Bin Buffer;
+               ESM=N£meros de lote por b£fer de ubicaci¢n;
+               FRC=Num‚ros lot par tampon zone;
+               ENC=Lot Numbers by Bin Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Item No.            ;Code20        ;CaptionML=[ENU=Item No.;
+                                                              ESM=N§ producto;
+                                                              FRC=Nø d'article;
+                                                              ENC=Item No.] }
+    { 2   ;   ;Variant Code        ;Code10        ;CaptionML=[ENU=Variant Code;
+                                                              ESM=C¢d. variante;
+                                                              FRC=Code variante;
+                                                              ENC=Variant Code] }
+    { 3   ;   ;Location Code       ;Code10        ;CaptionML=[ENU=Location Code;
+                                                              ESM=C¢d. almac‚n;
+                                                              FRC=Code d'emplacement;
+                                                              ENC=Location Code] }
+    { 4   ;   ;Zone Code           ;Code10        ;CaptionML=[ENU=Zone Code;
+                                                              ESM=C¢d. zona;
+                                                              FRC=Code zone;
+                                                              ENC=Zone Code] }
+    { 5   ;   ;Bin Code            ;Code20        ;CaptionML=[ENU=Bin Code;
+                                                              ESM=C¢d. ubicaci¢n;
+                                                              FRC=Code de zone;
+                                                              ENC=Bin Code] }
+    { 6   ;   ;Lot No.             ;Code20        ;CaptionML=[ENU=Lot No.;
+                                                              ESM=N§ lote;
+                                                              FRC=Nø de lot;
+                                                              ENC=Lot No.] }
+    { 7   ;   ;Qty. (Base)         ;Decimal       ;CaptionML=[ENU=Qty. (Base);
+                                                              ESM=Cantidad (Base);
+                                                              FRC=Quantit‚ (base);
+                                                              ENC=Qty. (Base)];
+                                                   DecimalPlaces=0:5 }
+  }
+  KEYS
+  {
+    {    ;Item No.,Variant Code,Location Code,Zone Code,Bin Code,Lot No.;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

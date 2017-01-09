@@ -1,0 +1,237 @@
+OBJECT Table 1230 SEPA Direct Debit Mandate
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/09/14;
+    Time=12:00:00 PM;
+    Version List=NAVW18.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=ID,Customer Bank Account Code;
+    OnInsert=BEGIN
+               InsertNoSeries
+             END;
+
+    OnModify=BEGIN
+               IF xRec.Blocked THEN
+                 TESTFIELD(Blocked,FALSE);
+             END;
+
+    CaptionML=[ENU=SEPA Direct Debit Mandate;
+               ESM=Orden de domiciliaci¢n de adeudo directo SEPA;
+               FRC=Mandat de pr‚lŠvement SEPA;
+               ENC=SEPA Direct Debit Mandate];
+    LookupPageID=Page1230;
+    DrillDownPageID=Page1230;
+  }
+  FIELDS
+  {
+    { 1   ;   ;ID                  ;Code35        ;OnValidate=VAR
+                                                                SalesSetup@1001 : Record 311;
+                                                                NoSeriesMgt@1000 : Codeunit 396;
+                                                              BEGIN
+                                                                IF ID <> xRec.ID THEN BEGIN
+                                                                  SalesSetup.GET;
+                                                                  NoSeriesMgt.TestManual(SalesSetup."Direct Debit Mandate Nos.");
+                                                                  "No. Series" := '';
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=ID;
+                                                              ESM=Id.;
+                                                              FRC=Code;
+                                                              ENC=ID] }
+    { 2   ;   ;Customer No.        ;Code20        ;TableRelation=Customer;
+                                                   OnValidate=BEGIN
+                                                                IF (xRec."Customer No." <> '') AND ("Customer No." <> xRec."Customer No.") THEN BEGIN
+                                                                  TESTFIELD("Date of Signature",0D);
+                                                                  TESTFIELD("Debit Counter",0);
+                                                                  "Customer Bank Account Code" := '';
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Customer No.;
+                                                              ESM=N§ cliente;
+                                                              FRC=Nø client;
+                                                              ENC=Customer No.];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Customer Bank Account Code;Code10  ;TableRelation="Customer Bank Account".Code WHERE (Customer No.=FIELD(Customer No.));
+                                                   CaptionML=[ENU=Customer Bank Account Code;
+                                                              ESM=C¢digo banco cliente;
+                                                              FRC=Code compte bancaire client;
+                                                              ENC=Customer Bank Account Code];
+                                                   NotBlank=Yes }
+    { 4   ;   ;Valid From          ;Date          ;OnValidate=BEGIN
+                                                                ValidateDates;
+                                                              END;
+
+                                                   CaptionML=[ENU=Valid From;
+                                                              ESM=V lido desde;
+                                                              FRC=Valide … partir de;
+                                                              ENC=Valid From] }
+    { 5   ;   ;Valid To            ;Date          ;OnValidate=BEGIN
+                                                                ValidateDates;
+                                                              END;
+
+                                                   CaptionML=[ENU=Valid To;
+                                                              ESM=V lido hasta;
+                                                              FRC=Valide jusque;
+                                                              ENC=Valid To] }
+    { 6   ;   ;Date of Signature   ;Date          ;CaptionML=[ENU=Date of Signature;
+                                                              ESM=Fecha de firma;
+                                                              FRC=Date de signature;
+                                                              ENC=Date of Signature];
+                                                   NotBlank=Yes }
+    { 7   ;   ;Type of Payment     ;Option        ;OnValidate=BEGIN
+                                                                IF ("Type of Payment" = "Type of Payment"::OneOff) AND ("Debit Counter" > 1) THEN
+                                                                  ERROR(MandateChangeErr);
+                                                                "Expected Number of Debits" := 1;
+                                                              END;
+
+                                                   CaptionML=[ENU=Type of Payment;
+                                                              ESM=Tipo de pago;
+                                                              FRC=Type de paiement;
+                                                              ENC=Type of Payment];
+                                                   OptionCaptionML=[ENU=OneOff,Recurrent;
+                                                                    ESM=Pago £nico,Pago recurrente;
+                                                                    FRC=Ponctuel,R‚current;
+                                                                    ENC=OneOff,Recurrent];
+                                                   OptionString=OneOff,Recurrent }
+    { 8   ;   ;Blocked             ;Boolean       ;CaptionML=[ENU=Blocked;
+                                                              ESM=Bloqueado;
+                                                              FRC=Bloqu‚;
+                                                              ENC=Blocked] }
+    { 9   ;   ;Expected Number of Debits;Integer  ;InitValue=1;
+                                                   OnValidate=BEGIN
+                                                                IF "Expected Number of Debits" < "Debit Counter" THEN
+                                                                  ERROR(InvalidNumberOfDebitsTxt);
+                                                                IF ("Type of Payment" = "Type of Payment"::OneOff) AND ("Expected Number of Debits" > 1) THEN
+                                                                  ERROR(InvalidOneOffNumOfDebitsErr);
+
+                                                                Closed := "Expected Number of Debits" <= "Debit Counter";
+                                                              END;
+
+                                                   CaptionML=[ENU=Expected Number of Debits;
+                                                              ESM=N£mero de debe esperado;
+                                                              FRC=Nombre attendu de pr‚lŠvements;
+                                                              ENC=Expected Number of Debits];
+                                                   MinValue=1 }
+    { 10  ;   ;Debit Counter       ;Integer       ;OnValidate=BEGIN
+                                                                IF "Expected Number of Debits" < "Debit Counter" THEN BEGIN
+                                                                  MESSAGE(InvalidNumberOfDebitsTxt);
+                                                                  FIELDERROR("Debit Counter");
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Debit Counter;
+                                                              ESM=Contador debe;
+                                                              FRC=Compteur pr‚lŠvements;
+                                                              ENC=Debit Counter];
+                                                   Editable=No }
+    { 11  ;   ;No. Series          ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=No. Series;
+                                                              ESM=Nos. serie;
+                                                              FRC=S‚ries de nø;
+                                                              ENC=No. Series] }
+    { 12  ;   ;Closed              ;Boolean       ;CaptionML=[ENU=Closed;
+                                                              ESM=Cerrado;
+                                                              FRC=Ferm‚;
+                                                              ENC=Closed];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;ID                                      ;Clustered=Yes }
+    {    ;Customer No.                             }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;ID,Customer Bank Account Code,Valid From,Valid To,Type of Payment }
+  }
+  CODE
+  {
+    VAR
+      DateErr@1006 : TextConst 'ENU=The Valid To date must be after the Valid From date.;ESM=La fecha final v lida debe ser igual o posterior a la fecha inicial v lida.;FRC=La Date fin validit‚ doit ˆtre post‚rieure … la Date d‚but validit‚.;ENC=The Valid To date must be after the Valid From date.';
+      InvalidNumberOfDebitsTxt@1005 : TextConst 'ENU=The Debit Counter cannot be greater than the Number of Debits.;ESM=El contador de debe no puede ser mayor que el n£mero de debe.;FRC=Le compteur de pr‚lŠvements ne peut pas ˆtre sup‚rieur au nombre de pr‚lŠvements.;ENC=The Debit Counter cannot be greater than the Number of Debits.';
+      InvalidOneOffNumOfDebitsErr@1004 : TextConst 'ENU=The Number of Debits for OneOff Sequence Type cannot be greater than one.;ESM=El n£mero de adeudos de un tipo de pago de Pago £nico no puede ser mayor que uno.;FRC=Le nombre de pr‚lŠvements pour le type de paiement Ponctuel ne peut pas ˆtre sup‚rieur … un.;ENC=The Number of Debits for OneOff Sequence Type cannot be greater than one.';
+      MandateChangeErr@1003 : TextConst 'ENU=SequenceType cannot be set to OneOff, since the Mandate has already been used.;ESM=El tipo de pago de adeudos no puede establecerse en Pago £nico porque la orden de domiciliaci¢n ya se ha usado.;FRC=Le type de paiement ne peut pas ˆtre d‚fini sur Ponctuel, puisque le mandat a d‚j… ‚t‚ utilis‚.;ENC=SequenceType cannot be set to OneOff, since the Mandate has already been used.';
+
+    LOCAL PROCEDURE InsertNoSeries@1();
+    VAR
+      SalesSetup@1001 : Record 311;
+      NoSeriesMgt@1000 : Codeunit 396;
+      NewNo@1002 : Code[20];
+    BEGIN
+      IF ID = '' THEN BEGIN
+        SalesSetup.GET;
+        SalesSetup.TESTFIELD("Direct Debit Mandate Nos.");
+        NoSeriesMgt.InitSeries(SalesSetup."Direct Debit Mandate Nos.",xRec."No. Series",0D,NewNo,"No. Series");
+        ID := NewNo;
+      END;
+    END;
+
+    PROCEDURE IsMandateActive@2(TransactionDate@1000 : Date) : Boolean;
+    BEGIN
+      IF ("Valid To" <> 0D) AND ("Valid To" < TransactionDate) OR ("Valid From" > TransactionDate) OR Blocked OR Closed THEN
+        EXIT(FALSE);
+      EXIT(TRUE)
+    END;
+
+    PROCEDURE GetDefaultMandate@58(CustomerNo@1001 : Code[20];DueDate@1002 : Date) : Code[35];
+    VAR
+      SEPADirectDebitMandate@1000 : Record 1230;
+    BEGIN
+      SEPADirectDebitMandate.SETRANGE("Customer No.",CustomerNo);
+      SEPADirectDebitMandate.SETFILTER("Valid From",'%1|<=%2',0D,DueDate);
+      SEPADirectDebitMandate.SETFILTER("Valid To",'%1|>=%2',0D,DueDate);
+      SEPADirectDebitMandate.SETRANGE(Blocked,FALSE);
+      SEPADirectDebitMandate.SETRANGE(Closed,FALSE);
+      IF SEPADirectDebitMandate.FINDFIRST THEN
+        EXIT(SEPADirectDebitMandate.ID);
+      EXIT('');
+    END;
+
+    PROCEDURE UpdateCounter@5();
+    BEGIN
+      TESTFIELD(Blocked,FALSE);
+      VALIDATE("Debit Counter","Debit Counter" + 1);
+      Closed := "Debit Counter" >= "Expected Number of Debits";
+      MODIFY;
+    END;
+
+    PROCEDURE GetSequenceType@4() : Integer;
+    VAR
+      DirectDebitCollectionEntry@1000 : Record 1208;
+    BEGIN
+      DirectDebitCollectionEntry.INIT;
+      IF "Type of Payment" = "Type of Payment"::OneOff THEN
+        EXIT(DirectDebitCollectionEntry."Sequence Type"::"One Off");
+      IF "Debit Counter" = 0 THEN
+        EXIT(DirectDebitCollectionEntry."Sequence Type"::First);
+      IF "Debit Counter" >= "Expected Number of Debits" - 1 THEN
+        EXIT(DirectDebitCollectionEntry."Sequence Type"::Last);
+      EXIT(DirectDebitCollectionEntry."Sequence Type"::Recurring);
+    END;
+
+    PROCEDURE RollBackSequenceType@6();
+    BEGIN
+      IF "Debit Counter" <= 0 THEN
+        EXIT;
+
+      "Debit Counter" -= 1;
+      Closed := "Debit Counter" >= "Expected Number of Debits";
+      MODIFY;
+    END;
+
+    LOCAL PROCEDURE ValidateDates@3();
+    BEGIN
+      IF ("Valid To" <> 0D) AND ("Valid From" > "Valid To") THEN
+        ERROR(DateErr);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

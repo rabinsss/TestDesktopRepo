@@ -1,0 +1,66 @@
+OBJECT Table 5803 Item Journal Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/05/08;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Item Journal Buffer;
+               ESM=Diario prod. mem. int.;
+               FRC=Tampon journal article;
+               ENC=Item Journal Buffer];
+  }
+  FIELDS
+  {
+    { 2   ;   ;Line No.            ;Integer       ;CaptionML=[ENU=Line No.;
+                                                              ESM=N§ l¡nea;
+                                                              FRC=Nø ligne;
+                                                              ENC=Line No.] }
+    { 3   ;   ;Item No.            ;Code20        ;TableRelation=Item;
+                                                   CaptionML=[ENU=Item No.;
+                                                              ESM=N§ producto;
+                                                              FRC=Nø d'article;
+                                                              ENC=Item No.] }
+    { 8   ;   ;Location Code       ;Code10        ;TableRelation=Location;
+                                                   CaptionML=[ENU=Location Code;
+                                                              ESM=C¢d. almac‚n;
+                                                              FRC=Code d'emplacement;
+                                                              ENC=Location Code] }
+    { 12  ;   ;Quantity            ;Decimal       ;CaptionML=[ENU=Quantity;
+                                                              ESM=Cantidad;
+                                                              FRC=Quantit‚;
+                                                              ENC=Quantity];
+                                                   DecimalPlaces=0:5 }
+    { 5402;   ;Variant Code        ;Code10        ;TableRelation="Item Variant".Code WHERE (Item No.=FIELD(Item No.));
+                                                   CaptionML=[ENU=Variant Code;
+                                                              ESM=C¢d. variante;
+                                                              FRC=Code variante;
+                                                              ENC=Variant Code] }
+    { 5802;   ;Inventory Value (Calculated);Decimal;
+                                                   CaptionML=[ENU=Inventory Value (Calculated);
+                                                              ESM=Valor inventario (calculado);
+                                                              FRC=Valeur inventaire (calcul‚e);
+                                                              ENC=Inventory Value (Calculated)];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+  }
+  KEYS
+  {
+    {    ;Line No.                                ;Clustered=Yes }
+    {    ;Item No.,Location Code,Variant Code      }
+    {    ;Item No.,Variant Code                    }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

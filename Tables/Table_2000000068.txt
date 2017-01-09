@@ -1,0 +1,100 @@
+OBJECT Table 2000000068 Record Link
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Record Link;
+               ESM=V¡nculo registro;
+               FRC=Lien d'enregistrement;
+               ENC=Record Link];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Link ID             ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Link ID;
+                                                              ESM=Id. v¡nculo;
+                                                              FRC=Code lien;
+                                                              ENC=Link ID] }
+    { 2   ;   ;Record ID           ;RecordID      ;CaptionML=[ENU=Record ID;
+                                                              ESM=Id. registro;
+                                                              FRC=Code d'enregistrement;
+                                                              ENC=Record ID] }
+    { 3   ;   ;URL1                ;Text250       ;CaptionML=[ENU=URL1;
+                                                              ESM=URL1;
+                                                              FRC=URL1;
+                                                              ENC=URL1] }
+    { 4   ;   ;URL2                ;Text250       ;CaptionML=[ENU=URL2;
+                                                              ESM=URL2;
+                                                              FRC=URL2;
+                                                              ENC=URL2] }
+    { 5   ;   ;URL3                ;Text250       ;CaptionML=[ENU=URL3;
+                                                              ESM=URL3;
+                                                              FRC=URL3;
+                                                              ENC=URL3] }
+    { 6   ;   ;URL4                ;Text250       ;CaptionML=[ENU=URL4;
+                                                              ESM=URL4;
+                                                              FRC=URL4;
+                                                              ENC=URL4] }
+    { 7   ;   ;Description         ;Text250       ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 8   ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ESM=Tipo;
+                                                              FRC=Type;
+                                                              ENC=Type];
+                                                   OptionCaptionML=[ENU=Link,Note;
+                                                                    ESM=V¡nculo,Nota;
+                                                                    FRC=Lien,Remarque;
+                                                                    ENC=Link,Note];
+                                                   OptionString=Link,Note }
+    { 9   ;   ;Note                ;BLOB          ;CaptionML=[ENU=Note;
+                                                              ESM=Nota;
+                                                              FRC=Remarque;
+                                                              ENC=Note];
+                                                   SubType=Memo }
+    { 10  ;   ;Created             ;DateTime      ;CaptionML=[ENU=Created;
+                                                              ESM=Creado;
+                                                              FRC=Cr‚‚;
+                                                              ENC=Created] }
+    { 11  ;   ;User ID             ;Text132       ;CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 12  ;   ;Company             ;Text30        ;TableRelation=Company.Name;
+                                                   CaptionML=[ENU=Company;
+                                                              ESM=Empresa;
+                                                              FRC=Compagnie;
+                                                              ENC=Company] }
+    { 13  ;   ;Notify              ;Boolean       ;CaptionML=[ENU=Notify;
+                                                              ESM=Notificar;
+                                                              FRC=Notifier;
+                                                              ENC=Notify] }
+    { 14  ;   ;To User ID          ;Text132       ;CaptionML=[ENU=To User ID;
+                                                              ESM=Al Id. usuario;
+                                                              FRC=Au code utilisateur;
+                                                              ENC=To User ID] }
+  }
+  KEYS
+  {
+    {    ;Link ID                                 ;Clustered=Yes }
+    {    ;Record ID                                }
+    {    ;Company                                  }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

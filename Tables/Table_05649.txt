@@ -1,0 +1,64 @@
+OBJECT Table 5649 FA Posting Group Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/05/08;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=FA Posting Group Buffer;
+               ESM=Mem. int. grupos contab. A/F;
+               FRC=Tampon groupe compta. immo.;
+               ENC=FA Posting Group Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;FA Posting Group    ;Code10        ;CaptionML=[ENU=FA Posting Group;
+                                                              ESM=A/F Grupo contable;
+                                                              FRC=Groupe report immobilisation;
+                                                              ENC=FA Posting Group] }
+    { 2   ;   ;Posting Type        ;Option        ;CaptionML=[ENU=Posting Type;
+                                                              ESM=Tipo registro;
+                                                              FRC=Type report;
+                                                              ENC=Posting Type];
+                                                   OptionCaptionML=[ENU=Acq,Depr,WD,Appr,C1,C2,DeprExp,Maint,Disp,GL,BV,DispAcq,DispDepr,DispWD,DispAppr,DispC1,DispC2,BalWD,BalAppr,BalC1,BalC2;
+                                                                    ESM=Cost,Amort,Depre,Apre,Esp,Prov,GtosAmort,Mant,V/B,PyG,ValNet,V/BCost,V/BAmort,V/B Depre,V/BApre,V/BEsp,V/BProv,SdoDepre,SdoApre,SdoEsp,SdoProv;
+                                                                    FRC=Acq,Amort,Depr,R‚‚v,P1,P2,ExpAmort,Maint,C‚d‚,Cpta,VC,AcqCess,AmortCess,D‚prCess,R‚‚vCess,P1Cess,P2Cess,D‚prSolde,R‚evSolde,P1Solde,P2Solde;
+                                                                    ENC=Acq,Depr,WD,Appr,C1,C2,DeprExp,Maint,Disp,GL,BV,DispAcq,DispDepr,DispWD,DispAppr,DispC1,DispC2,BalWD,BalAppr,BalC1,BalC2];
+                                                   OptionString=Acq,Depr,WD,Appr,C1,C2,DeprExp,Maint,Disp,GL,BV,DispAcq,DispDepr,DispWD,DispAppr,DispC1,DispC2,BalWD,BalAppr,BalC1,BalC2 }
+    { 3   ;   ;Account No.         ;Code20        ;CaptionML=[ENU=Account No.;
+                                                              ESM=N§ cuenta;
+                                                              FRC=Nø de compte;
+                                                              ENC=Account No.] }
+    { 4   ;   ;Amount              ;Decimal       ;CaptionML=[ENU=Amount;
+                                                              ESM=Importe;
+                                                              FRC=Montant;
+                                                              ENC=Amount] }
+    { 5   ;   ;Account Name        ;Text50        ;CaptionML=[ENU=Account Name;
+                                                              ESM=Nombre cuenta;
+                                                              FRC=Nom du compte;
+                                                              ENC=Account Name] }
+    { 6   ;   ;FA FieldCaption     ;Text50        ;CaptionML=[ENU=FA FieldCaption;
+                                                              ESM=Nombre campo A/F;
+                                                              FRC=TitreChamp Immo.;
+                                                              ENC=FA FieldCaption] }
+  }
+  KEYS
+  {
+    {    ;FA Posting Group,Posting Type,Account No.;
+                                                   Clustered=Yes }
+    {    ;Account No.                             ;SumIndexFields=Amount }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

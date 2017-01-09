@@ -1,0 +1,164 @@
+OBJECT Table 1296 Posted Payment Recon. Line
+{
+  OBJECT-PROPERTIES
+  {
+    Date=10/23/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.43402;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Posted Payment Recon. Line;
+               ESM=L°nea conciliaci¢n de pago registrado;
+               FRC=Ligne rappr. paiement reportÇ;
+               ENC=Posted Payment Recon. Line];
+    PasteIsValid=No;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Bank Account No.    ;Code20        ;TableRelation="Bank Account";
+                                                   CaptionML=[ENU=Bank Account No.;
+                                                              ESM=C¢d. cuenta banco;
+                                                              FRC=N¯ compte bancaire;
+                                                              ENC=Bank Account No.] }
+    { 2   ;   ;Statement No.       ;Code20        ;TableRelation="Bank Acc. Reconciliation"."Statement No." WHERE (Bank Account No.=FIELD(Bank Account No.));
+                                                   CaptionML=[ENU=Statement No.;
+                                                              ESM=Nß estado de cta. banco;
+                                                              FRC=N¯ de relevÇ;
+                                                              ENC=Statement No.] }
+    { 3   ;   ;Statement Line No.  ;Integer       ;CaptionML=[ENU=Statement Line No.;
+                                                              ESM=Nß l°n. estado de cuenta;
+                                                              FRC=N¯ ligne relevÇ;
+                                                              ENC=Statement Line No.] }
+    { 4   ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ESM=Nß documento;
+                                                              FRC=N¯ de document;
+                                                              ENC=Document No.] }
+    { 5   ;   ;Transaction Date    ;Date          ;CaptionML=[ENU=Transaction Date;
+                                                              ESM=Fecha movimiento;
+                                                              FRC=Date transaction;
+                                                              ENC=Transaction Date] }
+    { 6   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 7   ;   ;Statement Amount    ;Decimal       ;CaptionML=[ENU=Statement Amount;
+                                                              ESM=Importe estado de cuenta;
+                                                              FRC=Montant relevÇ;
+                                                              ENC=Statement Amount];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 8   ;   ;Difference          ;Decimal       ;CaptionML=[ENU=Difference;
+                                                              ESM=Diferencia;
+                                                              FRC=DiffÇrence;
+                                                              ENC=Difference];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 9   ;   ;Applied Amount      ;Decimal       ;CaptionML=[ENU=Applied Amount;
+                                                              ESM=Importe liquidado;
+                                                              FRC=Montant affectÇ;
+                                                              ENC=Applied Amount];
+                                                   Editable=No;
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 10  ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ESM=Tipo;
+                                                              FRC=Type;
+                                                              ENC=Type];
+                                                   OptionCaptionML=[ENU=Bank Account Ledger Entry,Check Ledger Entry,Difference;
+                                                                    ESM=Mov. banco,Mov. cheque,Diferencia;
+                                                                    FRC=Banque,Chäque,DiffÇrence;
+                                                                    ENC=Bank Account Ledger Entry,Cheque Ledger Entry,Difference];
+                                                   OptionString=Bank Account Ledger Entry,Check Ledger Entry,Difference }
+    { 11  ;   ;Applied Entries     ;Integer       ;CaptionML=[ENU=Applied Entries;
+                                                              ESM=Movs. liquidados;
+                                                              FRC=êcritures affectÇes;
+                                                              ENC=Applied Entries];
+                                                   Editable=No }
+    { 12  ;   ;Value Date          ;Date          ;CaptionML=[ENU=Value Date;
+                                                              ESM=Fecha valor;
+                                                              FRC=Date de valeur;
+                                                              ENC=Value Date] }
+    { 14  ;   ;Check No.           ;Code20        ;CaptionML=[ENU=Check No.;
+                                                              ESM=Nß cheque;
+                                                              FRC=N¯ de chäque;
+                                                              ENC=Cheque No.] }
+    { 15  ;   ;Related-Party Name  ;Text250       ;CaptionML=[ENU=Related-Party Name;
+                                                              ESM=Nombre de parte vinculada;
+                                                              FRC=Nom partie associÇe;
+                                                              ENC=Related-Party Name] }
+    { 16  ;   ;Additional Transaction Info;Text100;CaptionML=[ENU=Additional Transaction Info;
+                                                              ESM=Informaci¢n adicional de la transacci¢n;
+                                                              FRC=Info transaction supplÇmentaire;
+                                                              ENC=Additional Transaction Info] }
+    { 17  ;   ;Data Exch. Entry No.;Integer       ;TableRelation="Data Exch.";
+                                                   CaptionML=[ENU=Data Exch. Entry No.;
+                                                              ESM=N.ß mov. intercambio de datos;
+                                                              FRC=N¯ Çcriture Çchge donnÇes;
+                                                              ENC=Data Exch. Entry No.];
+                                                   Editable=No }
+    { 18  ;   ;Data Exch. Line No. ;Integer       ;CaptionML=[ENU=Data Exch. Line No.;
+                                                              ESM=N.ß l°nea intercambio de datos;
+                                                              FRC=N¯ ligne Çchge donnÇes;
+                                                              ENC=Data Exch. Line No.];
+                                                   Editable=No }
+    { 21  ;   ;Account Type        ;Option        ;CaptionML=[ENU=Account Type;
+                                                              ESM=Tipo de cta.;
+                                                              FRC=Type de compte;
+                                                              ENC=Account Type];
+                                                   OptionCaptionML=[ENU=G/L Account,Customer,Vendor,Bank Account,Fixed Asset,IC Partner;
+                                                                    ESM=Cuenta,Cliente,Proveedor,Banco,Activo,Empresa vinculada asociada;
+                                                                    FRC=Compte du grand livre,Client,Fournisseur,Compte bancaire,Immobilisation,Partenaire IC;
+                                                                    ENC=G/L Account,Customer,Vendor,Bank Account,Fixed Asset,IC Partner];
+                                                   OptionString=G/L Account,Customer,Vendor,Bank Account,Fixed Asset,IC Partner }
+    { 22  ;   ;Account No.         ;Code20        ;TableRelation=IF (Account Type=CONST(G/L Account)) "G/L Account" WHERE (Account Type=CONST(Posting),
+                                                                                                                           Blocked=CONST(No))
+                                                                                                                           ELSE IF (Account Type=CONST(Customer)) Customer
+                                                                                                                           ELSE IF (Account Type=CONST(Vendor)) Vendor
+                                                                                                                           ELSE IF (Account Type=CONST(Bank Account)) "Bank Account"
+                                                                                                                           ELSE IF (Account Type=CONST(Fixed Asset)) "Fixed Asset"
+                                                                                                                           ELSE IF (Account Type=CONST(IC Partner)) "IC Partner";
+                                                   CaptionML=[ENU=Account No.;
+                                                              ESM=Nß cuenta;
+                                                              FRC=N¯ de compte;
+                                                              ENC=Account No.] }
+    { 23  ;   ;Applied Document No.;Text250       ;CaptionML=[ENU=Applied Document No.;
+                                                              ESM=Nß de documento liquidado;
+                                                              FRC=N¯ document affectation;
+                                                              ENC=Applied Document No.] }
+    { 24  ;   ;Applied Entry No.   ;Text250       ;CaptionML=[ENU=Applied Entry No.;
+                                                              ESM=Nß de movimiento liquidado;
+                                                              FRC=N¯ Çcriture affectÇe;
+                                                              ENC=Applied Entry No.] }
+  }
+  KEYS
+  {
+    {    ;Bank Account No.,Statement No.,Statement Line No.;
+                                                   SumIndexFields=Statement Amount,Difference;
+                                                   MaintainSIFTIndex=No;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    LOCAL PROCEDURE GetCurrencyCode@1() : Code[10];
+    VAR
+      BankAcc2@1000 : Record 270;
+    BEGIN
+      IF "Bank Account No." = BankAcc2."No." THEN
+        EXIT(BankAcc2."Currency Code");
+
+      IF BankAcc2.GET("Bank Account No.") THEN
+        EXIT(BankAcc2."Currency Code");
+
+      EXIT('');
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,60 @@
+OBJECT Table 5337 Temp Integration Field Mapping
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Temp Integration Field Mapping;
+               ESM=Asignaci¢n del campo de integraci¢n temporal;
+               FRC=Correspondance champ int‚gration temp.;
+               ENC=Temp Integration Field Mapping];
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=No.;
+                                                              ESM=N§;
+                                                              FRC=Nø;
+                                                              ENC=No.] }
+    { 2   ;   ;Integration Table Mapping Name;Code20;
+                                                   TableRelation="Integration Table Mapping".Name;
+                                                   CaptionML=[ENU=Integration Table Mapping Name;
+                                                              ESM=Nombre de asignaci¢n de tablas de integraci¢n;
+                                                              FRC=Nom correspondance table int‚gration;
+                                                              ENC=Integration Table Mapping Name] }
+    { 3   ;   ;Source Field No.    ;Integer       ;CaptionML=[ENU=Source Field No.;
+                                                              ESM=N.§ campo origen;
+                                                              FRC=Nø champ origine;
+                                                              ENC=Source Field No.] }
+    { 4   ;   ;Destination Field No.;Integer      ;CaptionML=[ENU=Destination Field No.;
+                                                              ESM=N§ campo destino;
+                                                              FRC=Nø champ destination;
+                                                              ENC=Destination Field No.] }
+    { 5   ;   ;Validate Destination Field;Boolean ;CaptionML=[ENU=Validate Destination Field;
+                                                              ESM=Validar campo destino;
+                                                              FRC=Valider champ destination;
+                                                              ENC=Validate Destination Field] }
+    { 7   ;   ;Constant Value      ;Text100       ;CaptionML=[ENU=Constant Value;
+                                                              ESM=Valor de constante;
+                                                              FRC=Valeur constante;
+                                                              ENC=Constant Value] }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

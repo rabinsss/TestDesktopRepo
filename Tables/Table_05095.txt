@@ -1,0 +1,71 @@
+OBJECT Table 5095 Duplicate Search String Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/05/08;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00;
+  }
+  PROPERTIES
+  {
+    OnDelete=BEGIN
+               DuplContSearchString.SETRANGE(Field,Field);
+               DuplContSearchString.SETRANGE("Part of Field","Part of Field");
+               DuplContSearchString.DELETEALL;
+             END;
+
+    OnRename=BEGIN
+               ERROR(Text000,TABLECAPTION);
+             END;
+
+    CaptionML=[ENU=Duplicate Search String Setup;
+               ESM=Config. cadena b£squeda dupl.;
+               FRC=Param. chaŒnes rech. doublons;
+               ENC=Duplicate Search String Setup];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Field               ;Option        ;CaptionML=[ENU=Field;
+                                                              ESM=Campo;
+                                                              FRC=Champ;
+                                                              ENC=Field];
+                                                   OptionCaptionML=[ENU=Name,Name 2,Address,Address 2,ZIP Code,City,Phone No.,VAT Registration No.;
+                                                                    ESM=Nombre,Nombre 2,Direcci¢n,Colonia,C.P.,Municipio/Ciudad,N§ tel‚fono,RFC/Curp;
+                                                                    FRC=Nom,Nom 2,Adresse,Adresse (2Šme ligne),Code postal,Ville,Nø de t‚l‚phone,Nø id. TPS/TVH;
+                                                                    ENC=Name,Name 2,Address,Address 2,Postal/ZIP Code,City,Phone No.,GST/HST Registration No.];
+                                                   OptionString=Name,Name 2,Address,Address 2,Post Code,City,Phone No.,VAT Registration No. }
+    { 2   ;   ;Part of Field       ;Option        ;CaptionML=[ENU=Part of Field;
+                                                              ESM=Parte del campo;
+                                                              FRC=Partie de champ;
+                                                              ENC=Part of Field];
+                                                   OptionCaptionML=[ENU=First,Last;
+                                                                    ESM=Primero,éltimo;
+                                                                    FRC=Premier,Dernier;
+                                                                    ENC=First,Last];
+                                                   OptionString=First,Last }
+    { 3   ;   ;Length              ;Integer       ;InitValue=5;
+                                                   CaptionML=[ENU=Length;
+                                                              ESM=Longitud;
+                                                              FRC=Longueur;
+                                                              ENC=Length];
+                                                   MinValue=2;
+                                                   MaxValue=10 }
+  }
+  KEYS
+  {
+    {    ;Field,Part of Field                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=You cannot rename a %1.;ESM=No se puede cambiar el nombre a %1.;FRC=Vous ne pouvez pas renommer un %1.;ENC=You cannot rename a %1.';
+      DuplContSearchString@1001 : Record 5086;
+
+    BEGIN
+    END.
+  }
+}
+

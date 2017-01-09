@@ -1,0 +1,80 @@
+OBJECT Table 5151 Integration Record
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Integration Record;
+               ESM=Registro integraci¢n;
+               FRC=Enregistrement int‚gration;
+               ENC=Integration Record];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Table ID            ;Integer       ;CaptionML=[ENU=Table ID;
+                                                              ESM=Id. tabla;
+                                                              FRC=Code table;
+                                                              ENC=Table ID] }
+    { 2   ;   ;Page ID             ;Integer       ;CaptionML=[ENU=Page ID;
+                                                              ESM=Id. p gina;
+                                                              FRC=Code page;
+                                                              ENC=Page ID] }
+    { 3   ;   ;Record ID           ;RecordID      ;CaptionML=[ENU=Record ID;
+                                                              ESM=Id. del registro;
+                                                              FRC=Code d'enregistrement;
+                                                              ENC=Record ID] }
+    { 5150;   ;Integration ID      ;GUID          ;CaptionML=[ENU=Integration ID;
+                                                              ESM=Id. de integraci¢n;
+                                                              FRC=Code int‚gration;
+                                                              ENC=Integration ID] }
+    { 5151;   ;Deleted On          ;DateTime      ;CaptionML=[ENU=Deleted On;
+                                                              ESM=Eliminado el;
+                                                              FRC=Supprim‚ le;
+                                                              ENC=Deleted On] }
+    { 5152;   ;Modified On         ;DateTime      ;CaptionML=[ENU=Modified On;
+                                                              ESM=Fecha modificaci¢n;
+                                                              FRC=Modifi‚ le;
+                                                              ENC=Modified On] }
+  }
+  KEYS
+  {
+    {    ;Integration ID                          ;Clustered=Yes }
+    {    ;Record ID                                }
+    {    ;Page ID,Deleted On                       }
+    {    ;Page ID,Modified On                      }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE FindByIntegrationId@11(IntegrationId@1000 : GUID) : Boolean;
+    BEGIN
+      IF ISNULLGUID(IntegrationId) THEN
+        EXIT(FALSE);
+
+      RESET;
+      SETRANGE("Integration ID",IntegrationId);
+      EXIT(FINDFIRST);
+    END;
+
+    PROCEDURE FindByRecordId@13(FindRecordId@1000 : RecordID) : Boolean;
+    BEGIN
+      IF FindRecordId.TABLENO = 0 THEN
+        EXIT(FALSE);
+
+      RESET;
+      SETRANGE("Record ID",FindRecordId);
+      EXIT(FINDFIRST);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

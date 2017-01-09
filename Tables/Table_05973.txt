@@ -1,0 +1,78 @@
+OBJECT Table 5973 Service Contract Account Group
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.44974,NAVNA9.00.00.44974;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Service Contract Account Group;
+               ESM=Grupo cuenta Contrato de Servicio;
+               FRC=Groupe comptes contrat service;
+               ENC=Service Contract Account Group];
+    LookupPageID=Page6070;
+    DrillDownPageID=Page6070;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ESM=C¢digo;
+                                                              FRC=Code;
+                                                              ENC=Code] }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 3   ;   ;Non-Prepaid Contract Acc.;Code20   ;TableRelation="G/L Account".No.;
+                                                   OnValidate=BEGIN
+                                                                IF "Non-Prepaid Contract Acc." <> '' THEN BEGIN
+                                                                  GlAcc.GET("Non-Prepaid Contract Acc.");
+                                                                  GLSetup.GET;
+                                                                  IF GLSetup."VAT in Use" THEN BEGIN
+                                                                    GlAcc.TESTFIELD("Gen. Prod. Posting Group");
+                                                                    GlAcc.TESTFIELD("VAT Prod. Posting Group");
+                                                                  END;
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Non-Prepaid Contract Acc.;
+                                                              ESM=Cuenta contratos sin anticipos;
+                                                              FRC=Compte contrat non pr‚pay‚;
+                                                              ENC=Non-Prepaid Contract Acc.] }
+    { 4   ;   ;Prepaid Contract Acc.;Code20       ;TableRelation="G/L Account".No.;
+                                                   OnValidate=BEGIN
+                                                                IF "Prepaid Contract Acc." <> '' THEN BEGIN
+                                                                  GlAcc.GET("Prepaid Contract Acc.");
+                                                                  GLSetup.GET;
+                                                                  IF GLSetup."VAT in Use" THEN BEGIN
+                                                                    GlAcc.TESTFIELD("Gen. Prod. Posting Group");
+                                                                    GlAcc.TESTFIELD("VAT Prod. Posting Group");
+                                                                  END;
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Prepaid Contract Acc.;
+                                                              ESM=Cuenta contratos con anticipos;
+                                                              FRC=Compte contrat pr‚pay‚;
+                                                              ENC=Prepaid Contract Acc.] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      GlAcc@1000 : Record 15;
+      GLSetup@1020000 : Record 98;
+
+    BEGIN
+    END.
+  }
+}
+

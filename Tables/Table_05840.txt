@@ -1,0 +1,50 @@
+OBJECT Table 5840 Standard Cost Worksheet Name
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/07/12;
+    Time=12:00:00 PM;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    OnDelete=BEGIN
+               StdCostWksh.SETRANGE("Standard Cost Worksheet Name",Name);
+               StdCostWksh.DELETEALL(TRUE);
+             END;
+
+    CaptionML=[ENU=Standard Cost Worksheet Name;
+               ESM=Nomb. hoja trab. costo est ndar;
+               FRC=Nom feuille trav. co–t stand.;
+               ENC=Standard Cost Worksheet Name];
+    LookupPageID=Page5840;
+  }
+  FIELDS
+  {
+    { 2   ;   ;Name                ;Code10        ;CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+  }
+  KEYS
+  {
+    {    ;Name                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      StdCostWksh@1000 : Record 5841;
+
+    BEGIN
+    END.
+  }
+}
+

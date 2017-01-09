@@ -1,0 +1,42 @@
+OBJECT Table 2000000151 NAV App Tenant App
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=NAV App Tenant App;
+               ESM=Aplic. inquilino de aplic. NAV;
+               FRC=Appli NAV - Appli abonn‚;
+               ENC=NAV App Tenant App];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Tenant ID           ;Text128       ;CaptionML=[ENU=Tenant ID;
+                                                              ESM=Id. de inquilino;
+                                                              FRC=Code abonn‚;
+                                                              ENC=Tenant ID] }
+    { 2   ;   ;App Package ID      ;GUID          ;CaptionML=[ENU=App Package ID;
+                                                              ESM=Id. de paquete de aplicaci¢n;
+                                                              FRC=Code package appli;
+                                                              ENC=App Package ID] }
+  }
+  KEYS
+  {
+    {    ;Tenant ID,App Package ID                ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

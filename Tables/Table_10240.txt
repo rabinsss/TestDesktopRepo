@@ -1,0 +1,43 @@
+OBJECT Table 10240 B10 Adjustment
+{
+  OBJECT-PROPERTIES
+  {
+    Date=02/13/07;
+    Time=12:00:00 PM;
+    Version List=NAVNA5.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=B10 Adjustment;
+               ESM=Ajuste B10;
+               FRC=Ajustement B10;
+               ENC=B10 Adjustment];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Date                ;Date          ;CaptionML=[ENU=Date;
+                                                              ESM=Fecha;
+                                                              FRC=Date;
+                                                              ENC=Date];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Adjustment Amount   ;Decimal       ;CaptionML=[ENU=Adjustment Amount;
+                                                              ESM=Importe ajuste;
+                                                              FRC=Montant d'ajustement;
+                                                              ENC=Adjustment Amount];
+                                                   DecimalPlaces=2:5 }
+  }
+  KEYS
+  {
+    {    ;Date                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

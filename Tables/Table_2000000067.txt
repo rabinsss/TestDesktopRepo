@@ -1,0 +1,62 @@
+OBJECT Table 2000000067 User Default Style Sheet
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=User Default Style Sheet;
+               ESM=Hoja estilos predet. usuario;
+               FRC=Feuille de style d‚faut util.;
+               ENC=User Default Style Sheet];
+  }
+  FIELDS
+  {
+    { 1   ;   ;User ID             ;GUID          ;TableRelation=User."User Security ID";
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 2   ;   ;Object Type         ;Option        ;CaptionML=[ENU=Object Type;
+                                                              ESM=Tipo objeto;
+                                                              FRC=Type d'objet;
+                                                              ENC=Object Type];
+                                                   OptionCaptionML=[ENU=Form,Report,Page;
+                                                                    ESM=Form,Report,Page;
+                                                                    FRC=Form,Report,Page;
+                                                                    ENC=Form,Report,Page];
+                                                   OptionString=Form,Report,Page }
+    { 3   ;   ;Object ID           ;Integer       ;TableRelation=Object.ID WHERE (Type=FIELD(Object Type));
+                                                   CaptionML=[ENU=Object ID;
+                                                              ESM=Id. objeto;
+                                                              FRC=Code d'objet;
+                                                              ENC=Object ID] }
+    { 4   ;   ;Program ID          ;GUID          ;CaptionML=[ENU=Program ID;
+                                                              ESM=Id. programa;
+                                                              FRC=Code programme;
+                                                              ENC=Program ID] }
+    { 5   ;   ;Style Sheet ID      ;GUID          ;CaptionML=[ENU=Style Sheet ID;
+                                                              ESM=Id. hoja estilos;
+                                                              FRC=Code feuille de style;
+                                                              ENC=Style Sheet ID] }
+  }
+  KEYS
+  {
+    {    ;User ID,Object Type,Object ID,Program ID;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,79 @@
+OBJECT Table 1100 Cost Journal Template
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               "Posting Report ID" := REPORT::"Cost Register";
+             END;
+
+    OnDelete=VAR
+               CostJnlBatch@1000 : Record 1102;
+             BEGIN
+               CostJnlBatch.SETRANGE("Journal Template Name",Name);
+               CostJnlBatch.DELETEALL(TRUE);
+             END;
+
+    CaptionML=[ENU=Cost Journal Template;
+               ESM=Plantilla diario costos;
+               FRC=ModŠle journal de co–ts;
+               ENC=Cost Journal Template];
+    LookupPageID=Page1107;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Name                ;Code10        ;ValidateTableRelation=No;
+                                                   CaptionML=[ENU=Name;
+                                                              ESM=Nombre;
+                                                              FRC=Nom;
+                                                              ENC=Name];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 3   ;   ;Reason Code         ;Code10        ;TableRelation="Reason Code";
+                                                   CaptionML=[ENU=Reason Code;
+                                                              ESM=C¢d. auditor¡a;
+                                                              FRC=Code motif;
+                                                              ENC=Reason Code] }
+    { 6   ;   ;Source Code         ;Code10        ;TableRelation="Source Code";
+                                                   CaptionML=[ENU=Source Code;
+                                                              ESM=C¢d. origen;
+                                                              FRC=Code d'origine;
+                                                              ENC=Source Code] }
+    { 7   ;   ;Posting Report ID   ;Integer       ;TableRelation=AllObj."Object ID" WHERE (Object Type=CONST(Report));
+                                                   CaptionML=[ENU=Posting Report ID;
+                                                              ESM=N§ informe para registro;
+                                                              FRC=Code de rapport sur le report;
+                                                              ENC=Posting Report ID] }
+    { 8   ;   ;Posting Report Caption;Text250     ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(AllObjWithCaption."Object Caption" WHERE (Object Type=CONST(Report),
+                                                                                                                Object ID=FIELD(Posting Report ID)));
+                                                   CaptionML=[ENU=Posting Report Caption;
+                                                              ESM=T¡tulo del informe de registro;
+                                                              FRC=Libell‚ du rapport de report;
+                                                              ENC=Posting Report Caption];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Name                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;Name,Description                         }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

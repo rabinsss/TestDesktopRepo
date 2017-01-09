@@ -1,0 +1,133 @@
+OBJECT Table 9183 Generic Chart Query Column
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/09/14;
+    Time=12:00:00 PM;
+    Version List=NAVW18.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Generic Chart Query Column;
+               ESM=Columna de consultas de gr fico gen‚rico;
+               FRC=Colonne requˆte graphique g‚n‚rique;
+               ENC=Generic Chart Query Column];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Query No.           ;Integer       ;CaptionML=[ENU=Query No.;
+                                                              ESM=N.§ consulta;
+                                                              FRC=Nø requˆte;
+                                                              ENC=Query No.] }
+    { 2   ;   ;Query Column No.    ;Integer       ;CaptionML=[ENU=Query Column No.;
+                                                              ESM=N.§ columna consultas;
+                                                              FRC=Nø colonne requˆte;
+                                                              ENC=Query Column No.] }
+    { 3   ;   ;Column Name         ;Text50        ;CaptionML=[ENU=Column Name;
+                                                              ESM=Nombre columna;
+                                                              FRC=Nom Colonne;
+                                                              ENC=Column Name] }
+    { 4   ;   ;Column Data Type    ;Option        ;CaptionML=[ENU=Column Data Type;
+                                                              ESM=Tipo de datos de columna;
+                                                              FRC=Type donn‚es colonne;
+                                                              ENC=Column Data Type];
+                                                   OptionCaptionML=[ENU=Date,Time,DateFormula,Decimal,Text,Code,Binary,Boolean,Integer,Option,BigInteger,DateTime;
+                                                                    ESM=Fecha,Hora,F¢rmulaFecha,Decimal,Texto,C¢digo,Binario,Booleano,N£meroEntero,Opci¢n,N£meroEnteroGrande,FechaHora;
+                                                                    FRC=Date,Heure,DateFormula,D‚cimale,Texte,Code,Binaire,Bool‚en,Entier,Option,GrandEntier,DateHeure;
+                                                                    ENC=Date,Time,DateFormula,Decimal,Text,Code,Binary,Boolean,Integer,Option,BigInteger,DateTime];
+                                                   OptionString=Date,Time,DateFormula,Decimal,Text,Code,Binary,Boolean,Integer,Option,BigInteger,DateTime }
+    { 5   ;   ;Column Type         ;Option        ;CaptionML=[ENU=Column Type;
+                                                              ESM=Tipo columna;
+                                                              FRC=Type de colonne;
+                                                              ENC=Column Type];
+                                                   OptionCaptionML=[ENU=Filter Column,Column;
+                                                                    ESM=Columna filtro,Columna;
+                                                                    FRC=Colonne filtre,Colonne;
+                                                                    ENC=Filter Column,Column];
+                                                   OptionString=Filter Column,Column }
+    { 6   ;   ;Entry No.           ;Integer       ;CaptionML=[ENU=Entry No.;
+                                                              ESM=N§ mov.;
+                                                              FRC=Nø ‚criture;
+                                                              ENC=Entry No.] }
+    { 7   ;   ;Aggregation Type    ;Option        ;CaptionML=[ENU=Aggregation Type;
+                                                              ESM=Tipo de agregaci¢n;
+                                                              FRC=Type agr‚gation;
+                                                              ENC=Aggregation Type];
+                                                   OptionCaptionML=[ENU=None,Count,Sum,Min,Max,Avg;
+                                                                    ESM=Ninguno,Recuento,Suma,M¡n,M x,Medio;
+                                                                    FRC=Aucun,Nombre,Somme,Min,Max,Moy;
+                                                                    ENC=None,Count,Sum,Min,Max,Avg];
+                                                   OptionString=None,Count,Sum,Min,Max,Avg }
+  }
+  KEYS
+  {
+    {    ;Query No.,Query Column No.,Entry No.    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst '@@@=NONE;ENU=NONE;ESM=NONE;FRC=AUCUN;ENC=NONE';
+      Text001@1001 : TextConst '@@@=COUNT;ENU=COUNT;ESM=COUNT;FRC=NOMBRE;ENC=COUNT';
+      Text002@1002 : TextConst '@@@=SUM;ENU=SUM;ESM=SUM;FRC=SOMME;ENC=SUM';
+      Text003@1003 : TextConst '@@@=MIN;ENU=MIN;ESM=MIN;FRC=MIN;ENC=MIN';
+      Text004@1004 : TextConst '@@@=MAX;ENU=MAX;ESM=MAX;FRC=MAX;ENC=MAX';
+      Text005@1005 : TextConst '@@@=AVERAGE;ENU=AVERAGE;ESM=AVERAGE;FRC=MOYENNE;ENC=AVERAGE';
+
+    PROCEDURE SetAggregationType@34(InputTxt@1000 : Text);
+    BEGIN
+      CASE UPPERCASE(InputTxt) OF
+        Text000:
+          "Aggregation Type" := "Aggregation Type"::None;
+        Text001:
+          "Aggregation Type" := "Aggregation Type"::Count;
+        Text002:
+          "Aggregation Type" := "Aggregation Type"::Sum;
+        Text003:
+          "Aggregation Type" := "Aggregation Type"::Min;
+        Text004:
+          "Aggregation Type" := "Aggregation Type"::Max;
+        Text005:
+          "Aggregation Type" := "Aggregation Type"::Avg;
+      END;
+    END;
+
+    PROCEDURE SetColumnDataType@1(FieldType@1001 : Option);
+    VAR
+      Field@1000 : Record 2000000041;
+    BEGIN
+      CASE FieldType OF
+        Field.Type::Date:
+          "Column Data Type" := "Column Data Type"::Date;
+        Field.Type::Time:
+          "Column Data Type" := "Column Data Type"::Time;
+        Field.Type::DateFormula:
+          "Column Data Type" := "Column Data Type"::DateFormula;
+        Field.Type::Decimal:
+          "Column Data Type" := "Column Data Type"::Decimal;
+        Field.Type::Text:
+          "Column Data Type" := "Column Data Type"::Text;
+        Field.Type::Code:
+          "Column Data Type" := "Column Data Type"::Code;
+        Field.Type::Binary:
+          "Column Data Type" := "Column Data Type"::Binary;
+        Field.Type::Boolean:
+          "Column Data Type" := "Column Data Type"::Boolean;
+        Field.Type::Integer:
+          "Column Data Type" := "Column Data Type"::Integer;
+        Field.Type::Option:
+          "Column Data Type" := "Column Data Type"::Option;
+        Field.Type::BigInteger:
+          "Column Data Type" := "Column Data Type"::BigInteger;
+        Field.Type::DateTime:
+          "Column Data Type" := "Column Data Type"::DateTime;
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

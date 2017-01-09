@@ -1,0 +1,221 @@
+OBJECT Table 405 Change Log Entry
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/26/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.43897;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Change Log Entry;
+               ESM=Mov. registro cambios;
+               FRC=criture journal modification;
+               ENC=Change Log Entry];
+    LookupPageID=Page595;
+    DrillDownPageID=Page595;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;BigInteger    ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Entry No.;
+                                                              ESM=N§ mov.;
+                                                              FRC=Nø ‚criture;
+                                                              ENC=Entry No.] }
+    { 2   ;   ;Date and Time       ;DateTime      ;CaptionML=[ENU=Date and Time;
+                                                              ESM=Fecha y hora;
+                                                              FRC=Date et heure;
+                                                              ENC=Date and Time] }
+    { 3   ;   ;Time                ;Time          ;CaptionML=[ENU=Time;
+                                                              ESM=Hora;
+                                                              FRC=Heure;
+                                                              ENC=Time] }
+    { 4   ;   ;User ID             ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=VAR
+                                                              UserMgt@1000 : Codeunit 418;
+                                                            BEGIN
+                                                              UserMgt.LookupUserID("User ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 5   ;   ;Table No.           ;Integer       ;TableRelation=AllObj."Object ID" WHERE (Object Type=CONST(Table));
+                                                   CaptionML=[ENU=Table No.;
+                                                              ESM=Tabla N§;
+                                                              FRC=Nø de la table;
+                                                              ENC=Table No.] }
+    { 6   ;   ;Table Caption       ;Text250       ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(AllObjWithCaption."Object Caption" WHERE (Object Type=CONST(Table),
+                                                                                                                Object ID=FIELD(Table No.)));
+                                                   CaptionML=[ENU=Table Caption;
+                                                              ESM=T¡tulo tabla;
+                                                              FRC=L‚gende table;
+                                                              ENC=Table Caption] }
+    { 7   ;   ;Field No.           ;Integer       ;TableRelation=Field.No. WHERE (TableNo=FIELD(Table No.));
+                                                   CaptionML=[ENU=Field No.;
+                                                              ESM=N§ campo;
+                                                              FRC=Nø de champ;
+                                                              ENC=Field No.] }
+    { 8   ;   ;Field Caption       ;Text80        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Field."Field Caption" WHERE (TableNo=FIELD(Table No.),
+                                                                                                   No.=FIELD(Field No.)));
+                                                   CaptionML=[ENU=Field Caption;
+                                                              ESM=T¡tulo campo;
+                                                              FRC=Libell‚ champ;
+                                                              ENC=Field Caption] }
+    { 9   ;   ;Type of Change      ;Option        ;CaptionML=[ENU=Type of Change;
+                                                              ESM=Tipo de cambio;
+                                                              FRC=Type modification;
+                                                              ENC=Type of Change];
+                                                   OptionCaptionML=[ENU=Insertion,Modification,Deletion;
+                                                                    ESM=Inserci¢n,Modificaci¢n,Eliminaci¢n;
+                                                                    FRC=Insertion,Modification,Suppression;
+                                                                    ENC=Insertion,Modification,Deletion];
+                                                   OptionString=Insertion,Modification,Deletion }
+    { 10  ;   ;Old Value           ;Text250       ;CaptionML=[ENU=Old Value;
+                                                              ESM=Valor antiguo;
+                                                              FRC=Ancienne valeur;
+                                                              ENC=Old Value] }
+    { 11  ;   ;New Value           ;Text250       ;CaptionML=[ENU=New Value;
+                                                              ESM=Valor nuevo;
+                                                              FRC=Nouvelle valeur;
+                                                              ENC=New Value] }
+    { 12  ;   ;Primary Key         ;Text250       ;CaptionML=[ENU=Primary Key;
+                                                              ESM=Clave primaria;
+                                                              FRC=Cl‚ primaire;
+                                                              ENC=Primary Key] }
+    { 13  ;   ;Primary Key Field 1 No.;Integer    ;TableRelation=Field.No. WHERE (TableNo=FIELD(Table No.));
+                                                   CaptionML=[ENU=Primary Key Field 1 No.;
+                                                              ESM=N§ campo 1 clave primaria;
+                                                              FRC=Nø champ cl‚ primaire 1;
+                                                              ENC=Primary Key Field 1 No.] }
+    { 14  ;   ;Primary Key Field 1 Caption;Text80 ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Field."Field Caption" WHERE (TableNo=FIELD(Table No.),
+                                                                                                   No.=FIELD(Primary Key Field 1 No.)));
+                                                   CaptionML=[ENU=Primary Key Field 1 Caption;
+                                                              ESM=T¡tulo campo 1 clave primaria;
+                                                              FRC=L‚gende du champ cl‚ primaire 1;
+                                                              ENC=Primary Key Field 1 Caption] }
+    { 15  ;   ;Primary Key Field 1 Value;Text50   ;CaptionML=[ENU=Primary Key Field 1 Value;
+                                                              ESM=Valor campo 1 clave primaria;
+                                                              FRC=Valeur champ cl‚ primaire 1;
+                                                              ENC=Primary Key Field 1 Value] }
+    { 16  ;   ;Primary Key Field 2 No.;Integer    ;TableRelation=Field.No. WHERE (TableNo=FIELD(Table No.));
+                                                   CaptionML=[ENU=Primary Key Field 2 No.;
+                                                              ESM=Campo 2 clave primaria;
+                                                              FRC=Nø champ cl‚ primaire 2;
+                                                              ENC=Primary Key Field 2 No.] }
+    { 17  ;   ;Primary Key Field 2 Caption;Text80 ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Field."Field Caption" WHERE (TableNo=FIELD(Table No.),
+                                                                                                   No.=FIELD(Primary Key Field 2 No.)));
+                                                   CaptionML=[ENU=Primary Key Field 2 Caption;
+                                                              ESM=T¡tulo campo 2 clave primaria;
+                                                              FRC=L‚gende du champ cl‚ primaire 2;
+                                                              ENC=Primary Key Field 2 Caption] }
+    { 18  ;   ;Primary Key Field 2 Value;Text50   ;CaptionML=[ENU=Primary Key Field 2 Value;
+                                                              ESM=Valor campo 2 clave primaria;
+                                                              FRC=Valeur champ cl‚ primaire 2;
+                                                              ENC=Primary Key Field 2 Value] }
+    { 19  ;   ;Primary Key Field 3 No.;Integer    ;TableRelation=Field.No. WHERE (TableNo=FIELD(Table No.));
+                                                   CaptionML=[ENU=Primary Key Field 3 No.;
+                                                              ESM=N§ campo 3 clave primaria;
+                                                              FRC=Nø champ cl‚ primaire 3;
+                                                              ENC=Primary Key Field 3 No.] }
+    { 20  ;   ;Primary Key Field 3 Caption;Text80 ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Field."Field Caption" WHERE (TableNo=FIELD(Table No.),
+                                                                                                   No.=FIELD(Primary Key Field 3 No.)));
+                                                   CaptionML=[ENU=Primary Key Field 3 Caption;
+                                                              ESM=T¡tulo campo 3 clave primaria;
+                                                              FRC=L‚gende du champ cl‚ primaire 3;
+                                                              ENC=Primary Key Field 3 Caption] }
+    { 21  ;   ;Primary Key Field 3 Value;Text50   ;CaptionML=[ENU=Primary Key Field 3 Value;
+                                                              ESM=Valor campo 3 clave primaria;
+                                                              FRC=Valeur champ cl‚ primaire 3;
+                                                              ENC=Primary Key Field 3 Value] }
+    { 22  ;   ;Record ID           ;RecordID      ;CaptionML=[ENU=Record ID;
+                                                              ESM=Id. del registro;
+                                                              FRC=Code d'enregistrement;
+                                                              ENC=Record ID] }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;Clustered=Yes }
+    {    ;Table No.,Primary Key Field 1 Value      }
+    {    ;Table No.,Date and Time                  }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE GetPrimaryKeyFriendlyName@1() : Text[250];
+    VAR
+      RecRef@1000 : RecordRef;
+      FriendlyName@1004 : Text[250];
+      p@1001 : Integer;
+    BEGIN
+      IF "Primary Key" = '' THEN
+        EXIT('');
+
+      // Retain existing formatting of old data
+      IF (STRPOS("Primary Key",'CONST(') = 0) AND (STRPOS("Primary Key",'0(') = 0) THEN
+        EXIT("Primary Key");
+
+      RecRef.OPEN("Table No.");
+      RecRef.SETPOSITION("Primary Key");
+      FriendlyName := RecRef.GETPOSITION(TRUE);
+      RecRef.CLOSE;
+
+      FriendlyName := DELCHR(FriendlyName,'=','()');
+      p := STRPOS(FriendlyName,'CONST');
+      WHILE p > 0 DO BEGIN
+        FriendlyName := DELSTR(FriendlyName,p,5);
+        p := STRPOS(FriendlyName,'CONST');
+      END;
+      EXIT(FriendlyName);
+    END;
+
+    PROCEDURE GetLocalOldValue@3() : Text;
+    BEGIN
+      EXIT(GetLocalValue("Old Value"));
+    END;
+
+    PROCEDURE GetLocalNewValue@4() : Text;
+    BEGIN
+      EXIT(GetLocalValue("New Value"));
+    END;
+
+    LOCAL PROCEDURE GetLocalValue@5(Value@1000 : Text) : Text;
+    VAR
+      Object@1005 : Record 2000000001;
+      ChangeLogManagement@1001 : Codeunit 423;
+      RecordRef@1002 : RecordRef;
+      FieldRef@1003 : FieldRef;
+      HasCultureNeutralValues@1004 : Boolean;
+    BEGIN
+      // The culture neutral storage format was added simultaneously with the Record ID field
+      HasCultureNeutralValues := FORMAT("Record ID") <> '';
+      Object.SETRANGE(Type,Object.Type::Table);
+      Object.SETRANGE(ID,"Table No.");
+
+      IF NOT Object.ISEMPTY AND (Value <> '') AND HasCultureNeutralValues THEN BEGIN
+        RecordRef.OPEN("Table No.");
+        IF RecordRef.FIELDEXIST("Field No.") THEN BEGIN
+          FieldRef := RecordRef.FIELD("Field No.");
+          IF ChangeLogManagement.EvaluateTextToFieldRef(Value,FieldRef) THEN
+            EXIT(FORMAT(FieldRef.VALUE,0,1));
+        END;
+      END;
+
+      EXIT(Value);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,113 @@
+OBJECT Table 1214 Intermediate Data Import
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Intermediate Data Import;
+               ESM=Importaci¢n de datos intermedia;
+               FRC=Importation donn‚es interm‚diaires;
+               ENC=Intermediate Data Import];
+  }
+  FIELDS
+  {
+    { 1   ;   ;ID                  ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=ID;
+                                                              ESM=Id.;
+                                                              FRC=Code;
+                                                              ENC=ID] }
+    { 2   ;   ;Data Exch. No.      ;Integer       ;TableRelation="Data Exch.";
+                                                   CaptionML=[ENU=Data Exch. No.;
+                                                              ESM=N.§ intercambio de datos;
+                                                              FRC=Nø ‚chge donn‚es;
+                                                              ENC=Data Exch. No.];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Table ID            ;Integer       ;TableRelation=AllObj."Object ID" WHERE (Object Type=CONST(Table));
+                                                   CaptionML=[ENU=Table ID;
+                                                              ESM=Id. tabla;
+                                                              FRC=Code table;
+                                                              ENC=Table ID];
+                                                   NotBlank=Yes }
+    { 4   ;   ;Record No.          ;Integer       ;CaptionML=[ENU=Record No.;
+                                                              ESM=N§ registro;
+                                                              FRC=Nombre enregistrements;
+                                                              ENC=Record No.] }
+    { 5   ;   ;Field ID            ;Integer       ;TableRelation=Field.No. WHERE (TableNo=FIELD(Table ID));
+                                                   CaptionML=[ENU=Field ID;
+                                                              ESM=Id. campo;
+                                                              FRC=Code champ;
+                                                              ENC=Field ID] }
+    { 6   ;   ;Value               ;Text250       ;CaptionML=[ENU=Value;
+                                                              ESM=Valor;
+                                                              FRC=Valeur;
+                                                              ENC=Value] }
+    { 7   ;   ;Validate Only       ;Boolean       ;CaptionML=[ENU=Validate Only;
+                                                              ESM=Validar solo;
+                                                              FRC=Valider uniquement;
+                                                              ENC=Validate Only] }
+    { 8   ;   ;Parent Record No.   ;Integer       ;CaptionML=[ENU=Parent Record No.;
+                                                              ESM=N.§ registro principal;
+                                                              FRC=Nø enregistrement parent;
+                                                              ENC=Parent Record No.] }
+  }
+  KEYS
+  {
+    {    ;ID                                       }
+    {    ;Data Exch. No.,Table ID,Record No.,Field ID;
+                                                   Clustered=Yes }
+    {    ;Data Exch. No.,Table ID,Field ID         }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE InsertOrUpdateEntry@2(EntryNo@1002 : Integer;TableID@1003 : Integer;FieldID@1004 : Integer;ParentRecordNo@1001 : Integer;RecordNo@1000 : Integer;NewValue@1005 : Text[250]);
+    BEGIN
+      IF FindEntry(EntryNo,TableID,FieldID,ParentRecordNo,RecordNo) THEN BEGIN
+        Value := NewValue;
+        MODIFY;
+      END ELSE BEGIN
+        CLEAR(Rec);
+        "Data Exch. No." := EntryNo;
+        "Table ID" := TableID;
+        "Record No." := RecordNo;
+        "Field ID" := FieldID;
+        Value := NewValue;
+        "Parent Record No." := ParentRecordNo;
+        "Validate Only" := FALSE;
+        INSERT;
+      END;
+    END;
+
+    PROCEDURE FindEntry@1(EntryNo@1002 : Integer;TableID@1003 : Integer;FieldID@1004 : Integer;ParentRecordNo@1001 : Integer;RecordNo@1000 : Integer) : Boolean;
+    BEGIN
+      RESET;
+
+      SETRANGE("Data Exch. No.",EntryNo);
+      SETRANGE("Table ID",TableID);
+      SETRANGE("Field ID",FieldID);
+      SETRANGE("Parent Record No.",ParentRecordNo);
+      SETRANGE("Record No.",RecordNo);
+
+      EXIT(FINDFIRST);
+    END;
+
+    PROCEDURE GetEntryValue@4(EntryNo@1002 : Integer;TableID@1003 : Integer;FieldID@1004 : Integer;ParentRecordNo@1001 : Integer;RecordNo@1000 : Integer) : Text[250];
+    BEGIN
+      IF FindEntry(EntryNo,TableID,FieldID,ParentRecordNo,RecordNo) THEN
+        EXIT(Value);
+
+      EXIT('');
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,231 @@
+OBJECT Table 1703 Deferral Post. Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=10/23/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.43402;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Deferral Post. Buffer;
+               ESM=Mem. inter. fraccionamiento;
+               FRC=Tampon valid. Çchelonnement;
+               ENC=Deferral Post. Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ESM=Tipo;
+                                                              FRC=Type;
+                                                              ENC=Type];
+                                                   OptionCaptionML=[ENU=Prepmt. Exch. Rate Difference,G/L Account,Item,Resource,Fixed Asset;
+                                                                    ESM=Diferencia tipo cambio anticipo,Cuenta,Producto,Recurso,Activo;
+                                                                    FRC=êcart de conversion acpte,Compte GL,Article,Ressource,Immobilisation;
+                                                                    ENC=Prepmt. Exch. Rate Difference,G/L Account,Item,Resource,Fixed Asset];
+                                                   OptionString=Prepmt. Exch. Rate Difference,G/L Account,Item,Resource,Fixed Asset }
+    { 2   ;   ;G/L Account         ;Code20        ;TableRelation="G/L Account" WHERE (Account Type=CONST(Posting),
+                                                                                      Blocked=CONST(No));
+                                                   CaptionML=[ENU=G/L Account;
+                                                              ESM=Cuenta;
+                                                              FRC=Compte du grand livre;
+                                                              ENC=G/L Account];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Gen. Bus. Posting Group;Code10     ;TableRelation="Gen. Business Posting Group";
+                                                   CaptionML=[ENU=Gen. Bus. Posting Group;
+                                                              ESM=Grupo contable negocio;
+                                                              FRC=Groupe de report de marchÇ;
+                                                              ENC=Gen. Bus. Posting Group] }
+    { 4   ;   ;Gen. Prod. Posting Group;Code10    ;TableRelation="Gen. Product Posting Group";
+                                                   CaptionML=[ENU=Gen. Prod. Posting Group;
+                                                              ESM=Grupo contable producto;
+                                                              FRC=Groupe de report de produit;
+                                                              ENC=Gen. Prod. Posting Group] }
+    { 5   ;   ;VAT Bus. Posting Group;Code10      ;TableRelation="VAT Business Posting Group";
+                                                   CaptionML=[ENU=Tax Bus. Posting Group;
+                                                              ESM=Grupo registro IVA neg.;
+                                                              FRC=Groupe de reports de taxe sur la valeur ajoutÇe de l'entreprise;
+                                                              ENC=Tax Bus. Posting Group] }
+    { 6   ;   ;VAT Prod. Posting Group;Code10     ;TableRelation="VAT Product Posting Group";
+                                                   CaptionML=[ENU=Tax Prod. Posting Group;
+                                                              ESM=Grupo registro IVA prod.;
+                                                              FRC=Groupe de report de produit taxe;
+                                                              ENC=Tax Prod. Posting Group] }
+    { 7   ;   ;Tax Area Code       ;Code20        ;TableRelation="Tax Area";
+                                                   CaptionML=[ENU=Tax Area Code;
+                                                              ESM=C¢d. †rea impuesto;
+                                                              FRC=Code de rÇgion fiscale;
+                                                              ENC=Tax Area Code] }
+    { 8   ;   ;Tax Group Code      ;Code10        ;TableRelation="Tax Group";
+                                                   CaptionML=[ENU=Tax Group Code;
+                                                              ESM=C¢d. grupo impuesto;
+                                                              FRC=Code groupe fiscal;
+                                                              ENC=Tax Group Code] }
+    { 9   ;   ;Tax Liable          ;Boolean       ;CaptionML=[ENU=Tax Liable;
+                                                              ESM=Sujeto a impuesto;
+                                                              FRC=Imposable;
+                                                              ENC=Tax Liable] }
+    { 10  ;   ;Use Tax             ;Boolean       ;CaptionML=[ENU=Use Tax;
+                                                              ESM=Impuesto de importaci¢n;
+                                                              FRC=Taxe de service;
+                                                              ENC=Use Tax] }
+    { 11  ;   ;Job No.             ;Code20        ;TableRelation=Job;
+                                                   CaptionML=[ENU=Job No.;
+                                                              ESM=Nß proyecto;
+                                                              FRC=N¯ projet;
+                                                              ENC=Job No.] }
+    { 12  ;   ;Posting Date        ;Date          ;CaptionML=[ENU=Posting Date;
+                                                              ESM=Fecha registro;
+                                                              FRC=Date de report;
+                                                              ENC=Posting Date] }
+    { 13  ;   ;Amount              ;Decimal       ;CaptionML=[ENU=Amount;
+                                                              ESM=Importe;
+                                                              FRC=Montant;
+                                                              ENC=Amount] }
+    { 14  ;   ;Amount (LCY)        ;Decimal       ;CaptionML=[ENU=Amount ($);
+                                                              ESM=Importe ($);
+                                                              FRC=Montant ($);
+                                                              ENC=Amount ($)] }
+    { 15  ;   ;System-Created Entry;Boolean       ;CaptionML=[ENU=System-Created Entry;
+                                                              ESM=Asiento autom†tico;
+                                                              FRC=êcriture systäme;
+                                                              ENC=System-Created Entry] }
+    { 16  ;   ;Global Dimension 1 Code;Code20     ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(1));
+                                                   CaptionML=[ENU=Global Dimension 1 Code;
+                                                              ESM=C¢d. dimensi¢n global 1;
+                                                              FRC=Code de dimension principal 1;
+                                                              ENC=Global Dimension 1 Code];
+                                                   CaptionClass='1,1,1' }
+    { 17  ;   ;Global Dimension 2 Code;Code20     ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(2));
+                                                   CaptionML=[ENU=Global Dimension 2 Code;
+                                                              ESM=C¢d. dimensi¢n global 2;
+                                                              FRC=Code de dimension principal 2;
+                                                              ENC=Global Dimension 2 Code];
+                                                   CaptionClass='1,1,2' }
+    { 18  ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 19  ;   ;Deferral Account    ;Code20        ;CaptionML=[ENU=Deferral Account;
+                                                              ESM=Cuenta de fraccionamiento;
+                                                              FRC=Compte Çchelonnement;
+                                                              ENC=Deferral Account] }
+    { 20  ;   ;Period Description  ;Text50        ;CaptionML=[ENU=Period Description;
+                                                              ESM=Descripci¢n del per°odo;
+                                                              FRC=Description de la pÇriode;
+                                                              ENC=Period Description] }
+    { 21  ;   ;Deferral Doc. Type  ;Option        ;CaptionML=[ENU=Deferral Doc. Type;
+                                                              ESM=Tipo de documento fraccionamiento;
+                                                              FRC=Type doc. Çchelonnement;
+                                                              ENC=Deferral Doc. Type];
+                                                   OptionCaptionML=[ENU=Purchase,Sales,G/L;
+                                                                    ESM=Compra,Ventas,C/G;
+                                                                    FRC=Achats,Ventes,Grand livre;
+                                                                    ENC=Purchase,Sales,G/L];
+                                                   OptionString=Purchase,Sales,G/L }
+    { 22  ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ESM=Nß documento;
+                                                              FRC=N¯ de document;
+                                                              ENC=Document No.] }
+    { 24  ;   ;Sales/Purch Amount  ;Decimal       ;CaptionML=[ENU=Sales/Purch Amount;
+                                                              ESM=Importe venta/compra;
+                                                              FRC=Montant achat/vente;
+                                                              ENC=Sales/Purch Amount] }
+    { 25  ;   ;Sales/Purch Amount (LCY);Decimal   ;CaptionML=[ENU=Sales/Purch Amount ($);
+                                                              ESM=Importe venta/compra ($);
+                                                              FRC=Montant achat/vente ($);
+                                                              ENC=Sales/Purch Amount ($)] }
+    { 480 ;   ;Dimension Set ID    ;Integer       ;TableRelation="Dimension Set Entry";
+                                                   CaptionML=[ENU=Dimension Set ID;
+                                                              ESM=Id. grupo dimensiones;
+                                                              FRC=Code ensemble de dimensions;
+                                                              ENC=Dimension Set ID];
+                                                   Editable=No }
+    { 1700;   ;Deferral Code       ;Code10        ;TableRelation="Deferral Template"."Deferral Code";
+                                                   CaptionML=[ENU=Deferral Code;
+                                                              ESM=C¢digo de fraccionamiento;
+                                                              FRC=Code Çchelonnement;
+                                                              ENC=Deferral Code] }
+    { 1701;   ;Deferral Line No.   ;Integer       ;CaptionML=[ENU=Deferral Line No.;
+                                                              ESM=Nß l°nea fraccionamiento;
+                                                              FRC=N¯ ligne Çchelonnement;
+                                                              ENC=Deferral Line No.] }
+  }
+  KEYS
+  {
+    {    ;Type,G/L Account,Gen. Bus. Posting Group,Gen. Prod. Posting Group,VAT Bus. Posting Group,VAT Prod. Posting Group,Tax Area Code,Tax Group Code,Tax Liable,Use Tax,Dimension Set ID,Job No.,Deferral Code,Posting Date;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE PrepareSales@1(SalesLine@1000 : Record 37;DocumentNo@1001 : Code[20]);
+    VAR
+      DeferralUtilities@1002 : Codeunit 1720;
+    BEGIN
+      CLEAR(Rec);
+      Type := SalesLine.Type;
+      "System-Created Entry" := TRUE;
+      "Gen. Bus. Posting Group" := SalesLine."Gen. Bus. Posting Group";
+      "Gen. Prod. Posting Group" := SalesLine."Gen. Prod. Posting Group";
+      "VAT Bus. Posting Group" := SalesLine."VAT Bus. Posting Group";
+      "VAT Prod. Posting Group" := SalesLine."VAT Prod. Posting Group";
+      "Global Dimension 1 Code" := SalesLine."Shortcut Dimension 1 Code";
+      "Global Dimension 2 Code" := SalesLine."Shortcut Dimension 2 Code";
+      "Dimension Set ID" := SalesLine."Dimension Set ID";
+      "Job No." := SalesLine."Job No.";
+
+      IF SalesLine."VAT Calculation Type" = SalesLine."VAT Calculation Type"::"Sales Tax" THEN BEGIN
+        "Tax Area Code" := SalesLine."Tax Area Code";
+        "Tax Group Code" := SalesLine."Tax Group Code";
+        "Tax Liable" := SalesLine."Tax Liable";
+        "Use Tax" := FALSE;
+      END;
+      "Deferral Code" := SalesLine."Deferral Code";
+      "Deferral Doc. Type" := DeferralUtilities.GetSalesDeferralDocType;
+      "Document No." := DocumentNo;
+    END;
+
+    PROCEDURE ReverseAmounts@2();
+    BEGIN
+      Amount := -Amount;
+      "Amount (LCY)" := -"Amount (LCY)";
+      "Sales/Purch Amount" := -"Sales/Purch Amount";
+      "Sales/Purch Amount (LCY)" := -"Sales/Purch Amount (LCY)";
+    END;
+
+    PROCEDURE PreparePurch@3(PurchLine@1000 : Record 39;DocumentNo@1001 : Code[20]);
+    VAR
+      DeferralUtilities@1002 : Codeunit 1720;
+    BEGIN
+      CLEAR(Rec);
+      Type := PurchLine.Type;
+      "System-Created Entry" := TRUE;
+      "Gen. Bus. Posting Group" := PurchLine."Gen. Bus. Posting Group";
+      "Gen. Prod. Posting Group" := PurchLine."Gen. Prod. Posting Group";
+      "VAT Bus. Posting Group" := PurchLine."VAT Bus. Posting Group";
+      "VAT Prod. Posting Group" := PurchLine."VAT Prod. Posting Group";
+      "Global Dimension 1 Code" := PurchLine."Shortcut Dimension 1 Code";
+      "Global Dimension 2 Code" := PurchLine."Shortcut Dimension 2 Code";
+      "Dimension Set ID" := PurchLine."Dimension Set ID";
+      "Job No." := PurchLine."Job No.";
+
+      IF PurchLine."VAT Calculation Type" = PurchLine."VAT Calculation Type"::"Sales Tax" THEN BEGIN
+        "Tax Area Code" := PurchLine."Tax Area Code";
+        "Tax Group Code" := PurchLine."Tax Group Code";
+        "Tax Liable" := PurchLine."Tax Liable";
+        "Use Tax" := FALSE;
+      END;
+      "Deferral Code" := PurchLine."Deferral Code";
+      "Deferral Doc. Type" := DeferralUtilities.GetPurchDeferralDocType;
+      "Document No." := DocumentNo;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

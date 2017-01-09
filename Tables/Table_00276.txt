@@ -1,0 +1,161 @@
+OBJECT Table 276 Bank Account Statement Line
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/09/14;
+    Time=12:00:00 PM;
+    Version List=NAVW18.00;
+  }
+  PROPERTIES
+  {
+    OnRename=BEGIN
+               ERROR(Text000,TABLECAPTION);
+             END;
+
+    CaptionML=[ENU=Bank Account Statement Line;
+               ESM=L°n. estado cuenta banco;
+               FRC=Ligne relevÇ compte bancaire;
+               ENC=Bank Account Statement Line];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Bank Account No.    ;Code20        ;TableRelation="Bank Account";
+                                                   CaptionML=[ENU=Bank Account No.;
+                                                              ESM=C¢d. cuenta banco;
+                                                              FRC=N¯ compte bancaire;
+                                                              ENC=Bank Account No.] }
+    { 2   ;   ;Statement No.       ;Code20        ;TableRelation="Bank Account Statement"."Statement No." WHERE (Bank Account No.=FIELD(Bank Account No.));
+                                                   CaptionML=[ENU=Statement No.;
+                                                              ESM=Nß estado de cta. banco;
+                                                              FRC=N¯ de relevÇ;
+                                                              ENC=Statement No.] }
+    { 3   ;   ;Statement Line No.  ;Integer       ;CaptionML=[ENU=Statement Line No.;
+                                                              ESM=Nß l°n. estado de cta. banco;
+                                                              FRC=N¯ ligne relevÇ;
+                                                              ENC=Statement Line No.] }
+    { 4   ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ESM=Nß documento;
+                                                              FRC=N¯ de document;
+                                                              ENC=Document No.] }
+    { 5   ;   ;Transaction Date    ;Date          ;CaptionML=[ENU=Transaction Date;
+                                                              ESM=Fecha movimiento;
+                                                              FRC=Date transaction;
+                                                              ENC=Transaction Date] }
+    { 6   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 7   ;   ;Statement Amount    ;Decimal       ;CaptionML=[ENU=Statement Amount;
+                                                              ESM=Importe estado de cuenta;
+                                                              FRC=Montant relevÇ;
+                                                              ENC=Statement Amount];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 8   ;   ;Difference          ;Decimal       ;CaptionML=[ENU=Difference;
+                                                              ESM=Diferencia;
+                                                              FRC=DiffÇrence;
+                                                              ENC=Difference];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 9   ;   ;Applied Amount      ;Decimal       ;OnLookup=BEGIN
+                                                              DisplayApplication;
+                                                            END;
+
+                                                   CaptionML=[ENU=Applied Amount;
+                                                              ESM=Importe conciliado;
+                                                              FRC=Montant affectÇ;
+                                                              ENC=Applied Amount];
+                                                   Editable=No;
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 10  ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ESM=Tipo;
+                                                              FRC=Type;
+                                                              ENC=Type];
+                                                   OptionCaptionML=[ENU=Bank Account Ledger Entry,Check Ledger Entry,Difference;
+                                                                    ESM=Mov. banco,Mov. cheque,Diferencia;
+                                                                    FRC=êcriture compte bancaire,êcriture compte Chäque,DiffÇrence;
+                                                                    ENC=Bank Account Ledger Entry,Cheque Ledger Entry,Difference];
+                                                   OptionString=Bank Account Ledger Entry,Check Ledger Entry,Difference }
+    { 11  ;   ;Applied Entries     ;Integer       ;OnLookup=BEGIN
+                                                              DisplayApplication;
+                                                            END;
+
+                                                   CaptionML=[ENU=Applied Entries;
+                                                              ESM=Movs. conciliados;
+                                                              FRC=êcritures affectÇes;
+                                                              ENC=Applied Entries];
+                                                   Editable=No }
+    { 12  ;   ;Value Date          ;Date          ;CaptionML=[ENU=Value Date;
+                                                              ESM=Fecha valor;
+                                                              FRC=Date de valeur;
+                                                              ENC=Value Date] }
+    { 14  ;   ;Check No.           ;Code20        ;AccessByPermission=TableData 272=R;
+                                                   CaptionML=[ENU=Check No.;
+                                                              ESM=Nß cheque;
+                                                              FRC=N¯ de chäque;
+                                                              ENC=Cheque No.] }
+  }
+  KEYS
+  {
+    {    ;Bank Account No.,Statement No.,Statement Line No.;
+                                                   SumIndexFields=Statement Amount,Difference;
+                                                   MaintainSIFTIndex=No;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=You cannot rename a %1.;ESM=No se puede cambiar el nombre a %1.;FRC=Vous ne pouvez pas renommer un %1.;ENC=You cannot rename a %1.';
+      BankAccLedgEntry@1001 : Record 271;
+      CheckLedgEntry@1002 : Record 272;
+
+    LOCAL PROCEDURE DisplayApplication@1();
+    BEGIN
+      CASE Type OF
+        Type::"Bank Account Ledger Entry":
+          BEGIN
+            BankAccLedgEntry.RESET;
+            BankAccLedgEntry.SETCURRENTKEY("Bank Account No.",Open);
+            BankAccLedgEntry.SETRANGE("Bank Account No.","Bank Account No.");
+            BankAccLedgEntry.SETRANGE(Open,FALSE);
+            BankAccLedgEntry.SETRANGE("Statement Status",BankAccLedgEntry."Statement Status"::Closed);
+            BankAccLedgEntry.SETRANGE("Statement No.","Statement No.");
+            BankAccLedgEntry.SETRANGE("Statement Line No.","Statement Line No.");
+            PAGE.RUN(0,BankAccLedgEntry);
+          END;
+        Type::"Check Ledger Entry":
+          BEGIN
+            CheckLedgEntry.RESET;
+            CheckLedgEntry.SETCURRENTKEY("Bank Account No.",Open);
+            CheckLedgEntry.SETRANGE("Bank Account No.","Bank Account No.");
+            CheckLedgEntry.SETRANGE(Open,FALSE);
+            CheckLedgEntry.SETRANGE("Statement Status",CheckLedgEntry."Statement Status"::Closed);
+            CheckLedgEntry.SETRANGE("Statement No.","Statement No.");
+            CheckLedgEntry.SETRANGE("Statement Line No.","Statement Line No.");
+            PAGE.RUN(0,CheckLedgEntry);
+          END;
+      END;
+    END;
+
+    PROCEDURE GetCurrencyCode@2() : Code[10];
+    VAR
+      BankAcc@1000 : Record 270;
+    BEGIN
+      IF "Bank Account No." = BankAcc."No." THEN
+        EXIT(BankAcc."Currency Code");
+
+      IF BankAcc.GET("Bank Account No.") THEN
+        EXIT(BankAcc."Currency Code");
+
+      EXIT('');
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

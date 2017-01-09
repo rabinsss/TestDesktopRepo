@@ -1,0 +1,54 @@
+OBJECT Table 9800 Table Permission Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=10/23/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00.00.43402;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Table Permission Buffer;
+               ESM=B£fer de permiso de tabla;
+               FRC=Tampon autorisation table;
+               ENC=Table Permission Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Table ID            ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Table ID;
+                                                              ESM=Id. tabla;
+                                                              FRC=Code table;
+                                                              ENC=Table ID] }
+    { 2   ;   ;Session ID          ;Integer       ;CaptionML=[ENU=Session ID;
+                                                              ESM=Id. sesi¢n;
+                                                              FRC=Code session;
+                                                              ENC=Session ID] }
+    { 3   ;   ;Insert Permission   ;Boolean       ;CaptionML=[ENU=Insert Permission;
+                                                              ESM=Inserci¢n;
+                                                              FRC=Permission d'insertion;
+                                                              ENC=Insert Permission] }
+    { 4   ;   ;Modify Permission   ;Boolean       ;CaptionML=[ENU=Modify Permission;
+                                                              ESM=Modificaci¢n;
+                                                              FRC=Permission de modification;
+                                                              ENC=Modify Permission] }
+    { 5   ;   ;Delete Permission   ;Boolean       ;CaptionML=[ENU=Delete Permission;
+                                                              ESM=Eliminaci¢n;
+                                                              FRC=Permission de suppression;
+                                                              ENC=Delete Permission] }
+  }
+  KEYS
+  {
+    {    ;Table ID,Session ID                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

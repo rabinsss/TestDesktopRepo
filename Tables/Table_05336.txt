@@ -1,0 +1,74 @@
+OBJECT Table 5336 Integration Field Mapping
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Integration Field Mapping;
+               ESM=Asignaci¢n del campo de integraci¢n;
+               FRC=Correspondance champ int‚gration;
+               ENC=Integration Field Mapping];
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=No.;
+                                                              ESM=N§;
+                                                              FRC=Nø;
+                                                              ENC=No.] }
+    { 2   ;   ;Integration Table Mapping Name;Code20;
+                                                   TableRelation="Integration Table Mapping".Name;
+                                                   CaptionML=[ENU=Integration Table Mapping Name;
+                                                              ESM=Nombre de asignaci¢n de tablas de integraci¢n;
+                                                              FRC=Nom correspondance table int‚gration;
+                                                              ENC=Integration Table Mapping Name] }
+    { 3   ;   ;Field No.           ;Integer       ;CaptionML=[ENU=Field No.;
+                                                              ESM=N§ campo;
+                                                              FRC=Nø de champ;
+                                                              ENC=Field No.] }
+    { 4   ;   ;Integration Table Field No.;Integer;CaptionML=[ENU=Integration Table Field No.;
+                                                              ESM=N.§ campo tabla integraci¢n;
+                                                              FRC=Nø champ table int‚gration;
+                                                              ENC=Integration Table Field No.] }
+    { 6   ;   ;Direction           ;Option        ;CaptionML=[ENU=Direction;
+                                                              ESM=Direcci¢n;
+                                                              FRC=Direction;
+                                                              ENC=Direction];
+                                                   OptionCaptionML=[ENU=Bidirectional,ToIntegrationTable,FromIntegrationTable;
+                                                                    ESM=Bidireccional,ATabladeIntegraci¢n,DeTabladeIntegraci¢n;
+                                                                    FRC=Bidirectionnel,Vers la table d'int‚gration,· partir de la table d'int‚gration;
+                                                                    ENC=Bidirectional,ToIntegrationTable,FromIntegrationTable];
+                                                   OptionString=Bidirectional,ToIntegrationTable,FromIntegrationTable }
+    { 7   ;   ;Constant Value      ;Text100       ;CaptionML=[ENU=Constant Value;
+                                                              ESM=Valor de constante;
+                                                              FRC=Valeur constante;
+                                                              ENC=Constant Value] }
+    { 8   ;   ;Validate Field      ;Boolean       ;CaptionML=[ENU=Validate Field;
+                                                              ESM=Validar campo;
+                                                              FRC=Valider Champ;
+                                                              ENC=Validate Field] }
+    { 9   ;   ;Validate Integration Table Fld;Boolean;
+                                                   CaptionML=[ENU=Validate Integration Table Fld;
+                                                              ESM=Validar campo de tablas de integraci¢n;
+                                                              FRC=Valider Champ table int‚gration;
+                                                              ENC=Validate Integration Table Fld] }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

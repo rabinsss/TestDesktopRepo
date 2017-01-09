@@ -1,0 +1,63 @@
+OBJECT Table 2000000069 Add-in
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/29/16;
+    Time=12:00:00 PM;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Add-in;
+               ESM=Complemento;
+               FRC=Compl‚ment;
+               ENC=Add-in];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Add-in Name         ;Text220       ;CaptionML=[ENU=Add-in Name;
+                                                              ESM=Nombre complemento;
+                                                              FRC=Nom du compl‚ment;
+                                                              ENC=Add-in Name] }
+    { 5   ;   ;Public Key Token    ;Text20        ;CaptionML=[ENU=Public Key Token;
+                                                              ESM=Token de clave p£blica;
+                                                              FRC=Jeton cl‚ publique;
+                                                              ENC=Public Key Token] }
+    { 8   ;   ;Version             ;Text25        ;CaptionML=[ENU=Version;
+                                                              ESM=Versi¢n;
+                                                              FRC=Version;
+                                                              ENC=Version] }
+    { 15  ;   ;Category            ;Option        ;CaptionML=[ENU=Category;
+                                                              ESM=Clase;
+                                                              FRC=Cat‚gorie;
+                                                              ENC=Category];
+                                                   OptionCaptionML=[ENU=JavaScript Control Add-in,DotNet Control Add-in,DotNet Interoperability,Language Resource;
+                                                                    ESM=Complemento de control de JavaScript,Complemento de control de DotNet,interoperabilidad de DotNet,Recurso de idioma;
+                                                                    FRC=Compl‚ment de contr“le JavaScript,Compl‚ment de contr“le DotNet,Interop‚rabilit‚ DotNet,Ressource linguistique;
+                                                                    ENC=JavaScript Control Add-in,DotNet Control Add-in,DotNet Interoperability,Language Resource];
+                                                   OptionString=JavaScript Control Add-in,DotNet Control Add-in,DotNet Interoperability,Language Resource }
+    { 20  ;   ;Description         ;Text250       ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 25  ;   ;Resource            ;BLOB          ;CaptionML=[ENU=Resource;
+                                                              ESM=Recurso;
+                                                              FRC=Ressource;
+                                                              ENC=Resource] }
+  }
+  KEYS
+  {
+    {    ;Add-in Name,Public Key Token,Version    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

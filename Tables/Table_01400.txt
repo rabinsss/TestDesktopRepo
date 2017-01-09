@@ -1,0 +1,83 @@
+OBJECT Table 1400 Service Connection
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Service Connection;
+               ESM=Conexi¢n de servicio;
+               FRC=Connexion au service;
+               ENC=Service Connection];
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Text250       ;CaptionML=[ENU=No.;
+                                                              ESM=Nß;
+                                                              FRC=N¯;
+                                                              ENC=No.] }
+    { 2   ;   ;Record ID           ;RecordID      ;CaptionML=[ENU=Record ID;
+                                                              ESM=Id. del registro;
+                                                              FRC=Code d'enregistrement;
+                                                              ENC=Record ID] }
+    { 3   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 4   ;   ;Host Name           ;Text250       ;CaptionML=[ENU=Host Name;
+                                                              ESM=Nombre del Host;
+                                                              FRC=Nom d'hìte;
+                                                              ENC=Host Name] }
+    { 8   ;   ;Status              ;Option        ;CaptionML=[ENU=Status;
+                                                              ESM=Estado;
+                                                              FRC=êtat;
+                                                              ENC=Status];
+                                                   OptionCaptionML=[ENU=" ,Enabled,Disabled,Connected,Error";
+                                                                    ESM=" ,Habilitado,Deshabilitado,Conectado,Error";
+                                                                    FRC=" ,ActivÇ,DÇsactivÇ,ConnectÇ,Erreur";
+                                                                    ENC=" ,Enabled,Disabled,Connected,Error"];
+                                                   OptionString=[ ,Enabled,Disabled,Connected,Error] }
+    { 10  ;   ;Page ID             ;Integer       ;CaptionML=[ENU=Page ID;
+                                                              ESM=Id. p†gina;
+                                                              FRC=Code page;
+                                                              ENC=Page ID] }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    [Integration]
+    PROCEDURE OnRegisterServiceConnection@1(VAR ServiceConnection@1000 : Record 1400);
+    BEGIN
+    END;
+
+    PROCEDURE InsertServiceConnection@4(VAR ServiceConnection@1003 : Record 1400;RecordID@1000 : RecordID;Description@1001 : Text;HostName@1002 : Text;PageID@1004 : Integer);
+    VAR
+      ServiceConnectionOld@1005 : Record 1400;
+    BEGIN
+      ServiceConnection."Record ID" := RecordID;
+      ServiceConnection."No." := FORMAT(RecordID);
+      ServiceConnection.Description := COPYSTR(Description,1,MAXSTRLEN(ServiceConnection.Description));
+      ServiceConnection."Host Name" := COPYSTR(HostName,1,MAXSTRLEN(ServiceConnection."Host Name"));
+      ServiceConnection."Page ID" := PageID;
+      ServiceConnectionOld := ServiceConnection;
+      IF NOT ServiceConnection.GET(ServiceConnection."No.") THEN BEGIN
+        ServiceConnection := ServiceConnectionOld;
+        ServiceConnection.INSERT(TRUE)
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

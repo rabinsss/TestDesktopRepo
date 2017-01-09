@@ -1,0 +1,147 @@
+OBJECT Table 300 Reminder/Fin. Charge Entry
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Reminder/Fin. Charge Entry;
+               ESM=Mov. recordatorio/interÇs;
+               FRC=êcr. rappel/frais financiers;
+               ENC=Reminder/Fin. Charge Entry];
+    LookupPageID=Page444;
+    DrillDownPageID=Page444;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;CaptionML=[ENU=Entry No.;
+                                                              ESM=Nß mov.;
+                                                              FRC=N¯ Çcriture;
+                                                              ENC=Entry No.];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ESM=Tipo;
+                                                              FRC=Type;
+                                                              ENC=Type];
+                                                   OptionCaptionML=[ENU=Reminder,Finance Charge Memo;
+                                                                    ESM=Recordatorio,Doc. interÇs;
+                                                                    FRC=Rappel,Note de frais financiers;
+                                                                    ENC=Reminder,Finance Charge Memo];
+                                                   OptionString=Reminder,Finance Charge Memo }
+    { 3   ;   ;No.                 ;Code20        ;TableRelation=IF (Type=CONST(Reminder)) "Issued Reminder Header"
+                                                                 ELSE IF (Type=CONST(Finance Charge Memo)) "Issued Fin. Charge Memo Header";
+                                                   CaptionML=[ENU=No.;
+                                                              ESM=Nß;
+                                                              FRC=N¯;
+                                                              ENC=No.] }
+    { 4   ;   ;Reminder Level      ;Integer       ;CaptionML=[ENU=Reminder Level;
+                                                              ESM=Nivel recordatorio;
+                                                              FRC=Niveau rappel;
+                                                              ENC=Reminder Level] }
+    { 5   ;   ;Posting Date        ;Date          ;CaptionML=[ENU=Posting Date;
+                                                              ESM=Fecha registro;
+                                                              FRC=Date de report;
+                                                              ENC=Posting Date] }
+    { 6   ;   ;Document Date       ;Date          ;CaptionML=[ENU=Document Date;
+                                                              ESM=Fecha emisi¢n documento;
+                                                              FRC=Date document;
+                                                              ENC=Document Date] }
+    { 7   ;   ;Interest Posted     ;Boolean       ;CaptionML=[ENU=Interest Posted;
+                                                              ESM=InterÇs registrado;
+                                                              FRC=IntÇràts calculÇs;
+                                                              ENC=Interest Posted] }
+    { 8   ;   ;Interest Amount     ;Decimal       ;CaptionML=[ENU=Interest Amount;
+                                                              ESM=Importe interÇs;
+                                                              FRC=Montant intÇràt;
+                                                              ENC=Interest Amount];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 9   ;   ;Customer Entry No.  ;Integer       ;TableRelation="Cust. Ledger Entry";
+                                                   CaptionML=[ENU=Customer Entry No.;
+                                                              ESM=Nß mov. cliente;
+                                                              FRC=N¯ Çcriture client;
+                                                              ENC=Customer Entry No.] }
+    { 10  ;   ;Document Type       ;Option        ;CaptionML=[ENU=Document Type;
+                                                              ESM=Tipo documento;
+                                                              FRC=Type de document;
+                                                              ENC=Document Type];
+                                                   OptionCaptionML=[ENU=" ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund";
+                                                                    ESM=" ,Pago,Factura,Nota crÇdito,Docs. interÇs,Recordatorio,Reembolso";
+                                                                    FRC=" ,Paiement,Facture,Note de crÇdit,Note de frais financiers,Rappel,Remboursement";
+                                                                    ENC=" ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund"];
+                                                   OptionString=[ ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund] }
+    { 11  ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ESM=Nß documento;
+                                                              FRC=N¯ de document;
+                                                              ENC=Document No.] }
+    { 12  ;   ;Remaining Amount    ;Decimal       ;CaptionML=[ENU=Remaining Amount;
+                                                              ESM=Importe pendiente;
+                                                              FRC=Solde ouvert;
+                                                              ENC=Remaining Amount];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 13  ;   ;Customer No.        ;Code20        ;TableRelation=Customer;
+                                                   CaptionML=[ENU=Customer No.;
+                                                              ESM=Nß cliente;
+                                                              FRC=N¯ client;
+                                                              ENC=Customer No.] }
+    { 14  ;   ;User ID             ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=VAR
+                                                              UserMgt@1000 : Codeunit 418;
+                                                            BEGIN
+                                                              UserMgt.LookupUserID("User ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 15  ;   ;Due Date            ;Date          ;CaptionML=[ENU=Due Date;
+                                                              ESM=Fecha vencimiento;
+                                                              FRC=Date d'ÇchÇance;
+                                                              ENC=Due Date] }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;Clustered=Yes }
+    {    ;Customer No.                             }
+    {    ;Customer Entry No.,Type                  }
+    {    ;Type,No.                                 }
+    {    ;Document No.,Posting Date                }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE Navigate@1();
+    VAR
+      NavigateForm@1000 : Page 344;
+    BEGIN
+      NavigateForm.SetDoc("Posting Date","No.");
+      NavigateForm.RUN;
+    END;
+
+    LOCAL PROCEDURE GetCurrencyCode@2() : Code[10];
+    VAR
+      CustLedgEntry@1000 : Record 21;
+    BEGIN
+      IF "Customer Entry No." = CustLedgEntry."Entry No." THEN
+        EXIT(CustLedgEntry."Currency Code");
+
+      IF CustLedgEntry.GET("Customer Entry No.") THEN
+        EXIT(CustLedgEntry."Currency Code");
+
+      EXIT('');
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

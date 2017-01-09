@@ -1,0 +1,2850 @@
+OBJECT Table 5080 To-do
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=No.,Description;
+    OnInsert=BEGIN
+               IF "No." = '' THEN BEGIN
+                 RMSetup.GET;
+                 RMSetup.TESTFIELD("To-do Nos.");
+                 NoSeriesMgt.InitSeries(RMSetup."To-do Nos.",xRec."No. Series",0D,"No.","No. Series");
+               END;
+               IF (("System To-do Type" = "System To-do Type"::Organizer) AND
+                   ("Team Code" = '')) OR
+                  ("System To-do Type" = "System To-do Type"::Team)
+               THEN
+                 "Organizer To-do No." := "No.";
+               "Last Date Modified" := TODAY;
+               "Last Time Modified" := TIME;
+             END;
+
+    OnModify=BEGIN
+               IF "No." <> '' THEN BEGIN
+                 "Last Date Modified" := TODAY;
+                 "Last Time Modified" := TIME;
+
+                 UpdateAttendeeTodos("No.");
+               END;
+             END;
+
+    OnDelete=VAR
+               Attendee@1001 : Record 5199;
+               Todo@1000 : Record 5080;
+               TodoInteractionLanguage@1002 : Record 5196;
+             BEGIN
+               RMCommentLine.SETRANGE("Table Name",RMCommentLine."Table Name"::"To-do");
+               RMCommentLine.SETRANGE("No.","No.");
+               RMCommentLine.DELETEALL;
+               Todo.SETRANGE("Organizer To-do No.","No.");
+               Todo.SETFILTER("No.",'<>%1',"No.");
+               IF Todo.FINDFIRST THEN
+                 Todo.DELETEALL;
+
+               Attendee.SETRANGE("To-do No.","No.");
+               Attendee.DELETEALL;
+
+               TodoInteractionLanguage.SETRANGE("To-do No.","No.");
+               TodoInteractionLanguage.DELETEALL(TRUE);
+             END;
+
+    CaptionML=[ENU=To-do;
+               ESM=Tarea;
+               FRC=Action;
+               ENC=To-do];
+    LookupPageID=Page5096;
+    DrillDownPageID=Page5096;
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Code20        ;OnValidate=BEGIN
+                                                                IF "No." <> xRec."No." THEN BEGIN
+                                                                  RMSetup.GET;
+                                                                  NoSeriesMgt.TestManual(RMSetup."To-do Nos.");
+                                                                  "No. Series" := '';
+                                                                  IF ("System To-do Type" = "System To-do Type"::Organizer) OR
+                                                                     ("System To-do Type" = "System To-do Type"::Team)
+                                                                  THEN
+                                                                    UpdateAttendeeTodos(xRec."No.");
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=No.;
+                                                              ESM=Nß;
+                                                              FRC=N¯;
+                                                              ENC=No.] }
+    { 2   ;   ;Team Code           ;Code10        ;TableRelation=Team;
+                                                   OnValidate=BEGIN
+                                                                IF ("Team Code" <> xRec."Team Code") AND
+                                                                   ("No." <> '') AND
+                                                                   IsCalledFromForm
+                                                                THEN BEGIN
+                                                                  IF ("Team Code" = '') AND ("Salesperson Code" = '') THEN
+                                                                    ERROR(Text035,FIELDCAPTION("Salesperson Code"),FIELDCAPTION("Team Code"));
+                                                                  IF xRec."Team Code" <> '' THEN BEGIN
+                                                                    IF Closed THEN BEGIN
+                                                                      IF CONFIRM(STRSUBSTNO(Text039,"No.",xRec."Team Code","Team Code")) THEN BEGIN
+                                                                        ChangeTeam;
+                                                                        GET("No.");
+                                                                        VALIDATE(Closed,FALSE);
+                                                                      END ELSE
+                                                                        "Team Code" := xRec."Team Code"
+                                                                    END ELSE BEGIN
+                                                                      IF CONFIRM(STRSUBSTNO(Text030,xRec."Team Code","Team Code")) THEN
+                                                                        ChangeTeam
+                                                                      ELSE
+                                                                        "Team Code" := xRec."Team Code"
+                                                                    END
+                                                                  END ELSE BEGIN
+                                                                    IF Closed THEN BEGIN
+                                                                      IF CONFIRM(STRSUBSTNO(Text042,"No.","Team Code")) THEN BEGIN
+                                                                        ReassignSalespersonTodoToTeam;
+                                                                        GET("No.");
+                                                                        VALIDATE(Closed,FALSE);
+                                                                      END ELSE
+                                                                        "Team Code" := ''
+                                                                    END ELSE
+                                                                      ReassignSalespersonTodoToTeam;
+                                                                  END
+                                                                END
+                                                              END;
+
+                                                   CaptionML=[ENU=Team Code;
+                                                              ESM=C¢d. equipo;
+                                                              FRC=Code Çquipe;
+                                                              ENC=Team Code] }
+    { 3   ;   ;Salesperson Code    ;Code10        ;TableRelation=Salesperson/Purchaser;
+                                                   OnValidate=BEGIN
+                                                                IF (xRec."Salesperson Code" <> "Salesperson Code") AND
+                                                                   ("No." <> '') AND
+                                                                   IsCalledFromForm
+                                                                THEN BEGIN
+                                                                  IF ("Team Code" = '') AND ("Salesperson Code" = '') THEN
+                                                                    ERROR(Text035,FIELDCAPTION("Salesperson Code"),FIELDCAPTION("Team Code"));
+                                                                  IF (Type = Type::Meeting) AND ("Team Code" = '') THEN
+                                                                    ERROR(Text009,FIELDCAPTION("Salesperson Code"));
+
+                                                                  IF "Team Code" <> '' THEN BEGIN
+                                                                    IF Type = Type::Meeting THEN
+                                                                      IF Closed THEN
+                                                                        IF CONFIRM(STRSUBSTNO(Text040,"No.","Salesperson Code")) THEN BEGIN
+                                                                          ReassignTeamTodoToSalesperson;
+                                                                          GET("No.");
+                                                                          VALIDATE(Closed,FALSE);
+                                                                        END ELSE
+                                                                          "Salesperson Code" := xRec."Salesperson Code"
+                                                                      ELSE
+                                                                        IF CONFIRM(STRSUBSTNO(Text033,"No.","Salesperson Code")) THEN
+                                                                          ReassignTeamTodoToSalesperson
+                                                                        ELSE
+                                                                          "Salesperson Code" := xRec."Salesperson Code"
+                                                                    ELSE
+                                                                      IF Closed THEN
+                                                                        IF CONFIRM(STRSUBSTNO(Text041,"No.","Salesperson Code")) THEN BEGIN
+                                                                          ReassignTeamTodoToSalesperson;
+                                                                          GET("No.");
+                                                                          VALIDATE(Closed,FALSE);
+                                                                        END ELSE
+                                                                          "Salesperson Code" := xRec."Salesperson Code"
+                                                                      ELSE
+                                                                        IF CONFIRM(STRSUBSTNO(Text032,"No.","Salesperson Code")) THEN
+                                                                          ReassignTeamTodoToSalesperson
+                                                                        ELSE
+                                                                          "Salesperson Code" := xRec."Salesperson Code"
+                                                                  END
+                                                                END
+                                                              END;
+
+                                                   CaptionML=[ENU=Salesperson Code;
+                                                              ESM=C¢d. vendedor;
+                                                              FRC=Code reprÇsentant;
+                                                              ENC=Salesperson Code] }
+    { 4   ;   ;Campaign No.        ;Code20        ;TableRelation=Campaign;
+                                                   CaptionML=[ENU=Campaign No.;
+                                                              ESM=Nß campa§a;
+                                                              FRC=N¯ promotion;
+                                                              ENC=Campaign No.] }
+    { 5   ;   ;Contact No.         ;Code20        ;TableRelation=Contact;
+                                                   OnValidate=VAR
+                                                                AttendeeTemp@1000 : TEMPORARY Record 5199;
+                                                              BEGIN
+                                                                IF Cont.GET("Contact No.") THEN
+                                                                  "Contact Company No." := Cont."Company No."
+                                                                ELSE
+                                                                  CLEAR("Contact Company No.");
+
+                                                                IF ("No." <> '') AND
+                                                                   ("No." = "Organizer To-do No.") AND
+                                                                   ("Contact No." <> xRec."Contact No.") AND
+                                                                   (Type <> Type::Meeting)
+                                                                THEN
+                                                                  CASE TRUE OF
+                                                                    (xRec."Contact No." = '') AND ("Contact No." <> ''):
+                                                                      BEGIN
+                                                                        AttendeeTemp.CreateAttendee(
+                                                                          AttendeeTemp,
+                                                                          "No.",10000,AttendeeTemp."Attendance Type"::Required,
+                                                                          AttendeeTemp."Attendee Type"::Contact,
+                                                                          "Contact No.",FALSE);
+                                                                        CreateSubTodo(AttendeeTemp,Rec);
+                                                                      END;
+                                                                    (xRec."Contact No." <> '') AND ("Contact No." = ''):
+                                                                      BEGIN
+                                                                        AttendeeTemp.CreateAttendee(
+                                                                          AttendeeTemp,
+                                                                          "No.",10000,AttendeeTemp."Attendance Type"::Required,
+                                                                          AttendeeTemp."Attendee Type"::Contact,
+                                                                          xRec."Contact No.",FALSE);
+                                                                        DeleteAttendeeTodo(AttendeeTemp);
+                                                                      END;
+                                                                    xRec."Contact No." <> "Contact No.":
+                                                                      BEGIN
+                                                                        AttendeeTemp.CreateAttendee(
+                                                                          AttendeeTemp,
+                                                                          "No.",10000,AttendeeTemp."Attendance Type"::Required,
+                                                                          AttendeeTemp."Attendee Type"::Contact,
+                                                                          xRec."Contact No.",FALSE);
+                                                                        DeleteAttendeeTodo(AttendeeTemp);
+                                                                        AttendeeTemp.CreateAttendee(
+                                                                          AttendeeTemp,
+                                                                          "No.",20000,AttendeeTemp."Attendance Type"::Required,
+                                                                          AttendeeTemp."Attendee Type"::Contact,
+                                                                          "Contact No.",FALSE);
+                                                                        CreateSubTodo(AttendeeTemp,Rec);
+                                                                      END;
+                                                                  END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Contact No.;
+                                                              ESM=Nß contacto;
+                                                              FRC=N¯ contact;
+                                                              ENC=Contact No.] }
+    { 6   ;   ;Opportunity No.     ;Code20        ;TableRelation=Opportunity;
+                                                   OnValidate=VAR
+                                                                OppEntry@1001 : Record 5093;
+                                                              BEGIN
+                                                                OppEntry.RESET;
+                                                                OppEntry.SETCURRENTKEY(Active,"Opportunity No.");
+                                                                OppEntry.SETRANGE(Active,TRUE);
+                                                                OppEntry.SETRANGE("Opportunity No.","Opportunity No.");
+                                                                IF OppEntry.FINDFIRST THEN
+                                                                  "Opportunity Entry No." := OppEntry."Entry No."
+                                                                ELSE
+                                                                  "Opportunity Entry No." := 0;
+                                                              END;
+
+                                                   CaptionML=[ENU=Opportunity No.;
+                                                              ESM=Nß oportunidad;
+                                                              FRC=N¯ opportunitÇ;
+                                                              ENC=Opportunity No.] }
+    { 7   ;   ;Segment No.         ;Code20        ;TableRelation="Segment Header";
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Segment No.;
+                                                              ESM=Nß segmento;
+                                                              FRC=N¯ segment;
+                                                              ENC=Segment No.] }
+    { 8   ;   ;Type                ;Option        ;OnValidate=VAR
+                                                                OldEndDate@1000 : Date;
+                                                              BEGIN
+                                                                IF "No." <> '' THEN BEGIN
+                                                                  IF ((xRec.Type = Type::Meeting) AND (Type <> Type::Meeting)) OR
+                                                                     ((xRec.Type <> Type::Meeting) AND (Type = Type::Meeting))
+                                                                  THEN
+                                                                    ERROR(Text012);
+                                                                END ELSE BEGIN
+                                                                  IF CurrFieldNo = 0 THEN
+                                                                    EXIT;
+
+                                                                  IF xRec.Type <> Type::Meeting THEN
+                                                                    TempEndDateTime := CREATEDATETIME(xRec.Date,xRec."Start Time") - OneDayDuration + xRec.Duration
+                                                                  ELSE
+                                                                    TempEndDateTime := CREATEDATETIME(xRec.Date,xRec."Start Time") + xRec.Duration;
+
+                                                                  OldEndDate := DT2DATE(TempEndDateTime);
+
+                                                                  IF (xRec.Type = Type::Meeting) AND (Type <> Type::Meeting) THEN BEGIN
+                                                                    "Start Time" := 0T;
+                                                                    "All Day Event" := FALSE;
+                                                                    SetDuration(OldEndDate,0T);
+                                                                  END;
+
+                                                                  IF (xRec.Type <> Type::Meeting) AND (Type = Type::Meeting) THEN BEGIN
+                                                                    "Start Time" := 0T;
+                                                                    IF OldEndDate = Date THEN BEGIN
+                                                                      SetDuration(OldEndDate,DT2TIME(CREATEDATETIME(OldEndDate,0T) + 30 * 60 * 1000));
+                                                                    END ELSE
+                                                                      SetDuration(OldEndDate,0T);
+                                                                  END;
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Type;
+                                                              ESM=Tipo;
+                                                              FRC=Type;
+                                                              ENC=Type];
+                                                   OptionCaptionML=[ENU=" ,Meeting,Phone Call";
+                                                                    ESM=" ,Reuni¢n,Llamada";
+                                                                    FRC=" ,RÇunion,Appel tÇlÇphonique";
+                                                                    ENC=" ,Meeting,Phone Call"];
+                                                   OptionString=[ ,Meeting,Phone Call] }
+    { 9   ;   ;Date                ;Date          ;OnValidate=BEGIN
+                                                                IF (Date < 01011900D) OR (Date > 12312999D) THEN
+                                                                  ERROR(Text006,01011900D,12312999D);
+
+                                                                IF Date <> xRec.Date THEN
+                                                                  GetEndDateTime;
+                                                              END;
+
+                                                   CaptionML=[ENU=Date;
+                                                              ESM=Fecha;
+                                                              FRC=Date;
+                                                              ENC=Date];
+                                                   NotBlank=Yes }
+    { 10  ;   ;Status              ;Option        ;OnValidate=BEGIN
+                                                                IF Status = Status::Completed THEN
+                                                                  VALIDATE(Closed,TRUE)
+                                                                ELSE
+                                                                  VALIDATE(Closed,FALSE);
+                                                              END;
+
+                                                   CaptionML=[ENU=Status;
+                                                              ESM=Estado;
+                                                              FRC=êtat;
+                                                              ENC=Status];
+                                                   OptionCaptionML=[ENU=Not Started,In Progress,Completed,Waiting,Postponed;
+                                                                    ESM=No iniciado,En progreso,Completado,Esperando,Aplazado;
+                                                                    FRC=Non dÇmarrÇ,En cours,TerminÇ,En attente,ReportÇ;
+                                                                    ENC=Not Started,In Progress,Completed,Waiting,Postponed];
+                                                   OptionString=Not Started,In Progress,Completed,Waiting,Postponed }
+    { 11  ;   ;Priority            ;Option        ;InitValue=Normal;
+                                                   CaptionML=[ENU=Priority;
+                                                              ESM=Prioridad;
+                                                              FRC=PrioritÇ;
+                                                              ENC=Priority];
+                                                   OptionCaptionML=[ENU=Low,Normal,High;
+                                                                    ESM=Baja,Normal,Alta;
+                                                                    FRC=Faible,Normal,Haut;
+                                                                    ENC=Low,Normal,High];
+                                                   OptionString=Low,Normal,High }
+    { 12  ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ESM=Descripci¢n;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 13  ;   ;Closed              ;Boolean       ;OnValidate=BEGIN
+                                                                IF Closed THEN BEGIN
+                                                                  "Date Closed" := TODAY;
+                                                                  Status := Status::Completed;
+                                                                  IF NOT Canceled THEN BEGIN
+                                                                    IF ("Team Code" <> '') AND
+                                                                       ("Completed By" = '')
+                                                                    THEN
+                                                                      ERROR(STRSUBSTNO(Text029,FIELDCAPTION("Completed By")));
+                                                                    IF CurrFieldNo <> 0 THEN
+                                                                      IF CONFIRM(Text004,TRUE) THEN
+                                                                        CreateInteraction
+                                                                  END;
+                                                                  IF Recurring THEN
+                                                                    CreateRecurringTodo;
+                                                                END ELSE BEGIN
+                                                                  Canceled := FALSE;
+                                                                  "Date Closed" := 0D;
+                                                                  IF Status = Status::Completed THEN
+                                                                    Status := Status::"In Progress";
+                                                                  IF "Completed By" <> '' THEN
+                                                                    "Completed By" := ''
+                                                                END;
+                                                                IF CurrFieldNo <> 0 THEN
+                                                                  MODIFY(TRUE);
+                                                              END;
+
+                                                   CaptionML=[ENU=Closed;
+                                                              ESM=Cerrado;
+                                                              FRC=FermÇ;
+                                                              ENC=Closed] }
+    { 14  ;   ;Date Closed         ;Date          ;CaptionML=[ENU=Date Closed;
+                                                              ESM=Fecha cerrada;
+                                                              FRC=Date fermeture;
+                                                              ENC=Date Closed];
+                                                   Editable=No }
+    { 15  ;   ;No. Series          ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=No. Series;
+                                                              ESM=Nos. serie;
+                                                              FRC=SÇries de n¯;
+                                                              ENC=No. Series];
+                                                   Editable=No }
+    { 16  ;   ;Comment             ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Rlshp. Mgt. Comment Line" WHERE (Table Name=CONST(To-do),
+                                                                                                       No.=FIELD(Organizer To-do No.),
+                                                                                                       Sub No.=CONST(0)));
+                                                   CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment];
+                                                   Editable=No }
+    { 17  ;   ;Canceled            ;Boolean       ;OnValidate=BEGIN
+                                                                IF Canceled AND NOT Closed THEN
+                                                                  VALIDATE(Closed,TRUE);
+                                                                IF (NOT Canceled) AND Closed THEN
+                                                                  VALIDATE(Closed,FALSE);
+                                                              END;
+
+                                                   CaptionML=[ENU=Canceled;
+                                                              ESM=Cancelado;
+                                                              FRC=AnnulÇe;
+                                                              ENC=Cancelled] }
+    { 18  ;   ;Contact Name        ;Text50        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Contact.Name WHERE (No.=FIELD(Contact No.)));
+                                                   CaptionML=[ENU=Contact Name;
+                                                              ESM=Nombre contacto;
+                                                              FRC=Nom du contact;
+                                                              ENC=Contact Name];
+                                                   Editable=No }
+    { 19  ;   ;Team Name           ;Text30        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Team.Name WHERE (Code=FIELD(Team Code)));
+                                                   CaptionML=[ENU=Team Name;
+                                                              ESM=Nombre equipo;
+                                                              FRC=Nom Çquipe;
+                                                              ENC=Team Name];
+                                                   NotBlank=No;
+                                                   Editable=No }
+    { 20  ;   ;Salesperson Name    ;Text50        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Salesperson/Purchaser.Name WHERE (Code=FIELD(Salesperson Code)));
+                                                   CaptionML=[ENU=Salesperson Name;
+                                                              ESM=Nombre vendedor;
+                                                              FRC=Nom du reprÇsentant;
+                                                              ENC=Salesperson Name];
+                                                   Editable=No }
+    { 21  ;   ;Campaign Description;Text50        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Campaign.Description WHERE (No.=FIELD(Campaign No.)));
+                                                   CaptionML=[ENU=Campaign Description;
+                                                              ESM=Descripci¢n campa§a;
+                                                              FRC=DÇsignation promotion;
+                                                              ENC=Campaign Description];
+                                                   Editable=No }
+    { 22  ;   ;Contact Company No. ;Code20        ;TableRelation=Contact WHERE (Type=CONST(Company));
+                                                   CaptionML=[ENU=Contact Company No.;
+                                                              ESM=Nß empresa contacto;
+                                                              FRC=N¯ compagnie contact;
+                                                              ENC=Contact Company No.] }
+    { 23  ;   ;Contact Company Name;Text50        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Contact.Name WHERE (No.=FIELD(Contact Company No.)));
+                                                   CaptionML=[ENU=Contact Company Name;
+                                                              ESM=Nombre empresa contacto;
+                                                              FRC=Nom compagnie contact;
+                                                              ENC=Contact Company Name];
+                                                   Editable=No }
+    { 24  ;   ;Recurring           ;Boolean       ;CaptionML=[ENU=Recurring;
+                                                              ESM=Peri¢dico;
+                                                              FRC=RÇcurrent;
+                                                              ENC=Recurring] }
+    { 25  ;   ;Recurring Date Interval;DateFormula;OnValidate=BEGIN
+                                                                IF Recurring THEN
+                                                                  TESTFIELD("Recurring Date Interval");
+                                                              END;
+
+                                                   CaptionML=[ENU=Recurring Date Interval;
+                                                              ESM=Intervalo fecha peri¢dico;
+                                                              FRC=Intervalle de rÇcurrence;
+                                                              ENC=Recurring Date Interval] }
+    { 26  ;   ;Calc. Due Date From ;Option        ;OnValidate=BEGIN
+                                                                IF Recurring THEN
+                                                                  TESTFIELD("Calc. Due Date From");
+                                                              END;
+
+                                                   CaptionML=[ENU=Calc. Due Date From;
+                                                              ESM=Calc. fecha vto. desde;
+                                                              FRC=Calculer ÇchÇance Ö partir de;
+                                                              ENC=Calc. Due Date From];
+                                                   OptionCaptionML=[ENU=" ,Due Date,Closing Date";
+                                                                    ESM=" ,Fecha vto.,Fecha cierre";
+                                                                    FRC=" ,Date ÇchÇance,Date de fermeture";
+                                                                    ENC=" ,Due Date,Closing Date"];
+                                                   OptionString=[ ,Due Date,Closing Date] }
+    { 27  ;   ;Opportunity Description;Text50     ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Opportunity.Description WHERE (No.=FIELD(Opportunity No.)));
+                                                   CaptionML=[ENU=Opportunity Description;
+                                                              ESM=Descripci¢n oportunidad;
+                                                              FRC=Description de l'opportunitÇ;
+                                                              ENC=Opportunity Description];
+                                                   Editable=No }
+    { 28  ;   ;Start Time          ;Time          ;OnValidate=BEGIN
+                                                                IF "Start Time" <> xRec."Start Time" THEN
+                                                                  GetEndDateTime;
+                                                              END;
+
+                                                   CaptionML=[ENU=Start Time;
+                                                              ESM=Hora de inicio;
+                                                              FRC=Heure dÇbut;
+                                                              ENC=Start Time] }
+    { 29  ;   ;Duration            ;Duration      ;OnValidate=BEGIN
+                                                                IF Duration < 0 THEN
+                                                                  ERROR(Text005);
+
+                                                                IF Duration < (60 * 1000) THEN
+                                                                  ERROR(Text007);
+
+                                                                IF Duration > (CREATEDATETIME(TODAY + 3650,0T) - CREATEDATETIME(TODAY,0T)) THEN
+                                                                  ERROR(Text008);
+
+                                                                IF Duration <> xRec.Duration THEN
+                                                                  GetEndDateTime;
+                                                              END;
+
+                                                   CaptionML=[ENU=Duration;
+                                                              ESM=Duraci¢n;
+                                                              FRC=DurÇe;
+                                                              ENC=Duration] }
+    { 31  ;   ;Opportunity Entry No.;Integer      ;TableRelation="Opportunity Entry";
+                                                   CaptionML=[ENU=Opportunity Entry No.;
+                                                              ESM=Nß mov. oportunidad;
+                                                              FRC=N¯ Çcriture opportunitÇ;
+                                                              ENC=Opportunity Entry No.] }
+    { 32  ;   ;Last Date Modified  ;Date          ;CaptionML=[ENU=Last Date Modified;
+                                                              ESM=Fecha £lt. modificaci¢n;
+                                                              FRC=Date derniäre modification;
+                                                              ENC=Last Date Modified] }
+    { 33  ;   ;Last Time Modified  ;Time          ;CaptionML=[ENU=Last Time Modified;
+                                                              ESM=Èlt. hora modificaci¢n;
+                                                              FRC=Heure dern. modification;
+                                                              ENC=Last Time Modified] }
+    { 34  ;   ;All Day Event       ;Boolean       ;OnValidate=BEGIN
+                                                                IF "All Day Event" THEN BEGIN
+                                                                  "Start Time" := 0T;
+                                                                  TempStartDateTime := CREATEDATETIME(Date,"Start Time");
+                                                                  TempEndDateTime := TempStartDateTime + Duration;
+                                                                  IF DT2DATE(TempEndDateTime) = Date THEN
+                                                                    Duration := 1440 * 1000 * 60
+                                                                  ELSE
+                                                                    Duration := ROUNDDATETIME(TempEndDateTime + 1,1440 * 1000 * 60,'>') - TempStartDateTime;
+                                                                END ELSE
+                                                                  Duration := Duration - 1440 * 1000 * 60;
+                                                              END;
+
+                                                   CaptionML=[ENU=All Day Event;
+                                                              ESM=Todo el d°a;
+                                                              FRC=JournÇe entiäre;
+                                                              ENC=All Day Event] }
+    { 35  ;   ;Location            ;Text50        ;CaptionML=[ENU=Location;
+                                                              ESM=Lugar;
+                                                              FRC=Emplacement;
+                                                              ENC=Location] }
+    { 36  ;   ;Organizer To-do No. ;Code20        ;TableRelation=To-do;
+                                                   CaptionML=[ENU=Organizer To-do No.;
+                                                              ESM=Nß tarea organizador;
+                                                              FRC=N¯ de tÉche de l'organisateur;
+                                                              ENC=Organizer To-do No.] }
+    { 37  ;   ;Interaction Template Code;Code10   ;TableRelation="Interaction Template";
+                                                   OnValidate=VAR
+                                                                TodoInteractionLanguage@1000 : Record 5196;
+                                                                Attachment@1001 : Record 5062;
+                                                              BEGIN
+                                                                IF "No." <> '' THEN
+                                                                  UpdateInteractionTemplate(
+                                                                    Rec,TodoInteractionLanguage,Attachment,"Interaction Template Code",FALSE);
+                                                              END;
+
+                                                   CaptionML=[ENU=Interaction Template Code;
+                                                              ESM=C¢d. plantilla interacci¢n;
+                                                              FRC=Code modäle interaction;
+                                                              ENC=Interaction Template Code] }
+    { 38  ;   ;Language Code       ;Code10        ;TableRelation=Language;
+                                                   OnValidate=VAR
+                                                                TodoInteractionLanguage@1000 : Record 5196;
+                                                              BEGIN
+                                                                IF CurrFieldNo <> 0 THEN
+                                                                  MODIFY;
+
+                                                                IF "Language Code" = xRec."Language Code" THEN
+                                                                  EXIT;
+
+                                                                IF NOT TodoInteractionLanguage.GET("No.","Language Code") THEN BEGIN
+                                                                  IF "No." = '' THEN
+                                                                    EXIT;
+                                                                  IF CurrFieldNo <> 0 THEN
+                                                                    IF CONFIRM(Text010,TRUE,TodoInteractionLanguage.TABLECAPTION,"Language Code") THEN BEGIN
+                                                                      TodoInteractionLanguage.INIT;
+                                                                      TodoInteractionLanguage."To-do No." := "No.";
+                                                                      TodoInteractionLanguage."Language Code" := "Language Code";
+                                                                      TodoInteractionLanguage.Description := FORMAT("Interaction Template Code") + ' ' + FORMAT("Language Code");
+                                                                      TodoInteractionLanguage.INSERT(TRUE);
+                                                                      "Attachment No." := 0;
+                                                                      MODIFY;
+                                                                    END ELSE
+                                                                      ERROR('');
+                                                                END ELSE
+                                                                  "Attachment No." := TodoInteractionLanguage."Attachment No.";
+                                                              END;
+
+                                                   OnLookup=VAR
+                                                              TodoInteractionLanguage@1000 : Record 5196;
+                                                            BEGIN
+                                                              MODIFY;
+                                                              COMMIT;
+
+                                                              TodoInteractionLanguage.SETRANGE("To-do No.","Organizer To-do No.");
+                                                              IF TodoInteractionLanguage.GET("Organizer To-do No.","Language Code") THEN;
+                                                              IF PAGE.RUNMODAL(0,TodoInteractionLanguage) = ACTION::LookupOK THEN BEGIN
+                                                                IF ("System To-do Type" = "System To-do Type"::Organizer) OR
+                                                                   ("System To-do Type" = "System To-do Type"::Team)
+                                                                THEN
+                                                                  IF NOT TodoInteractionLanguage.ISEMPTY THEN BEGIN
+                                                                    "Language Code" := TodoInteractionLanguage."Language Code";
+                                                                    "Attachment No." := TodoInteractionLanguage."Attachment No.";
+                                                                  END ELSE BEGIN
+                                                                    "Language Code" := '';
+                                                                    "Attachment No." := 0;
+                                                                  END;
+                                                              END ELSE
+                                                                IF NOT TodoInteractionLanguage.ISEMPTY THEN BEGIN
+                                                                  IF "Language Code" = TodoInteractionLanguage."Language Code" THEN
+                                                                    "Attachment No." := TodoInteractionLanguage."Attachment No.";
+                                                                END ELSE BEGIN
+                                                                  "Language Code" := '';
+                                                                  "Attachment No." := 0;
+                                                                END;
+                                                            END;
+
+                                                   CaptionML=[ENU=Language Code;
+                                                              ESM=C¢d. idioma;
+                                                              FRC=Code langue;
+                                                              ENC=Language Code] }
+    { 39  ;   ;Attachment No.      ;Integer       ;CaptionML=[ENU=Attachment No.;
+                                                              ESM=Nß anexo;
+                                                              FRC=N¯ piäce jointe;
+                                                              ENC=Attachment No.] }
+    { 40  ;   ;Subject             ;Text50        ;OnValidate=BEGIN
+                                                                IF CurrFieldNo <> 0 THEN
+                                                                  MODIFY;
+                                                              END;
+
+                                                   CaptionML=[ENU=Subject;
+                                                              ESM=Asunto;
+                                                              FRC=Sujet;
+                                                              ENC=Subject] }
+    { 41  ;   ;Unit Cost (LCY)     ;Decimal       ;OnValidate=BEGIN
+                                                                IF CurrFieldNo <> 0 THEN
+                                                                  MODIFY;
+                                                              END;
+
+                                                   CaptionML=[ENU=Unit Cost ($);
+                                                              ESM=Costo unitario ($);
+                                                              FRC=Coñt unitaire ($);
+                                                              ENC=Unit Cost ($)];
+                                                   DecimalPlaces=2:2 }
+    { 42  ;   ;Unit Duration (Min.);Decimal       ;OnValidate=BEGIN
+                                                                IF CurrFieldNo <> 0 THEN
+                                                                  MODIFY;
+                                                              END;
+
+                                                   CaptionML=[ENU=Unit Duration (Min.);
+                                                              ESM=Duraci¢n unitaria (Min.);
+                                                              FRC=DurÇe unitaire (min.);
+                                                              ENC=Unit Duration (Min.)];
+                                                   DecimalPlaces=0:2 }
+    { 43  ;   ;No. of Attendees    ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count(Attendee WHERE (To-do No.=FIELD(Organizer To-do No.)));
+                                                   CaptionML=[ENU=No. of Attendees;
+                                                              ESM=Nß de asistentes;
+                                                              FRC=Nbre de participants;
+                                                              ENC=No. of Attendees];
+                                                   Editable=No }
+    { 44  ;   ;Attendees Accepted No.;Integer     ;FieldClass=FlowField;
+                                                   CalcFormula=Count(Attendee WHERE (To-do No.=FIELD(Organizer To-do No.),
+                                                                                     Invitation Response Type=CONST(Accepted)));
+                                                   CaptionML=[ENU=Attendees Accepted No.;
+                                                              ESM=Nß asistentes aceptados;
+                                                              FRC=Nbre de participants acceptÇs;
+                                                              ENC=Attendees Accepted No.];
+                                                   Editable=No }
+    { 45  ;   ;System To-do Type   ;Option        ;CaptionML=[ENU=System To-do Type;
+                                                              ESM=Tipo tarea sistema;
+                                                              FRC=Type de tÉche du systäme;
+                                                              ENC=System To-do Type];
+                                                   OptionCaptionML=[ENU=Organizer,Salesperson Attendee,Contact Attendee,Team;
+                                                                    ESM=Organizador,Asistente vendedor,Asistente contacto,Equipo;
+                                                                    FRC=Organisateur,ReprÇsentant participant,Contact participant,êquipe;
+                                                                    ENC=Organizer,Salesperson Attendee,Contact Attendee,Team];
+                                                   OptionString=Organizer,Salesperson Attendee,Contact Attendee,Team }
+    { 46  ;   ;Completed By        ;Code10        ;TableRelation=Salesperson/Purchaser.Code;
+                                                   OnValidate=BEGIN
+                                                                IF (xRec."Completed By" = '') AND
+                                                                   ("Completed By" <> '')
+                                                                THEN
+                                                                  IF CONFIRM(Text034) THEN
+                                                                    VALIDATE(Closed,TRUE)
+                                                                  ELSE
+                                                                    "Completed By" := '';
+                                                              END;
+
+                                                   CaptionML=[ENU=Completed By;
+                                                              ESM=Completado por;
+                                                              FRC=ComplÇtÇ par;
+                                                              ENC=Completed By] }
+    { 47  ;   ;Ending Date         ;Date          ;OnValidate=BEGIN
+                                                                IF "Ending Date" <> xRec."Ending Date" THEN
+                                                                  SetDuration("Ending Date","Ending Time");
+                                                              END;
+
+                                                   CaptionML=[ENU=Ending Date;
+                                                              ESM=Fecha final;
+                                                              FRC=Date de fin;
+                                                              ENC=Ending Date] }
+    { 48  ;   ;Ending Time         ;Time          ;OnValidate=BEGIN
+                                                                IF "Ending Time" <> xRec."Ending Time" THEN
+                                                                  SetDuration("Ending Date","Ending Time");
+                                                              END;
+
+                                                   CaptionML=[ENU=Ending Time;
+                                                              ESM=Hora final;
+                                                              FRC=Heure de fin;
+                                                              ENC=Ending Time] }
+    { 9501;   ;Wizard Step         ;Option        ;CaptionML=[ENU=Wizard Step;
+                                                              ESM=Paso asistente;
+                                                              FRC=êtape assistant;
+                                                              ENC=Wizard Step];
+                                                   OptionCaptionML=[ENU=" ,1,2,3,4,5,6";
+                                                                    ESM=" ,1,2,3,4,5,6";
+                                                                    FRC=" ,1,2,3,4,5,6";
+                                                                    ENC=" ,1,2,3,4,5,6"];
+                                                   OptionString=[ ,1,2,3,4,5,6];
+                                                   Editable=No }
+    { 9504;   ;Team To-do          ;Boolean       ;CaptionML=[ENU=Team To-do;
+                                                              ESM=Tarea de equipo;
+                                                              FRC=TÉche Çquipe;
+                                                              ENC=Team To-do] }
+    { 9505;   ;Send on finish      ;Boolean       ;CaptionML=[ENU=Send on finish;
+                                                              ESM=Enviar al terminar;
+                                                              FRC=Envoyer si termin.;
+                                                              ENC=Send on finish] }
+    { 9506;   ;Segment Description ;Text50        ;CaptionML=[ENU=Segment Description;
+                                                              ESM=Descripci¢n del segmento;
+                                                              FRC=Description segment;
+                                                              ENC=Segment Description] }
+    { 9507;   ;Team Meeting Organizer;Code20      ;CaptionML=[ENU=Team Meeting Organizer;
+                                                              ESM=Organizador reuniones equipo;
+                                                              FRC=Organisateur rÇunion d'Çquipe;
+                                                              ENC=Team Meeting Organizer] }
+    { 9508;   ;Activity Code       ;Code10        ;TableRelation=Activity.Code;
+                                                   CaptionML=[ENU=Activity Code;
+                                                              ESM=C¢d. actividad;
+                                                              FRC=Code d'activitÇ;
+                                                              ENC=Activity Code] }
+    { 9509;   ;Wizard Contact Name ;Text50        ;CaptionML=[ENU=Wizard Contact Name;
+                                                              ESM=Nombre contacto asistente;
+                                                              FRC=Assistant - Nom contact;
+                                                              ENC=Wizard Contact Name] }
+    { 9510;   ;Wizard Campaign Description;Text50 ;CaptionML=[ENU=Wizard Campaign Description;
+                                                              ESM=Descripci¢n campa§a asistente;
+                                                              FRC=Assistant - Description de promotion;
+                                                              ENC=Wizard Campaign Description] }
+    { 9511;   ;Wizard Opportunity Description;Text50;
+                                                   CaptionML=[ENU=Wizard Opportunity Description;
+                                                              ESM=Descripci¢n oportunidad asistente;
+                                                              FRC=Assistant - Description opportunitÇ;
+                                                              ENC=Wizard Opportunity Description] }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+    {    ;Contact Company No.,Date,Contact No.,Closed }
+    {    ;Contact Company No.,Contact No.,Closed,Date }
+    {    ;Salesperson Code,Date,Closed             }
+    {    ;Team Code,Date,Closed                    }
+    {    ;Campaign No.,Date                        }
+    {    ;Segment No.,Date                         }
+    {    ;Opportunity No.,Date,Closed              }
+    {    ;Organizer To-do No.,System To-do Type    }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;No.,Description,Status                   }
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=%1 must be specified.;ESM=Se debe indicar %1.;FRC=%1 doit àtre spÇcifiÇ.;ENC=%1 must be specified.';
+      Text001@1001 : TextConst 'ENU=%1 No. %2 has been created from recurring %3 %4.;ESM=%1 Nß %2 se ha creado desde %3 %4 peri¢dico.;FRC=L''%1 n¯ %2 a ÇtÇ crÇÇe Ö partir de l''%3 rÇcurrente %4.;ENC=%1 No. %2 has been created from recurring %3 %4.';
+      Text002@1002 : TextConst 'ENU=Do you want to create a to-do for all contacts in the %1 segment;ESM=®Desea crear una tarea en todos los contactos del segmento %1?;FRC=Souhaitez-vous crÇer une tÉche pour tous les contacts du segment %1?;ENC=Do you want to create a to-do for all contacts in the %1 segment';
+      Text003@1003 : TextConst 'ENU=Do you want to assign an activity to all contacts in the %1 segment;ESM=®Desea asignar una actividad en todos los contactos del segmento %1?;FRC=Souhaitez-vous attribuer une activitÇ Ö tous les contacts du segment %1?;ENC=Do you want to assign an activity to all contacts in the %1 segment';
+      RMSetup@1004 : Record 5079;
+      Cont@1005 : Record 5050;
+      RMCommentLine@1006 : Record 5061;
+      Salesperson@1021 : Record 13;
+      Activity@1069 : Record 5081;
+      Campaign@1059 : Record 5071;
+      Team@1050 : Record 5083;
+      Opp@1041 : Record 5092;
+      SegHeader@1040 : Record 5076;
+      AttendeeTemp@1039 : TEMPORARY Record 5199;
+      SalesPurchPerson@1038 : Record 13;
+      TodoInteractionLanguage@1037 : TEMPORARY Record 5196;
+      AttachmentTemp@1026 : TEMPORARY Record 5062;
+      RMCommentLineTmp@1024 : TEMPORARY Record 5061;
+      NoSeriesMgt@1007 : Codeunit 396;
+      Text004@1008 : TextConst 'ENU=Do you want to register an interaction log entry?;ESM=®Confirma que desea registrar un mov. log interacci¢n?;FRC=Souhaitez-vous enregistrer l''Çcriture journal interaction ?;ENC=Do you want to register an interaction log entry?';
+      TempEndDateTime@1012 : DateTime;
+      Text005@1013 : TextConst 'ENU=Information that you have entered in this field will cause the duration to be negative which is not allowed. Please modify the ending date/time value.;ESM=La informaci¢n que ha introducido en este campo har† que la duraci¢n sea negativa, lo que no est† permitido. Modifique el campo fecha/hora fin.;FRC=En raison des informations entrÇes dans ce champ, la durÇe est nÇgative, ce qui n''est pas autorisÇ par le systäme. Veuillez modifier la valeur de la date/l''heure de fin.;ENC=Information that you have entered in this field will cause the duration to be negative which is not allowed. Please modify the ending date/time value.';
+      TempStartDateTime@1014 : DateTime;
+      Text006@1015 : TextConst 'ENU=The valid range of dates is from %1 to %2. Please enter a date within this range.;ESM=El rango v†lido de fechas es desde %1 hasta %2. Introduzca una fecha dentro de este rango.;FRC=L''intervalle de dates valides va du %1 au %2. Veuillez entrer une date appartenant Ö cet intervalle.;ENC=The valid range of dates is from %1 to %2. Please enter a date within this range.';
+      Text007@1016 : TextConst 'ENU=Information that you have entered in this field will cause the duration to be less than 1 minute, which is not allowed. Please modify the ending date/time value.;ESM=La informaci¢n que ha introducido en este campo har† que la duraci¢n sea inferior a 1 minuto, lo que no est† permitido. Modifique el campo fecha/hora fin.;FRC=En raison des informations entrÇes dans ce champ, la durÇe est infÇrieure Ö 1 minute, ce qui n''est pas autorisÇ par le systäme. Veuillez modifier la valeur de la date/l''heure de fin.;ENC=Information that you have entered in this field will cause the duration to be less than 1 minute, which is not allowed. Please modify the ending date/time value.';
+      Text008@1017 : TextConst 'ENU=Information that you have entered in this field will cause the duration to be more than 10 years, which is not allowed. Please modify the ending date/time value.;ESM=La informaci¢n que ha introducido en este campo har† que la duraci¢n sea superior a 10 a§os, lo que no est† permitido. Modifique el campo fecha/hora fin.;FRC=En raison des informations entrÇes dans ce champ, la durÇe est supÇrieure Ö 10 ans, ce qui n''est pas autorisÇ par le systäme. Veuillez modifier la valeur de la date/l''heure de fin.;ENC=Information that you have entered in this field will cause the duration to be more than 10 years, which is not allowed. Please modify the ending date/time value.';
+      Text009@1022 : TextConst 'ENU=You cannot change the %1 for this to-do, because this salesperson is the meeting organizer.;ESM=No puede modificar el %1 para esta tarea porque este vendedor es el organizador de la reuni¢n.;FRC=Vous ne pouvez pas modifier le %1 pour cette tÉche, puisque ce reprÇsentant est l''organisateur de la rÇunion.;ENC=You cannot change the %1 for this to-do, because this salesperson is the meeting organizer.';
+      Text010@1023 : TextConst 'ENU=Do you want to create a new %2 value in %1 for this to-do?;ESM=®Desea crear un nuevo valor %2 en %1 para esta tarea?;FRC=Voulez-vous crÇer une nouvelle valeur %2 dans %1 pour cette tÉche?;ENC=Do you want to create a new %2 value in %1 for this to-do?';
+      Text012@1025 : TextConst 'ENU=You cannot change a to-do type from Blank or Phone Call to Meeting and vice versa. You can only change a to-do type from Blank to Phone Call or from Phone Call to Blank.;ESM=No puede cambiar un tipo tarea desde Blanco o Llamada a Reuni¢n y viceversa. S¢lo puede modificar un tipo de tarea desde Blanco a Llamada o desde Llamada a Blanco.;FRC=Vous ne pouvez pas modifier un type de tÉche de Vide ou Appel Ö RÇunion et vice-versa. Vous pouvez modifier un type de tÉche uniquement de Vide Ö Appel ou de Appel Ö Vide;ENC=You cannot change a to-do type from Blank or Phone Call to Meeting and vice versa. You can only change a to-do type from Blank to Phone Call or from Phone Call to Blank.';
+      Text015@1029 : TextConst 'ENU=Dear %1,;ESM=Estimado %1,;FRC=Cher/Chäre %1,;ENC=Dear %1,';
+      Text016@1030 : TextConst '@@@="%1 = To-Do Date,%2 = To-Do StartTime,%3=To-Do location";ENU=You are cordially invited to attend the meeting, which will take place on %1, %2 at %3.;ESM=Ha sido invitado a la reuni¢n que tendr† lugar el %1 a las %2 en %3.;FRC=Vous àtes invitÇ(e) Ö participer Ö la rÇunion qui se tiendra le %1, %2 Ö %3.;ENC=You are cordially invited to attend the meeting, which will take place on %1, %2 at %3.';
+      Text017@1028 : TextConst 'ENU=Yours sincerely,;ESM=Un saludo,;FRC=Bien Ö vous,;ENC=Yours sincerely,';
+      Text018@1031 : TextConst 'ENU=The %1 check box is not selected.;ESM=No est† seleccionada la casilla de activaci¢n %1.;FRC=La case Ö cocher %1 n''est pas sÇlectionnÇe.;ENC=The %1 check box is not selected.';
+      Text019@1032 : TextConst 'ENU=Send invitations to all Attendees with selected %1 check boxes.;ESM=Enviar invitaciones a todos los asistentes con las casillas de verificaci¢n %1 seleccionadas.;FRC=Envoyer des invitations Ö tous les participants dont les cases Ö cocher %1 sont sÇlectionnÇes.;ENC=Send invitations to all Attendees with selected %1 check boxes.';
+      Text020@1033 : TextConst 'ENU=Send invitations to Attendees who have not been sent invitations yet.;ESM=Enviar invitaciones a los asistentes a los que no se les hayan enviado todav°a.;FRC=Envoyer une invitation aux participants qui ne l''ont pas encore reáue.;ENC=Send invitations to Attendees who have not been sent invitations yet.';
+      Text021@1034 : TextConst 'ENU=Do not send invitations.;ESM=No enviar invitaciones.;FRC=Ne pas envoyer d''invitations;ENC=Do not send invitations.';
+      Text022@1035 : TextConst 'ENU=Invitations have already been sent to Attendees with selected %1 check boxes. Do you want to resend the invitations?;ESM=Ya se han enviado invitaciones a los asistentes con las casillas de verificaci¢n %1 seleccionadas. ®Desea volver a enviar las invitaciones?;FRC=Des invitations ont dÇjÖ ÇtÇ envoyÇes aux participants dont les cases Ö cocher %1 sont sÇlectionnÇes. DÇsirez-vous envoyer de nouveau les invitations?;ENC=Invitations have already been sent to Attendees with selected %1 check boxes. Do you want to resend the invitations?';
+      Text023@1036 : TextConst 'ENU=Outlook failed to send an invitation to %1.;ESM=Outlook no pudo enviar una invitaci¢n a %1.;FRC=Outlook n''a pas pu faire parvenir d''invitation Ö %1.;ENC=Outlook failed to send an invitation to %1.';
+      Text029@1042 : TextConst 'ENU=The %1 field must be filled in for to-dos assigned to a team.;ESM=Introduzca un valor en el campo %1 de las tareas asignadas a un equipo.;FRC=Le champ %1 doit àtre rempli pour les tÉches affectÇes Ö une Çquipe.;ENC=The %1 field must be filled in for to-dos assigned to a team.';
+      Text030@1043 : TextConst 'ENU=The to-dos of the %1 team members who do not belong to the %2 team will be deleted. Do you want to continue?;ESM=Se eliminar†n las tareas de los miembros del equipo %1 que no pertenezcan al equipo %2. ®Desea continuar?;FRC=Les tÉches des membres de l''Çquipe %1 qui n''appartiennent pas Ö l''Çquipe %2 seront supprimÇes. Voulez-vous continuer?;ENC=The to-dos of the %1 team members who do not belong to the %2 team will be deleted. Do you want to continue?';
+      Text032@1045 : TextConst 'ENU=To-do no. %1 will be reassigned to %2 and the corresponding salesperson to-dos for team members will be deleted. Do you want to continue?;ESM=La tarea nß %1 se reasignar† a %2 y se eliminar†n las tareas del vendedor correspondiente para todos los miembros del equipo. ®Desea continuar?;FRC=La tÉche n¯ %1 sera rÇaffectÇe Ö %2 et les tÉches de reprÇsentant correspondantes des membres de l''Çquipe seront supprimÇes. Voulez-vous continuer?;ENC=To-do no. %1 will be reassigned to %2 and the corresponding salesperson to-dos for team members will be deleted. Do you want to continue?';
+      Text033@1046 : TextConst 'ENU=To-do no. %1 will be reassigned to %2. Do you want to continue?;ESM=La tarea nß %1 se reasignar† a %2. ®Desea continuar?;FRC=La tÉche n¯ %1 sera rÇaffectÇe Ö %2. Voulez-vous continuer?;ENC=To-do no. %1 will be reassigned to %2. Do you want to continue?';
+      Text034@1047 : TextConst 'ENU=Do you want to close the to-do?;ESM=®Desea crear la tarea?;FRC=Voulez-vous fermer la tÉche?;ENC=Do you want to close the to-do?';
+      Text035@1027 : TextConst 'ENU=You must fill in either the %1 field or the %2 field.;ESM=Complete el campo %1 o el campo %2.;FRC=Vous ne pouvez pas modifier le %1 de la liste de tÉches du participant. Vous pouvez modifier le %2 Ö partir de la liste de tÉches de l''organisateur.;ENC=You must fill in either the %1 field or the %2 field.';
+      Text036@1049 : TextConst 'ENU=Creating to-dos...\;ESM=Creando tareas...\;FRC=CrÇation de tÉches...\;ENC=Creating to-dos...\';
+      Text037@1048 : TextConst 'ENU=To-do No. #1##############\;ESM=Tarea nß  #1##############\;FRC=TÉche n¯  #1##############\;ENC=To-do No. #1##############\';
+      Text038@1044 : TextConst 'ENU=Status    @2@@@@@@@@@@@@@@;ESM=Estado    @2@@@@@@@@@@@@@@;FRC=êtat      @2@@@@@@@@@@@@@@;ENC=Status    @2@@@@@@@@@@@@@@';
+      Text039@1051 : TextConst 'ENU=To-do no. %1 is closed and will be reopened. The to-dos of the %2 team members who do not belong to the %3 team will be deleted. Do you want to continue?;ESM=La tarea %1 est† cerrada y se reabrir†. Se eliminar†n las tareas de los miembros del equipo %2 que no pertenezcan al equipo %3. ®Desea continuar?;FRC=La tÉche n¯ %1 est fermÇe et sera ouverte Ö nouveau. Les tÉches des membres de l''Çquipe %2 qui n''appartiennent pas Ö l''Çquipe %3 seront supprimÇes. DÇsirez-vous continuer?;ENC=To-do no. %1 is closed and will be reopened. The to-dos of the %2 team members who do not belong to the %3 team will be deleted. Do you want to continue?';
+      Text040@1052 : TextConst 'ENU=To-do no. %1 is closed and will be reopened. It will be reassigned to %2, and the corresponding salesperson to-dos for team members will be deleted. Do you want to continue?;ESM=La tarea %1 est† cerrada y se reabrir† y reasignar† a %2, y se eliminar†n las tareas del vendedor correspondiente para todos los miembros del equipo. ®Desea continuar?;FRC="La tÉche n¯ %1 est fermÇe et sera ouverte Ö nouveau. Elle sera rÇaffectÇe Ö %2; les tÉches de reprÇsentant correspondantes des membres de l''Çquipe seront supprimÇes. DÇsirez-vous continuer?";ENC=To-do no. %1 is closed and will be reopened. It will be reassigned to %2, and the corresponding salesperson to-dos for team members will be deleted. Do you want to continue?';
+      Text041@1053 : TextConst 'ENU=To-do no. %1 is closed. It will be reopened and reassigned to %2. Do you want to continue?;ESM=La tarea nß %1 est† cerrada y se reabrir† y reasignar† a %2. ®Desea continuar?;FRC=La tÉche n¯ %1 est fermÇe. Elle sera rÇouverte et rÇaffectÇe Ö %2. Voulez-vous continuer?;ENC=To-do no. %1 is closed. It will be reopened and reassigned to %2. Do you want to continue?';
+      Text042@1054 : TextConst 'ENU=To-do no. %1 is closed. Do you want to reopen it and assign to the %2 team?;ESM=La tarea nß %1 est† cerrada. ®Desea reabrirla y reasignarla al equipo a %2?;FRC=La tÉche n¯ %1 est fermÇe. Voulez-vous la rouvrir et l''affecter Ö l''Çquipe %2?;ENC=To-do no. %1 is closed. Do you want to reopen it and assign to the %2 team?';
+      SalespersonFilter@1058 : Code[10];
+      ContactFilter@1057 : Code[20];
+      Text043@1068 : TextConst 'ENU=You must fill in the %1 field.;ESM=Debe rellenar el campo %1.;FRC=Vous devez remplir le champ %1.;ENC=You must fill in the %1 field.';
+      Text047@1072 : TextConst 'ENU=You cannot use the wizard to create an attachment. You can create an attachment in the Interaction Template window.;ESM=No puede utilizar el asistente para crear un anexo. Puede crear anexos en la ventana Plantilla interacci¢n.;FRC=Vous ne pouvez pas utiliser l''assistant pour crÇer une piäce jointe. Vous pouvez crÇer une piäce jointe dans le fenàtre de modäle d''interaction.;ENC=You cannot use the wizard to create an attachment. You can create an attachment in the Interaction Template window.';
+      Text051@1077 : TextConst 'ENU=Activity Code;ESM=C¢d. actividad;FRC=Code activitÇ;ENC=Activity Code';
+      Text053@1076 : TextConst 'ENU=You must specify %1 or %2.;ESM=Se debe especificar %1 o %2.;FRC=Vous devez spÇcifier %1 ou %2.;ENC=You must specify %1 or %2.';
+      Text056@1073 : TextConst 'ENU=Activity %1 contains to-dos of type Meeting. You must fill in the Meeting Organizer field.;ESM=La actividad %1 contiene tareas de tipo Reuni¢n. Introduzca un valor en el campo Organizador de la reuni¢n.;FRC=L''activitÇ %1 contient des tÉches de type RÇunion. Vous devez remplir le champ Organisateur de rÇunions.;ENC=Activity %1 contains to-dos of type Meeting. You must fill in the Meeting Organizer field.';
+      Text065@1083 : TextConst 'ENU=You must specify the to-do organizer.;ESM=Debe indicar el organizador de la tarea.;FRC=Vous devez spÇcifier l''organisateur de tÉches.;ENC=You must specify the to-do organizer.';
+      Text067@1019 : TextConst 'ENU=The %1 must contain an attachment if you want to send an invitation to an %2 of the contact type.;ESM=%1 debe contener un anexo si desea enviar una invitaci¢n a un %2 del tipo de contacto.;FRC=Le %1 doit contenir une piäce jointe si vous souhaitez envoyer une invitation Ö un %2 de type Contact.;ENC=The %1 must contain an attachment if you want to send an invitation to an %2 of the contact type.';
+      Text068@1080 : TextConst 'ENU=You cannot select the Send invitation(s) on Finish check box, because none of the %1 check boxes are selected.;ESM=No puede seleccionar Enviar invitaci¢n/es cuando pulse Terminar, porque ninguna de las casillas %1 est†n seleccionadas.;FRC=Vous ne pouvez pas cocher la case Envoyer l''/les invitation(s) en cliquant sur Terminer, puisque aucune des cases Ö cocher %1 ne sont sÇlectionnÇes.;ENC=You cannot select the Send invitation(s) on Finish check box, because none of the %1 check boxes are selected.';
+      RunFormCode@1020 : Boolean;
+
+    PROCEDURE CreateToDoFromToDo@1(VAR ToDo@1000 : Record 5080);
+    VAR
+      Cont@1001 : Record 5050;
+      SalesPurchPerson@1002 : Record 13;
+      Team@1003 : Record 5083;
+      Campaign@1004 : Record 5071;
+      Opp@1005 : Record 5092;
+      SegHeader@1006 : Record 5076;
+    BEGIN
+      DELETEALL;
+      INIT;
+      IF ToDo.GETFILTER("Contact Company No.") <> '' THEN
+        IF Cont.GET(ToDo.GETRANGEMIN("Contact Company No.")) THEN BEGIN
+          VALIDATE("Contact No.",Cont."No.");
+          "Salesperson Code" := Cont."Salesperson Code";
+          SETRANGE("Contact Company No.","Contact No.");
+        END;
+      IF Cont.GET(ToDo.GETFILTER("Contact No.")) THEN BEGIN
+        VALIDATE("Contact No.",Cont."No.");
+        "Salesperson Code" := Cont."Salesperson Code";
+        SETRANGE("Contact No.","Contact No.");
+      END;
+      IF SalesPurchPerson.GET(ToDo.GETFILTER("Salesperson Code")) THEN BEGIN
+        "Salesperson Code" := SalesPurchPerson.Code;
+        SETRANGE("Salesperson Code","Salesperson Code");
+      END;
+      IF Team.GET(ToDo.GETFILTER("Team Code")) THEN BEGIN
+        VALIDATE("Team Code",Team.Code);
+        SETRANGE("Team Code","Team Code");
+      END;
+      IF Campaign.GET(ToDo.GETFILTER("Campaign No.")) THEN BEGIN
+        "Campaign No." := Campaign."No.";
+        "Salesperson Code" := Campaign."Salesperson Code";
+        SETRANGE("Campaign No.","Campaign No.");
+      END;
+      IF Opp.GET(ToDo.GETFILTER("Opportunity No.")) THEN BEGIN
+        VALIDATE("Opportunity No.",Opp."No.");
+        "Contact No." := Opp."Contact No.";
+        "Contact Company No." := Opp."Contact Company No.";
+        "Campaign No." := Opp."Campaign No.";
+        "Salesperson Code" := Opp."Salesperson Code";
+        SETRANGE("Opportunity No.","Opportunity No.");
+      END;
+      IF SegHeader.GET(ToDo.GETFILTER("Segment No.")) THEN BEGIN
+        "Segment No." := SegHeader."No.";
+        "Campaign No." := SegHeader."Campaign No.";
+        "Salesperson Code" := SegHeader."Salesperson Code";
+        SETRANGE("Segment No.","Segment No.");
+      END;
+
+      StartWizard;
+    END;
+
+    PROCEDURE CreateToDoFromSalesHeader@50(SalesHeader@1000 : Record 36);
+    BEGIN
+      DELETEALL;
+      INIT;
+      VALIDATE("Contact No.",SalesHeader."Sell-to Contact No.");
+      SETRANGE("Contact No.",SalesHeader."Sell-to Contact No.");
+      IF SalesHeader."Salesperson Code" <> '' THEN BEGIN
+        "Salesperson Code" := SalesHeader."Salesperson Code";
+        SETRANGE("Salesperson Code","Salesperson Code");
+      END;
+      IF SalesHeader."Campaign No." <> '' THEN BEGIN
+        "Campaign No." := SalesHeader."Campaign No.";
+        SETRANGE("Campaign No.","Campaign No.");
+      END;
+
+      StartWizard;
+    END;
+
+    PROCEDURE CreateToDoFromInteractLogEntry@51(InteractionLogEntry@1000 : Record 5065);
+    BEGIN
+      INIT;
+      VALIDATE("Contact No.",InteractionLogEntry."Contact No.");
+      "Salesperson Code" := InteractionLogEntry."Salesperson Code";
+      "Campaign No." := InteractionLogEntry."Campaign No.";
+
+      StartWizard;
+    END;
+
+    LOCAL PROCEDURE CreateInteraction@10();
+    VAR
+      SegLine@1000 : TEMPORARY Record 5077;
+    BEGIN
+      SegLine.CreateInteractionFromToDo(Rec);
+    END;
+
+    LOCAL PROCEDURE CreateRecurringTodo@4();
+    VAR
+      RMCommentLine@1000 : Record 5061;
+      ToDo2@1002 : Record 5080;
+      TodoInteractLanguage@1003 : Record 5196;
+      Attachment@1004 : Record 5062;
+      Attendee@1005 : Record 5199;
+      AttendeeTemp@1007 : TEMPORARY Record 5199;
+      RMCommentLine3@1006 : Record 5061;
+    BEGIN
+      TESTFIELD("Recurring Date Interval");
+      IF "Calc. Due Date From" = "Calc. Due Date From"::" " THEN
+        ERROR(
+          STRSUBSTNO(Text000,FIELDCAPTION("Calc. Due Date From")));
+
+      ToDo2 := Rec;
+      WITH ToDo2 DO BEGIN
+        Status := 0;
+        Closed := FALSE;
+        Canceled := FALSE;
+        "Date Closed" := 0D;
+        "Completed By" := '';
+        CASE "Calc. Due Date From" OF
+          "Calc. Due Date From"::"Due Date":
+            Date := CALCDATE("Recurring Date Interval",Date);
+          "Calc. Due Date From"::"Closing Date":
+            Date := CALCDATE("Recurring Date Interval",TODAY);
+        END;
+        GetEndDateTime;
+
+        WITH RMCommentLine3 DO BEGIN
+          RESET;
+          SETRANGE("Table Name",RMCommentLine."Table Name"::"To-do");
+          SETRANGE("No.","No.");
+          SETRANGE("Sub No.",0);
+        END;
+
+        TodoInteractLanguage.SETRANGE("To-do No.","No.");
+
+        IF Type = Type::Meeting THEN BEGIN
+          Attendee.SETRANGE("To-do No.","No.");
+          GET(InsertTodoAndRelatedData(
+              ToDo2,TodoInteractLanguage,Attachment,Attendee,RMCommentLine3));
+        END ELSE BEGIN
+          CreateAttendeesFromTodo(AttendeeTemp,ToDo2,'');
+          GET(InsertTodoAndRelatedData(
+              ToDo2,TodoInteractLanguage,Attachment,AttendeeTemp,RMCommentLine3));
+        END;
+      END;
+
+      MESSAGE(
+        STRSUBSTNO(Text001,
+          TABLECAPTION,ToDo2."Organizer To-do No.",TABLECAPTION,"No."));
+    END;
+
+    PROCEDURE InsertTodo@2(Todo2@1000 : Record 5080;VAR RMCommentLineTmp@1004 : Record 5061;VAR AttendeeTemp@1005 : Record 5199;VAR TodoInteractLanguageTemp@1007 : Record 5196;VAR AttachmentTemp@1008 : Record 5062;ActivityCode@1001 : Code[10];Deliver@1010 : Boolean);
+    VAR
+      SegHeader@1002 : Record 5076;
+      SegLine@1003 : Record 5077;
+      ConfirmText@1006 : Text[250];
+    BEGIN
+      IF SegHeader.GET(GETFILTER("Segment No.")) THEN BEGIN
+        SegLine.SETRANGE("Segment No.",SegHeader."No.");
+        SegLine.SETFILTER("Contact No.",'<>%1','');
+        IF SegLine.FINDFIRST THEN BEGIN
+          IF ActivityCode = '' THEN
+            ConfirmText := Text002
+          ELSE
+            ConfirmText := Text003;
+          IF CONFIRM(ConfirmText,TRUE,SegHeader."No.") THEN BEGIN
+            IF ActivityCode = '' THEN BEGIN
+              Todo2.GET(InsertTodoAndRelatedData(
+                  Todo2,TodoInteractLanguageTemp,
+                  AttachmentTemp,AttendeeTemp,RMCommentLineTmp));
+              IF (Todo2.Type = Type::Meeting) AND Deliver THEN
+                SendMAPIInvitations(Todo2,TRUE);
+            END ELSE
+              InsertActivityTodo(Todo2,ActivityCode,AttendeeTemp);
+          END;
+        END;
+      END ELSE BEGIN
+        IF ActivityCode = '' THEN BEGIN
+          Todo2.GET(InsertTodoAndRelatedData(
+              Todo2,TodoInteractLanguageTemp,
+              AttachmentTemp,AttendeeTemp,RMCommentLineTmp));
+          IF (Todo2.Type = Type::Meeting) AND Deliver THEN
+            SendMAPIInvitations(Todo2,TRUE);
+        END ELSE
+          InsertActivityTodo(Todo2,ActivityCode,AttendeeTemp);
+      END;
+
+      IF (Todo2.Type = Todo2.Type::Meeting) AND
+         Todo2.GET(Todo2."Organizer To-do No.")
+      THEN
+        Todo2.ArrangeOrganizerAttendee
+    END;
+
+    LOCAL PROCEDURE InsertTodoAndRelatedData@14(Todo2@1000 : Record 5080;VAR TodoInteractLanguage@1001 : Record 5196;VAR Attachment@1002 : Record 5062;VAR Attendee@1003 : Record 5199;VAR RMCommentLine@1004 : Record 5061) TodoNo : Code[20];
+    VAR
+      TodoInteractLanguage2@1005 : Record 5196;
+      AttendeeTemp@1006 : TEMPORARY Record 5199;
+      Todo@1007 : Record 5080;
+      TeamSalesperson@1008 : Record 5084;
+      Attendee2@1010 : Record 5199;
+      SalespersonCode@1009 : Code[10];
+      Window@1013 : Dialog;
+      AttendeeCounter@1017 : Integer;
+      TotalAttendees@1018 : Integer;
+      CommentLineInserted@1019 : Boolean;
+    BEGIN
+      IF Todo2."Team Code" = '' THEN
+        Todo2."System To-do Type" := "System To-do Type"::Organizer
+      ELSE
+        Todo2."System To-do Type" := "System To-do Type"::Team;
+      IF Todo2.Type = Type::Meeting THEN BEGIN
+        SalespersonCode := Todo2."Salesperson Code";
+        CLEAR(Todo2."No.");
+        IF Todo2."System To-do Type" = Todo2."System To-do Type"::Team THEN
+          Todo2."Salesperson Code" := '';
+        Todo2.INSERT(TRUE);
+
+        CreateTodoInteractLanguages(TodoInteractLanguage,Attachment,Todo2."No.");
+        IF TodoInteractLanguage2.GET(Todo2."No.",Todo2."Language Code") THEN BEGIN
+          Todo2."Attachment No." := TodoInteractLanguage2."Attachment No.";
+          Todo2.MODIFY;
+        END;
+
+        IF "Team Code" <> '' THEN BEGIN
+          Attendee.SETCURRENTKEY("To-do No.","Attendance Type");
+          Attendee.SETRANGE("Attendance Type",Attendee."Attendance Type"::"To-do Organizer");
+          IF Attendee.FIND('-') THEN BEGIN
+            CreateSubTodo(Attendee,Todo2);
+            Attendee2.INIT;
+            Attendee2 := Attendee;
+            Attendee2."To-do No." := Todo2."No.";
+            Attendee2.INSERT;
+          END;
+          Attendee.SETFILTER("Attendance Type",'<>%1',Attendee."Attendance Type"::"To-do Organizer")
+        END;
+        IF Attendee.FIND('-') THEN
+          REPEAT
+            CreateSubTodo(Attendee,Todo2);
+            Attendee2.INIT;
+            Attendee2 := Attendee;
+            Attendee2."To-do No." := Todo2."No.";
+            Attendee2.INSERT
+          UNTIL Attendee.NEXT = 0;
+
+        Todo2.GetMeetingOrganizerTodo(Todo);
+        TodoNo := Todo."No."
+      END ELSE
+        IF Todo2."Segment No." = '' THEN BEGIN
+          CLEAR(Todo2."No.");
+
+          Todo2.INSERT(TRUE);
+          TodoNo := Todo2."No.";
+          IF Todo2."System To-do Type" = "System To-do Type"::Team THEN BEGIN
+            TeamSalesperson.SETRANGE("Team Code",Todo2."Team Code");
+            IF TeamSalesperson.FIND('-') THEN
+              REPEAT
+                AttendeeTemp.CreateAttendee(
+                  AttendeeTemp,
+                  Todo2."No.",10000,
+                  AttendeeTemp."Attendance Type"::"To-do Organizer",
+                  AttendeeTemp."Attendee Type"::Salesperson,
+                  TeamSalesperson."Salesperson Code",
+                  TRUE);
+                CreateSubTodo(AttendeeTemp,Todo2);
+                AttendeeTemp.DELETEALL
+              UNTIL TeamSalesperson.NEXT = 0
+          END;
+          IF Attendee.FIND('-') THEN
+            REPEAT
+              CreateSubTodo(Attendee,Todo2);
+            UNTIL Attendee.NEXT = 0;
+        END ELSE
+          IF Attendee.FIND('-') THEN BEGIN
+            Window.OPEN(Text036 + Text037 + Text038);
+            TotalAttendees := Attendee.COUNT;
+            REPEAT
+              IF Todo2."System To-do Type" = "System To-do Type"::Team THEN BEGIN
+                Todo.INIT;
+                Todo := Todo2;
+                CLEAR(Todo."No.");
+                FillSalesPersonContact(Todo,Attendee);
+                Todo.INSERT(TRUE);
+                TodoNo := Todo."No.";
+                AttendeeTemp.INIT;
+                AttendeeTemp := Attendee;
+                AttendeeTemp.INSERT;
+                CreateSubTodo(AttendeeTemp,Todo);
+                AttendeeTemp.DELETEALL;
+                TeamSalesperson.SETRANGE("Team Code",Todo."Team Code");
+                IF TeamSalesperson.FIND('-') THEN
+                  REPEAT
+                    AttendeeTemp.CreateAttendee(
+                      AttendeeTemp,
+                      "No.",10000,
+                      AttendeeTemp."Attendance Type"::"To-do Organizer",
+                      AttendeeTemp."Attendee Type"::Salesperson,
+                      TeamSalesperson."Salesperson Code",
+                      TRUE);
+                    CreateSubTodo(AttendeeTemp,Todo);
+                    AttendeeTemp.DELETEALL
+                  UNTIL TeamSalesperson.NEXT = 0
+              END ELSE BEGIN
+                Todo.INIT;
+                Todo := Todo2;
+                CLEAR(Todo."No.");
+                Todo."System To-do Type" := "System To-do Type"::Organizer;
+                FillSalesPersonContact(Todo,Attendee);
+                Todo.INSERT(TRUE);
+                TodoNo := Todo."No.";
+
+                AttendeeTemp.INIT;
+                AttendeeTemp := Attendee;
+                AttendeeTemp.INSERT;
+                CreateSubTodo(AttendeeTemp,Todo);
+              END;
+              AttendeeCounter := AttendeeCounter + 1;
+              CreateCommentLines(RMCommentLine,TodoNo);
+              Window.UPDATE(1,Todo."Organizer To-do No.");
+              Window.UPDATE(2,ROUND(AttendeeCounter / TotalAttendees * 10000,1));
+              COMMIT
+            UNTIL Attendee.NEXT = 0;
+            Window.CLOSE;
+            CommentLineInserted := TRUE;
+          END;
+      IF NOT CommentLineInserted THEN
+        CreateCommentLines(RMCommentLine,Todo2."No.");
+    END;
+
+    PROCEDURE CreateSubTodo@15(VAR Attendee@1001 : Record 5199;Todo@1000 : Record 5080) TodoNo : Code[20];
+    VAR
+      Todo2@1002 : Record 5080;
+    BEGIN
+      Todo2.INIT;
+      Todo2.TRANSFERFIELDS(Todo,FALSE);
+
+      IF Attendee."Attendance Type" <> Attendee."Attendance Type"::"To-do Organizer" THEN BEGIN
+        IF Attendee."Attendee Type" = Attendee."Attendee Type"::Salesperson THEN BEGIN
+          Todo2.VALIDATE("Salesperson Code",Attendee."Attendee No.");
+          Todo2."Organizer To-do No." := Todo."No.";
+          Todo2."System To-do Type" := "System To-do Type"::"Salesperson Attendee";
+        END ELSE BEGIN
+          Todo2.VALIDATE("Salesperson Code",Todo."Salesperson Code");
+          Todo2.VALIDATE("Team Code",Todo."Team Code");
+          Todo2.VALIDATE("Contact No.",Attendee."Attendee No.");
+          Todo2."Organizer To-do No." := Todo."No.";
+          Todo2."System To-do Type" := "System To-do Type"::"Contact Attendee";
+        END;
+        Todo2.INSERT(TRUE)
+      END ELSE
+        IF Todo."Team Code" <> '' THEN BEGIN
+          Todo2."System To-do Type" := Todo2."System To-do Type"::Organizer;
+          Todo2.VALIDATE("Salesperson Code",Attendee."Attendee No.");
+
+          Todo2.INSERT(TRUE);
+        END;
+      EXIT(Todo2."No.")
+    END;
+
+    PROCEDURE DeleteAttendeeTodo@20(Attendee@1000 : Record 5199);
+    VAR
+      Todo@1001 : Record 5080;
+    BEGIN
+      IF FindAttendeeTodo(Todo,Attendee) THEN
+        Todo.DELETE;
+    END;
+
+    PROCEDURE FindAttendeeTodo@25(VAR Todo@1000 : Record 5080;Attendee@1001 : Record 5199) : Boolean;
+    BEGIN
+      Todo.RESET;
+      Todo.SETCURRENTKEY("Organizer To-do No.","System To-do Type");
+      Todo.SETRANGE("Organizer To-do No.",Attendee."To-do No.");
+      IF Attendee."Attendee Type" = Attendee."Attendee Type"::Contact THEN BEGIN
+        Todo.SETRANGE("System To-do Type",Todo."System To-do Type"::"Contact Attendee");
+        Todo.SETRANGE("Contact No.",Attendee."Attendee No.")
+      END ELSE BEGIN
+        Todo.SETRANGE("System To-do Type",Todo."System To-do Type"::"Salesperson Attendee");
+        Todo.SETRANGE("Salesperson Code",Attendee."Attendee No.");
+      END;
+      EXIT(Todo.FIND('-'));
+    END;
+
+    LOCAL PROCEDURE CreateAttendeesFromTodo@19(VAR Attendee@1000 : Record 5199;Todo@1001 : Record 5080;TeamMeetingOrganizer@1008 : Code[10]);
+    VAR
+      Cont@1002 : Record 5050;
+      Salesperson@1003 : Record 13;
+      SegHeader@1004 : Record 5076;
+      SegLine@1005 : Record 5077;
+      Opp@1006 : Record 5092;
+      AttendeeLineNo@1007 : Integer;
+    BEGIN
+      IF Todo."Segment No." = '' THEN BEGIN
+        IF Todo.Type = Type::Meeting THEN
+          IF Todo."Team Code" = '' THEN BEGIN
+            IF Salesperson.GET(Todo."Salesperson Code") THEN
+              Attendee.CreateAttendee(
+                Attendee,
+                Todo."No.",10000,Attendee."Attendance Type"::"To-do Organizer",
+                Attendee."Attendee Type"::Salesperson,
+                Salesperson.Code,TRUE)
+          END ELSE
+            Todo.CreateAttendeesFromTeam(
+              Attendee,
+              TeamMeetingOrganizer);
+
+        IF Attendee.FIND('+') THEN
+          AttendeeLineNo := Attendee."Line No." + 10000
+        ELSE
+          AttendeeLineNo := 10000;
+
+        IF Cont.GET(Todo."Contact No.") THEN
+          Attendee.CreateAttendee(
+            Attendee,
+            Todo."No.",AttendeeLineNo,Attendee."Attendance Type"::Required,
+            Attendee."Attendee Type"::Contact,
+            Cont."No.",Cont."E-Mail" <> '');
+      END ELSE BEGIN
+        IF Todo."Team Code" = '' THEN BEGIN
+          IF Salesperson.GET(Todo."Salesperson Code") THEN
+            Attendee.CreateAttendee(
+              Attendee,
+              Todo."No.",10000,Attendee."Attendance Type"::"To-do Organizer",
+              Attendee."Attendee Type"::Salesperson,
+              Salesperson.Code,TRUE);
+        END ELSE
+          Todo.CreateAttendeesFromTeam(Attendee,TransformFromCode20ToCode10(Todo."Team Meeting Organizer"));
+
+        IF Attendee.FIND('+') THEN
+          AttendeeLineNo := Attendee."Line No." + 10000
+        ELSE
+          AttendeeLineNo := 10000;
+
+        IF Opp.GET(Todo."Opportunity No.") THEN
+          Attendee.CreateAttendee(
+            Attendee,
+            Todo."No.",AttendeeLineNo,Attendee."Attendance Type"::Required,
+            Attendee."Attendee Type"::Contact,
+            Opp."Contact No.",
+            (Cont.GET(Opp."Contact No.") AND
+             (Cont."E-Mail" <> '')))
+        ELSE
+          IF SegHeader.GET(Todo."Segment No.") THEN BEGIN
+            SegLine.SETRANGE("Segment No.",Todo."Segment No.");
+            SegLine.SETFILTER("Contact No.",'=%1',Todo."Contact No.");
+            IF SegLine.FIND('-') THEN
+              REPEAT
+                Attendee.CreateAttendee(
+                  Attendee,
+                  Todo."No.",AttendeeLineNo,Attendee."Attendance Type"::Required,
+                  Attendee."Attendee Type"::Contact,
+                  SegLine."Contact No.",
+                  (Cont.GET(SegLine."Contact No.") AND
+                   (Cont."E-Mail" <> '')));
+                AttendeeLineNo := AttendeeLineNo + 10000;
+              UNTIL SegLine.NEXT = 0;
+          END;
+      END;
+    END;
+
+    LOCAL PROCEDURE CreateTodoInteractLanguages@17(VAR TodoInteractLanguage@1000 : Record 5196;VAR Attachment@1001 : Record 5062;TodoNo@1002 : Code[20]);
+    VAR
+      TodoInteractLanguage2@1003 : Record 5196;
+      Attachment2@1004 : Record 5062;
+      MarketingSetup@1006 : Record 5079;
+      AttachmentManagement@1005 : Codeunit 5052;
+      FileName@1007 : Text;
+    BEGIN
+      IF TodoInteractLanguage.FIND('-') THEN
+        REPEAT
+          TodoInteractLanguage2.INIT;
+          TodoInteractLanguage2."To-do No." := TodoNo;
+          TodoInteractLanguage2."Language Code" := TodoInteractLanguage."Language Code";
+          TodoInteractLanguage2.Description := TodoInteractLanguage.Description;
+          IF TodoInteractLanguage."Attachment No." <> 0 THEN BEGIN
+            Attachment.GET(TodoInteractLanguage."Attachment No.");
+            Attachment2.GET(AttachmentManagement.InsertAttachment(0));
+            Attachment2.TRANSFERFIELDS(Attachment,FALSE);
+            Attachment.CALCFIELDS(Attachment);
+            Attachment2.Attachment := Attachment.Attachment;
+            Attachment2.WizSaveAttachment;
+            Attachment2.MODIFY(TRUE);
+            MarketingSetup.GET;
+            IF MarketingSetup."Attachment Storage Type" = MarketingSetup."Attachment Storage Type"::"Disk File" THEN
+              IF Attachment2."No." <> 0 THEN BEGIN
+                FileName := Attachment2.ConstDiskFileName;
+                IF FileName <> '' THEN
+                  Attachment.ExportAttachmentToServerFile(FileName);
+              END;
+            TodoInteractLanguage2."Attachment No." := Attachment2."No.";
+          END ELSE
+            TodoInteractLanguage2."Attachment No." := 0;
+          TodoInteractLanguage2.INSERT;
+        UNTIL TodoInteractLanguage.NEXT = 0;
+    END;
+
+    PROCEDURE AssignActivityFromToDo@9(VAR ToDo@1007 : Record 5080);
+    VAR
+      Cont@1001 : Record 5050;
+      SalesPurchPerson@1002 : Record 13;
+      Team@1003 : Record 5083;
+      Campaign@1004 : Record 5071;
+      SegHeader@1005 : Record 5076;
+      Opp@1006 : Record 5092;
+    BEGIN
+      INIT;
+
+      IF Cont.GET(ToDo.GETFILTER("Contact Company No.")) THEN BEGIN
+        VALIDATE("Contact No.",Cont."No.");
+        "Salesperson Code" := Cont."Salesperson Code";
+        SETRANGE("Contact Company No.","Contact No.");
+      END;
+
+      IF Cont.GET(ToDo.GETFILTER("Contact No.")) THEN BEGIN
+        VALIDATE("Contact No.",Cont."No.");
+        "Salesperson Code" := Cont."Salesperson Code";
+        SETRANGE("Contact No.","Contact No.");
+      END;
+
+      IF SegHeader.GET(ToDo.GETFILTER("Segment No.")) THEN BEGIN
+        VALIDATE("Segment No.",SegHeader."No.");
+        "Campaign No." := SegHeader."Campaign No.";
+        "Salesperson Code" := SegHeader."Salesperson Code";
+        SETRANGE("Segment No.","Segment No.");
+      END;
+
+      IF SalesPurchPerson.GET(ToDo.GETFILTER("Salesperson Code")) THEN BEGIN
+        "Salesperson Code" := SalesPurchPerson.Code;
+        SETRANGE("Salesperson Code","Salesperson Code");
+      END;
+
+      IF Team.GET(ToDo.GETFILTER("Team Code")) THEN BEGIN
+        "Team Code" := Team.Code;
+        SETRANGE("Team Code","Team Code");
+      END;
+
+      IF Campaign.GET(ToDo.GETFILTER("Campaign No.")) THEN BEGIN
+        "Campaign No." := Campaign."No.";
+        "Salesperson Code" := Campaign."Salesperson Code";
+        SETRANGE("Campaign No.","Campaign No.");
+      END;
+
+      IF Opp.GET(ToDo.GETFILTER("Opportunity No.")) THEN BEGIN
+        VALIDATE("Opportunity No.",Opp."No.");
+        "Contact No." := Opp."Contact No.";
+        "Contact Company No." := Opp."Contact Company No.";
+        "Campaign No." := Opp."Campaign No.";
+        "Salesperson Code" := Opp."Salesperson Code";
+        SETRANGE("Opportunity No.","Opportunity No.");
+      END;
+
+      StartWizard2;
+    END;
+
+    LOCAL PROCEDURE InsertActivityTodo@3(Todo2@1000 : Record 5080;ActivityCode@1001 : Code[10];VAR Attendee@1004 : Record 5199);
+    VAR
+      ActivityStep@1002 : Record 5082;
+      TodoDate@1003 : Date;
+    BEGIN
+      TodoDate := Todo2.Date;
+      ActivityStep.SETRANGE("Activity Code",ActivityCode);
+      IF ActivityStep.FIND('-') THEN BEGIN
+        REPEAT
+          InsertActivityStepTodo(Todo2,ActivityStep,TodoDate,Attendee);
+        UNTIL ActivityStep.NEXT = 0;
+      END ELSE
+        InsertActivityStepTodo(Todo2,ActivityStep,TodoDate,Attendee);
+    END;
+
+    LOCAL PROCEDURE InsertActivityStepTodo@22(Todo2@1010 : Record 5080;ActivityStep@1009 : Record 5082;TodoDate@1012 : Date;VAR Attendee2@1015 : Record 5199) TodoNo : Code[20];
+    VAR
+      TodoTemp@1011 : TEMPORARY Record 5080;
+      InteractionTemplateSetup@1008 : Record 5122;
+      InteractionTemplate@1007 : Record 5064;
+      TodoInteractionLanguage@1006 : TEMPORARY Record 5196;
+      Attachment@1005 : TEMPORARY Record 5062;
+      AttendeeTemp@1004 : TEMPORARY Record 5199;
+      RMCommentLine@1003 : TEMPORARY Record 5061;
+    BEGIN
+      TodoTemp.INIT;
+      TodoTemp := Todo2;
+      TodoTemp.INSERT;
+      IF NOT ActivityStep.ISEMPTY THEN BEGIN
+        TodoTemp.Type := ActivityStep.Type;
+        TodoTemp.Priority := ActivityStep.Priority;
+        TodoTemp.Description := ActivityStep.Description;
+        TodoTemp.Date := CALCDATE(ActivityStep."Date Formula",TodoDate);
+      END;
+
+      IF TodoTemp.Type = Type::Meeting THEN BEGIN
+        IF NOT Attendee2.ISEMPTY THEN BEGIN
+          Attendee2.SETRANGE("Attendance Type",Attendee2."Attendance Type"::"To-do Organizer");
+          Attendee2.FIND('-')
+        END;
+        AttendeeTemp.DELETEALL;
+        TodoTemp.VALIDATE("All Day Event",TRUE);
+
+        InteractionTemplateSetup.GET;
+        IF (InteractionTemplateSetup."Meeting Invitation" <> '') AND
+           InteractionTemplate.GET(InteractionTemplateSetup."Meeting Invitation")
+        THEN
+          UpdateInteractionTemplate(
+            TodoTemp,TodoInteractionLanguage,Attachment,InteractionTemplate.Code,TRUE);
+
+        CreateAttendeesFromTodo(AttendeeTemp,TodoTemp,Attendee2."Attendee No.");
+
+        TodoTemp.VALIDATE("Contact No.",'');
+
+        TodoNo := InsertTodoAndRelatedData(
+            TodoTemp,TodoInteractionLanguage,
+            Attachment,AttendeeTemp,RMCommentLine);
+      END ELSE BEGIN
+        AttendeeTemp.DELETEALL;
+        CreateAttendeesFromTodo(AttendeeTemp,TodoTemp,'');
+
+        InsertTodoAndRelatedData(
+          TodoTemp,TodoInteractionLanguage,
+          Attachment,AttendeeTemp,RMCommentLine);
+      END;
+      TodoTemp.DELETE;
+    END;
+
+    PROCEDURE CancelOpenTodos@6(OpportunityNo@1000 : Code[20]);
+    VAR
+      OldTodo@1001 : Record 5080;
+      OldTodo2@1002 : Record 5080;
+    BEGIN
+      IF OpportunityNo = '' THEN
+        EXIT;
+
+      OldTodo.RESET;
+      OldTodo.SETCURRENTKEY("Opportunity No.");
+      OldTodo.SETRANGE("Opportunity No.",OpportunityNo);
+      OldTodo.SETRANGE(Closed,FALSE);
+      OldTodo.SETRANGE(Canceled,FALSE);
+
+      IF OldTodo.FIND('-') THEN
+        REPEAT
+          OldTodo2.GET(OldTodo."No.");
+          OldTodo2.Recurring := FALSE;
+          OldTodo2.VALIDATE(Canceled,TRUE);
+          OldTodo2.MODIFY;
+        UNTIL OldTodo.NEXT = 0;
+    END;
+
+    LOCAL PROCEDURE CreateCommentLines@7(VAR RMCommentLineTmp@1001 : Record 5061;TodoNo@1000 : Code[20]);
+    BEGIN
+      IF RMCommentLineTmp.FIND('-') THEN
+        REPEAT
+          RMCommentLine.INIT;
+          RMCommentLine := RMCommentLineTmp;
+          RMCommentLine."No." := TodoNo;
+          RMCommentLine.INSERT;
+        UNTIL RMCommentLineTmp.NEXT = 0;
+    END;
+
+    PROCEDURE SetDuration@16(EndingDate@1000 : Date;EndingTime@1001 : Time);
+    BEGIN
+      IF (EndingDate < 01011900D) OR (EndingDate > 12312999D) THEN
+        ERROR(Text006,01011900D,12312999D);
+      IF NOT "All Day Event" AND (Type = Type::Meeting) THEN
+        Duration := CREATEDATETIME(EndingDate,EndingTime) - CREATEDATETIME(Date,"Start Time")
+      ELSE
+        Duration := CREATEDATETIME(EndingDate + 1,0T) - CREATEDATETIME(Date,0T);
+
+      VALIDATE(Duration);
+    END;
+
+    PROCEDURE GetEndDateTime@18();
+    BEGIN
+      IF (Type <> Type::Meeting) OR "All Day Event" THEN BEGIN
+        IF "Start Time" <> 0T THEN
+          TempEndDateTime := CREATEDATETIME(Date - 1,"Start Time") + Duration
+        ELSE
+          TempEndDateTime := CREATEDATETIME(Date,0T) + Duration;
+      END ELSE
+        TempEndDateTime := CREATEDATETIME(Date,"Start Time") + Duration;
+
+      "Ending Date" := DT2DATE(TempEndDateTime);
+      "Ending Time" := DT2TIME(TempEndDateTime);
+    END;
+
+    LOCAL PROCEDURE UpdateAttendeeTodos@12(OldTodoNo@1003 : Code[20]);
+    VAR
+      Todo2@1001 : Record 5080;
+      TodoBuffer@1002 : TEMPORARY Record 5080;
+    BEGIN
+      Todo2.SETCURRENTKEY("Organizer To-do No.","System To-do Type");
+      Todo2.SETRANGE("Organizer To-do No.",OldTodoNo);
+      IF "Team Code" = '' THEN
+        Todo2.SETFILTER(
+          "System To-do Type",
+          '%1|%2',
+          Todo2."System To-do Type"::"Salesperson Attendee",
+          Todo2."System To-do Type"::"Contact Attendee")
+      ELSE
+        Todo2.SETFILTER("System To-do Type",'<>%1',Todo2."System To-do Type"::Team);
+      IF Todo2.FIND('-') THEN
+        REPEAT
+          TodoBuffer.INIT;
+          TodoBuffer.TRANSFERFIELDS(Todo2,FALSE);
+          TodoBuffer.INSERT;
+          Todo2.TRANSFERFIELDS(Rec,FALSE);
+          Todo2."System To-do Type" := TodoBuffer."System To-do Type";
+          IF Todo2."System To-do Type" = Todo2."System To-do Type"::"Contact Attendee" THEN
+            Todo2.VALIDATE("Contact No.",TodoBuffer."Contact No.")
+          ELSE
+            Todo2."Salesperson Code" := TodoBuffer."Salesperson Code";
+          IF Todo2."No." <> OldTodoNo THEN
+            Todo2.MODIFY(TRUE);
+          TodoBuffer.DELETE;
+        UNTIL Todo2.NEXT = 0
+    END;
+
+    LOCAL PROCEDURE UpdateInteractionTemplate@13(VAR Todo@1004 : Record 5080;VAR TodoInteractionLanguage@1007 : Record 5196;VAR Attachment@1001 : Record 5062;InteractTmplCode@1006 : Code[10];AttachmentTemporary@1005 : Boolean);
+    VAR
+      InteractTmpl@1002 : Record 5064;
+      InteractTemplLanguage@1008 : Record 5103;
+      Attachment2@1003 : Record 5062;
+      AttachmentManagement@1000 : Codeunit 5052;
+    BEGIN
+      Todo.MODIFY;
+      TodoInteractionLanguage.SETRANGE("To-do No.",Todo."No.");
+
+      IF AttachmentTemporary THEN
+        TodoInteractionLanguage.DELETEALL
+      ELSE
+        TodoInteractionLanguage.DELETEALL(TRUE);
+
+      Todo."Interaction Template Code" := InteractTmplCode;
+
+      IF InteractTmpl.GET(Todo."Interaction Template Code") THEN BEGIN
+        Todo."Language Code" := InteractTmpl."Language Code (Default)";
+        Todo.Subject := InteractTmpl.Description;
+        Todo."Unit Cost (LCY)" := InteractTmpl."Unit Cost (LCY)";
+        Todo."Unit Duration (Min.)" := InteractTmpl."Unit Duration (Min.)";
+        IF Todo."Campaign No." = '' THEN
+          Todo."Campaign No." := InteractTmpl."Campaign No.";
+
+        IF AttachmentTemporary THEN
+          Attachment.DELETEALL;
+
+        InteractTemplLanguage.RESET;
+        InteractTemplLanguage.SETRANGE("Interaction Template Code",Todo."Interaction Template Code");
+        IF InteractTemplLanguage.FIND('-') THEN
+          REPEAT
+            TodoInteractionLanguage.INIT;
+            TodoInteractionLanguage."To-do No." := Todo."No.";
+            TodoInteractionLanguage."Language Code" := InteractTemplLanguage."Language Code";
+            TodoInteractionLanguage.Description := InteractTemplLanguage.Description;
+            IF Attachment2.GET(InteractTemplLanguage."Attachment No.") THEN BEGIN
+              IF AttachmentTemporary THEN BEGIN
+                Attachment.INIT;
+                IF Attachment2."Storage Type" = Attachment2."Storage Type"::Embedded THEN
+                  Attachment2.CALCFIELDS(Attachment);
+                Attachment.TRANSFERFIELDS(Attachment2);
+                Attachment.INSERT;
+                TodoInteractionLanguage."Attachment No." := Attachment."No.";
+              END ELSE
+                TodoInteractionLanguage."Attachment No." :=
+                  AttachmentManagement.InsertAttachment(InteractTemplLanguage."Attachment No.");
+            END;
+            TodoInteractionLanguage.INSERT;
+          UNTIL InteractTemplLanguage.NEXT = 0
+        ELSE
+          Todo."Attachment No." := 0;
+      END ELSE BEGIN
+        Todo."Language Code" := '';
+        Todo.Subject := '';
+        Todo."Unit Cost (LCY)" := 0;
+        Todo."Unit Duration (Min.)" := 0;
+        Todo."Attachment No." := 0;
+      END;
+
+      IF TodoInteractionLanguage.GET(Todo."No.",Todo."Language Code") THEN
+        Todo."Attachment No." := TodoInteractionLanguage."Attachment No.";
+
+      Todo.MODIFY;
+    END;
+
+    PROCEDURE SendMAPIInvitations@21(Todo@1000 : Record 5080;FromWizard@1019 : Boolean);
+    VAR
+      Attendee@1001 : Record 5199;
+      Todo2@1002 : Record 5080;
+      Salesperson@1004 : Record 13;
+      Salesperson2@1013 : Record 13;
+      Mail@1012 : Codeunit 397;
+      Body@1015 : Text[260];
+      NoToSend@1014 : Integer;
+      NoNotSent@1016 : Integer;
+      Selected@1018 : Integer;
+      Options@1017 : Text[1024];
+    BEGIN
+      IF Todo."System To-do Type" <> Todo."System To-do Type"::Organizer THEN
+        Todo.GetMeetingOrganizerTodo(Todo);
+      IF Todo."Attachment No." = 0 THEN BEGIN
+        Attendee.SETRANGE("To-do No.",Todo."Organizer To-do No.");
+        Attendee.SETRANGE("Send Invitation",TRUE);
+        Attendee.SETRANGE("Attendee Type",Attendee."Attendee Type"::Contact);
+        IF Attendee.FIND('-') THEN BEGIN
+          Attendee.SETCURRENTKEY("To-do No.","Attendance Type");
+          Attendee.SETRANGE("Send Invitation");
+          Attendee.SETRANGE("Attendee Type");
+          Attendee.SETRANGE("Attendance Type",Attendee."Attendance Type"::"To-do Organizer");
+          IF Attendee.FIND('-') THEN
+            ERROR(Text067,Todo.TABLECAPTION,Attendee.TABLECAPTION)
+        END;
+        Attendee.RESET;
+      END;
+
+      Attendee.SETRANGE("To-do No.",Todo."Organizer To-do No.");
+      Attendee.SETFILTER("Attendance Type",'<>%1',Attendee."Attendance Type"::"To-do Organizer");
+      Attendee.SETRANGE("Send Invitation",TRUE);
+
+      IF NOT FromWizard THEN BEGIN
+        NoToSend := Attendee.COUNT;
+        Attendee.SETRANGE("Invitation Sent",FALSE);
+        NoNotSent := Attendee.COUNT;
+        IF NoToSend = 0 THEN
+          ERROR(Text018,Attendee.FIELDCAPTION("Send Invitation"));
+        IF (NoToSend > NoNotSent) AND (NoNotSent <> 0) THEN BEGIN
+          Options :=
+            STRSUBSTNO(
+              Text019,Attendee.FIELDCAPTION("Send Invitation")) + ',' +
+            STRSUBSTNO(
+              Text020,Attendee.FIELDCAPTION("Send Invitation")) + ',' +
+            Text021;
+          Selected := STRMENU(Options,1);
+          IF Selected IN [0,3] THEN
+            ERROR('');
+        END;
+        IF NoNotSent = 0 THEN BEGIN
+          IF NOT CONFIRM(
+               STRSUBSTNO(
+                 Text022,Attendee.FIELDCAPTION("Send Invitation")),FALSE)
+          THEN
+            ERROR('');
+        END;
+        IF NoToSend = NoNotSent THEN BEGIN
+          IF NOT CONFIRM(STRSUBSTNO(Text019,Attendee.FIELDCAPTION("Send Invitation")),FALSE) THEN
+            ERROR('');
+        END;
+
+        Attendee.RESET;
+        Attendee.SETRANGE("To-do No.",Todo."Organizer To-do No.");
+        Attendee.SETRANGE("Send Invitation",TRUE);
+        IF Selected = 2 THEN
+          Attendee.SETRANGE("Invitation Sent",FALSE);
+      END;
+
+      IF Attendee.FIND('-') THEN
+        REPEAT
+          IF FindAttendeeTodo(Todo2,Attendee) THEN
+            IF Attendee."Attendee Type" = Attendee."Attendee Type"::Salesperson
+            THEN BEGIN
+              IF Salesperson2.GET(Todo2."Salesperson Code") AND
+                 Salesperson.GET(Todo."Salesperson Code")
+              THEN BEGIN
+                Body :=
+                  STRSUBSTNO(Text015,Salesperson2.Name) + '<br/><br/>' +
+                  STRSUBSTNO(Text016,FORMAT(Todo.Date),FORMAT(Todo."Start Time"),FORMAT(Todo.Location)) + '<br/><br/>' +
+                  Text017 + '<br/>' +
+                  Salesperson.Name + '<br/>' +
+                  FORMAT(TODAY) + ' ' + FORMAT(TIME);
+                IF Mail.NewMessage(
+                     Salesperson2."E-Mail",'','',Todo2.Description,
+                     Body,'',FALSE)
+                THEN BEGIN
+                  Attendee."Invitation Sent" := TRUE;
+                  Attendee.MODIFY;
+                END ELSE
+                  MESSAGE(Text023,Attendee."Attendee Name");
+              END;
+            END ELSE BEGIN
+              LogTodoInteraction(Todo,Todo2,TRUE);
+
+              Attendee."Invitation Sent" := TRUE;
+              Attendee.MODIFY;
+            END;
+        UNTIL Attendee.NEXT = 0;
+    END;
+
+    PROCEDURE CreateAttachment@23(PageNotEditable@1000 : Boolean);
+    VAR
+      TodoInteractionLanguage@1001 : Record 5196;
+    BEGIN
+      IF "Interaction Template Code" = '' THEN
+        EXIT;
+      IF NOT TodoInteractionLanguage.GET("Organizer To-do No.","Language Code") THEN BEGIN
+        TodoInteractionLanguage.INIT;
+        TodoInteractionLanguage."To-do No." := "Organizer To-do No.";
+        TodoInteractionLanguage."Language Code" := "Language Code";
+        TodoInteractionLanguage.INSERT(TRUE);
+      END;
+      IF TodoInteractionLanguage.CreateAttachment(PageNotEditable) THEN BEGIN
+        "Attachment No." := TodoInteractionLanguage."Attachment No.";
+        MODIFY(TRUE);
+      END;
+    END;
+
+    PROCEDURE OpenAttachment@24(PageNotEditable@1000 : Boolean);
+    VAR
+      TodoInteractionLanguage@1001 : Record 5196;
+    BEGIN
+      IF "Interaction Template Code" = '' THEN
+        EXIT;
+      IF TodoInteractionLanguage.GET("Organizer To-do No.","Language Code") THEN
+        IF TodoInteractionLanguage."Attachment No." <> 0 THEN
+          TodoInteractionLanguage.OpenAttachment(PageNotEditable);
+      MODIFY(TRUE);
+    END;
+
+    PROCEDURE ImportAttachment@26();
+    VAR
+      TodoInteractionLanguage@1000 : Record 5196;
+    BEGIN
+      IF "Interaction Template Code" = '' THEN
+        EXIT;
+
+      IF NOT TodoInteractionLanguage.GET("Organizer To-do No.","Language Code") THEN BEGIN
+        TodoInteractionLanguage.INIT;
+        TodoInteractionLanguage."To-do No." := "Organizer To-do No.";
+        TodoInteractionLanguage."Language Code" := "Language Code";
+        TodoInteractionLanguage.INSERT(TRUE);
+      END;
+      TodoInteractionLanguage.ImportAttachment;
+      "Attachment No." := TodoInteractionLanguage."Attachment No.";
+      MODIFY(TRUE);
+    END;
+
+    PROCEDURE ExportAttachment@27();
+    VAR
+      TodoInteractionLanguage@1000 : Record 5196;
+    BEGIN
+      IF "Interaction Template Code" = '' THEN
+        EXIT;
+
+      IF TodoInteractionLanguage.GET("Organizer To-do No.","Language Code") THEN
+        IF TodoInteractionLanguage."Attachment No." <> 0 THEN
+          TodoInteractionLanguage.ExportAttachment;
+    END;
+
+    PROCEDURE RemoveAttachment@28(Prompt@1000 : Boolean);
+    VAR
+      TodoInteractionLanguage@1001 : Record 5196;
+    BEGIN
+      IF "Interaction Template Code" = '' THEN
+        EXIT;
+
+      IF TodoInteractionLanguage.GET("Organizer To-do No.","Language Code") THEN
+        IF TodoInteractionLanguage."Attachment No." <> 0 THEN
+          IF TodoInteractionLanguage.RemoveAttachment(Prompt) THEN BEGIN
+            "Attachment No." := 0;
+            MODIFY(TRUE);
+          END;
+      MODIFY(TRUE);
+    END;
+
+    LOCAL PROCEDURE LogTodoInteraction@30(VAR Todo@1006 : Record 5080;VAR Todo2@1000 : Record 5080;Deliver@1010 : Boolean);
+    VAR
+      SegLine@1001 : TEMPORARY Record 5077;
+      Cont@1002 : Record 5050;
+      Salesperson@1003 : Record 13;
+      Campaign@1004 : Record 5071;
+      Attachment@1007 : Record 5062;
+      AttachmentTemp@1008 : TEMPORARY Record 5062;
+      InterLogEntryCommentLineTmp@1009 : TEMPORARY Record 5123;
+      SegManagement@1005 : Codeunit 5051;
+    BEGIN
+      IF Attachment.GET(Todo."Attachment No.") THEN BEGIN
+        AttachmentTemp.DELETEALL;
+        AttachmentTemp.INIT;
+        AttachmentTemp.WizEmbeddAttachment(Attachment);
+        AttachmentTemp.INSERT;
+      END;
+
+      SegLine.DELETEALL;
+      SegLine.INIT;
+      SegLine."To-do No." := Todo."Organizer To-do No.";
+      SegLine.SETRANGE("To-do No.",SegLine."To-do No.");
+      IF Cont.GET(Todo2."Contact No.") THEN
+        SegLine.VALIDATE("Contact No.",Todo2."Contact No.");
+      IF Salesperson.GET(Todo."Salesperson Code") THEN
+        SegLine."Salesperson Code" := Salesperson.Code;
+      IF Campaign.GET(Todo."Campaign No.") THEN
+        SegLine."Campaign No." := Campaign."No.";
+      SegLine."Interaction Template Code" := Todo."Interaction Template Code";
+      SegLine."Attachment No." := Todo."Attachment No.";
+      SegLine."Language Code" := Todo."Language Code";
+      SegLine.Subject := Todo.Description;
+      SegLine.Description := Todo.Description;
+      SegLine."Correspondence Type" := SegLine."Correspondence Type"::"E-Mail";
+      SegLine."Cost (LCY)" := Todo."Unit Cost (LCY)";
+      SegLine."Duration (Min.)" := Todo."Unit Duration (Min.)";
+      SegLine."Opportunity No." := Todo."Opportunity No.";
+      SegLine.VALIDATE(Date,WORKDATE);
+
+      SegLine.INSERT;
+      SegManagement.LogInteraction(SegLine,AttachmentTemp,InterLogEntryCommentLineTmp,Deliver,FALSE);
+    END;
+
+    PROCEDURE CreateAttendeesFromTeam@33(VAR Attendee@1002 : Record 5199;TeamMeetingOrganizer@1000 : Code[10]);
+    VAR
+      TeamSalesperson@1003 : Record 5084;
+      AttendeeLineNo@1004 : Integer;
+    BEGIN
+      IF TeamMeetingOrganizer = '' THEN
+        EXIT;
+      Attendee.CreateAttendee(
+        Attendee,
+        "No.",10000,Attendee."Attendance Type"::"To-do Organizer",
+        Attendee."Attendee Type"::Salesperson,
+        TeamMeetingOrganizer,
+        TRUE);
+
+      TeamSalesperson.SETRANGE("Team Code","Team Code");
+      IF TeamSalesperson.FIND('-') THEN BEGIN
+        AttendeeLineNo := 20000;
+        REPEAT
+          IF TeamSalesperson."Salesperson Code" <> TeamMeetingOrganizer THEN
+            Attendee.CreateAttendee(
+              Attendee,
+              "No.",AttendeeLineNo,Attendee."Attendance Type"::Required,
+              Attendee."Attendee Type"::Salesperson,
+              TeamSalesperson."Salesperson Code",
+              FALSE);
+          AttendeeLineNo := AttendeeLineNo + 10000;
+        UNTIL TeamSalesperson.NEXT = 0;
+      END;
+    END;
+
+    LOCAL PROCEDURE ChangeTeam@37();
+    VAR
+      Todo@1000 : Record 5080;
+      TeamSalesperson@1001 : Record 5084;
+      TeamSalespersonOld@1004 : Record 5084;
+      AttendeeTemp@1002 : TEMPORARY Record 5199;
+      Attendee@1003 : Record 5199;
+      Salesperson@1007 : Record 13;
+      AttendeeLineNo@1005 : Integer;
+      SendInvitation@1006 : Boolean;
+      TeamCode@1009 : Code[10];
+    BEGIN
+      MODIFY;
+      TeamSalespersonOld.SETRANGE("Team Code",xRec."Team Code");
+      TeamSalesperson.SETRANGE("Team Code","Team Code");
+      IF TeamSalesperson.FIND('-') THEN
+        REPEAT
+          TeamSalesperson.MARK(TRUE)
+        UNTIL TeamSalesperson.NEXT = 0;
+
+      IF Type = Type::Meeting THEN BEGIN
+        Attendee.SETCURRENTKEY("To-do No.","Attendee Type","Attendee No.");
+        Attendee.SETRANGE("To-do No.","Organizer To-do No.");
+        Attendee.SETRANGE("Attendee Type",Attendee."Attendee Type"::Salesperson);
+        IF Attendee.FIND('-') THEN
+          REPEAT
+            TeamSalesperson.SETRANGE("Salesperson Code",Attendee."Attendee No.");
+            IF TeamSalesperson.FIND('-') THEN
+              TeamSalesperson.MARK(FALSE)
+            ELSE
+              IF Attendee."Attendance Type" <> Attendee."Attendance Type"::"To-do Organizer" THEN BEGIN
+                TeamSalespersonOld.SETRANGE("Salesperson Code",Attendee."Attendee No.");
+                IF TeamSalespersonOld.FINDFIRST THEN BEGIN
+                  Attendee.MARK(TRUE);
+                  DeleteAttendeeTodo(Attendee)
+                END
+              END
+          UNTIL Attendee.NEXT = 0;
+        Attendee.MARKEDONLY(TRUE);
+        Attendee.DELETEALL
+      END ELSE BEGIN
+        Todo.SETCURRENTKEY("Organizer To-do No.","System To-do Type");
+        Todo.SETRANGE("Organizer To-do No.","Organizer To-do No.");
+        Todo.SETFILTER("System To-do Type",'%1|%2',
+          Todo."System To-do Type"::Organizer,
+          Todo."System To-do Type"::"Salesperson Attendee");
+        IF Todo.FIND('-') THEN
+          REPEAT
+            TeamSalesperson.SETRANGE("Salesperson Code",Todo."Salesperson Code");
+            IF TeamSalesperson.FIND('-') THEN
+              TeamSalesperson.MARK(FALSE)
+            ELSE
+              Todo.DELETE(TRUE)
+          UNTIL Todo.NEXT = 0
+      END;
+
+      TeamCode := "Team Code";
+      GET("No.");
+      "Team Code" := TeamCode;
+
+      TeamSalesperson.MARKEDONLY(TRUE);
+      TeamSalesperson.SETRANGE("Salesperson Code");
+      IF TeamSalesperson.FIND('-') THEN BEGIN
+        IF Type = Type::Meeting THEN
+          REPEAT
+            Attendee.RESET;
+            Attendee.SETRANGE("To-do No.","Organizer To-do No.");
+            IF Attendee.FIND('+') THEN
+              AttendeeLineNo := Attendee."Line No." + 10000
+            ELSE
+              AttendeeLineNo := 10000;
+            IF Salesperson.GET(TeamSalesperson."Salesperson Code") THEN
+              IF Salesperson."E-Mail" <> '' THEN
+                SendInvitation := TRUE
+              ELSE
+                SendInvitation := FALSE;
+            Attendee.CreateAttendee(
+              Attendee,
+              "Organizer To-do No.",AttendeeLineNo,
+              Attendee."Attendance Type"::Required,
+              Attendee."Attendee Type"::Salesperson,
+              TeamSalesperson."Salesperson Code",SendInvitation);
+            CreateSubTodo(Attendee,Rec)
+          UNTIL TeamSalesperson.NEXT = 0
+        ELSE
+          REPEAT
+            AttendeeTemp.CreateAttendee(
+              AttendeeTemp,
+              "No.",10000,
+              AttendeeTemp."Attendance Type"::"To-do Organizer",
+              AttendeeTemp."Attendee Type"::Salesperson,
+              TeamSalesperson."Salesperson Code",
+              TRUE);
+            CreateSubTodo(AttendeeTemp,Rec);
+            AttendeeTemp.DELETEALL
+          UNTIL TeamSalesperson.NEXT = 0
+      END;
+      MODIFY(TRUE)
+    END;
+
+    LOCAL PROCEDURE ReassignTeamTodoToSalesperson@38();
+    VAR
+      Todo@1000 : Record 5080;
+      Attendee@1001 : Record 5199;
+      AttendeeLineNo@1002 : Integer;
+      SalespersonCode@1005 : Code[10];
+    BEGIN
+      MODIFY;
+      IF Type = Type::Meeting THEN BEGIN
+        Todo.SETCURRENTKEY("Organizer To-do No.","System To-do Type");
+        Todo.SETRANGE("Organizer To-do No.","No.");
+        Todo.SETRANGE("Salesperson Code","Salesperson Code");
+        IF Todo.FINDFIRST THEN BEGIN
+          Attendee.SETCURRENTKEY("To-do No.","Attendee Type","Attendee No.");
+          Attendee.SETRANGE("To-do No.","No.");
+          Attendee.SETRANGE("Attendee Type",Attendee."Attendee Type"::Salesperson);
+          Attendee.SETRANGE("Attendee No.","Salesperson Code");
+          IF Attendee.FINDFIRST THEN
+            IF Attendee."Attendance Type" = Attendee."Attendance Type"::"To-do Organizer" THEN BEGIN
+              Attendee.DELETE;
+              Todo.DELETE;
+            END ELSE
+              Attendee.DELETE(TRUE)
+        END;
+
+        SalespersonCode := "Salesperson Code";
+        GET("No.");
+        "Salesperson Code" := SalespersonCode;
+
+        Todo.SETRANGE("Salesperson Code");
+        Todo.SETRANGE("System To-do Type","System To-do Type"::Organizer);
+        IF Todo.FINDFIRST THEN BEGIN
+          Attendee.RESET;
+          Attendee.SETCURRENTKEY("To-do No.","Attendee Type","Attendee No.");
+          Attendee.SETRANGE("To-do No.","No.");
+          Attendee.SETRANGE("Attendee Type",Attendee."Attendee Type"::Salesperson);
+          Attendee.SETRANGE("Attendee No.",Todo."Salesperson Code");
+          IF Attendee.FINDFIRST THEN BEGIN
+            Attendee."Attendance Type" := Attendee."Attendance Type"::Required;
+            Attendee.MODIFY
+          END;
+          Todo."System To-do Type" := Todo."System To-do Type"::"Salesperson Attendee";
+          Todo.MODIFY(TRUE)
+        END;
+
+        Attendee.RESET;
+        Attendee.SETRANGE("To-do No.","No.");
+        IF Attendee.FINDLAST THEN
+          AttendeeLineNo := Attendee."Line No." + 10000
+        ELSE
+          AttendeeLineNo := 10000;
+        Attendee.CreateAttendee(
+          Attendee,"No.",AttendeeLineNo,
+          Attendee."Attendance Type"::"To-do Organizer",
+          Attendee."Attendee Type"::Salesperson,
+          "Salesperson Code",TRUE);
+        ArrangeOrganizerAttendee;
+      END ELSE BEGIN
+        Todo.SETCURRENTKEY("Organizer To-do No.","System To-do Type");
+        Todo.SETRANGE("Organizer To-do No.","No.");
+        Todo.SETRANGE("System To-do Type","System To-do Type"::Organizer);
+        IF Todo.FINDFIRST THEN
+          Todo.DELETEALL(TRUE);
+
+        IF "Contact No." <> '' THEN BEGIN
+          Todo.SETRANGE("System To-do Type","System To-do Type"::"Contact Attendee");
+          IF Todo.FINDFIRST THEN BEGIN
+            Todo."Salesperson Code" := "Salesperson Code";
+            Todo.MODIFY(TRUE)
+          END
+        END
+      END;
+
+      "System To-do Type" := "System To-do Type"::Organizer;
+      "Team Code" := '';
+      MODIFY(TRUE);
+    END;
+
+    LOCAL PROCEDURE ReassignSalespersonTodoToTeam@36();
+    VAR
+      TeamSalesperson@1000 : Record 5084;
+      Attendee@1001 : Record 5199;
+      AttendeeTemp@1002 : TEMPORARY Record 5199;
+      Todo@1003 : Record 5080;
+      AttendeeLineNo@1004 : Integer;
+      SendInvitation@1005 : Boolean;
+      SalespersonCode@1006 : Code[10];
+      TodoNo@1007 : Code[20];
+    BEGIN
+      MODIFY;
+      SalespersonCode := "Salesperson Code";
+      "Salesperson Code" := '';
+      "System To-do Type" := "System To-do Type"::Team;
+      MODIFY;
+
+      Todo.SETCURRENTKEY("Organizer To-do No.","System To-do Type");
+      Todo.SETRANGE("Organizer To-do No.","No.");
+
+      IF Type = Type::Meeting THEN BEGIN
+        Attendee.SETRANGE("To-do No.","No.");
+        Attendee.SETRANGE("Attendance Type",Attendee."Attendance Type"::"To-do Organizer");
+        IF Attendee.FINDFIRST THEN BEGIN
+          Attendee."Attendance Type" := Attendee."Attendance Type"::Required;
+          TodoNo := CreateSubTodo(Attendee,Rec);
+          Attendee."Attendance Type" := Attendee."Attendance Type"::"To-do Organizer";
+          Attendee.MODIFY;
+          IF Todo.GET(TodoNo) THEN BEGIN
+            Todo."System To-do Type" := Todo."System To-do Type"::Organizer;
+            Todo.MODIFY;
+          END
+        END;
+
+        Todo.SETFILTER("System To-do Type",'<>%1',Todo."System To-do Type"::"Contact Attendee");
+        TeamSalesperson.SETRANGE("Team Code","Team Code");
+        IF TeamSalesperson.FIND('-') THEN
+          REPEAT
+            Todo.SETRANGE("Salesperson Code",TeamSalesperson."Salesperson Code");
+            IF Todo.FINDFIRST THEN BEGIN
+              IF (Todo."System To-do Type" = Todo."System To-do Type"::Organizer) AND
+                 (Todo."Salesperson Code" <> SalespersonCode)
+              THEN BEGIN
+                Todo."System To-do Type" := Todo."System To-do Type"::"Salesperson Attendee";
+                MODIFY(TRUE)
+              END
+            END ELSE BEGIN
+              Attendee.RESET;
+              Attendee.SETRANGE("To-do No.","No.");
+              IF Attendee.FINDLAST THEN
+                AttendeeLineNo := Attendee."Line No." + 10000
+              ELSE
+                AttendeeLineNo := 10000;
+              IF Salesperson.GET(TeamSalesperson."Salesperson Code") THEN
+                IF Salesperson."E-Mail" <> '' THEN
+                  SendInvitation := TRUE
+                ELSE
+                  SendInvitation := FALSE;
+              Attendee.CreateAttendee(
+                Attendee,"No.",AttendeeLineNo,
+                Attendee."Attendance Type"::Required,
+                Attendee."Attendee Type"::Salesperson,
+                TeamSalesperson."Salesperson Code",
+                SendInvitation);
+              CreateSubTodo(Attendee,Rec)
+            END
+          UNTIL TeamSalesperson.NEXT = 0
+      END ELSE BEGIN
+        TeamSalesperson.SETRANGE("Team Code","Team Code");
+        IF TeamSalesperson.FIND('-') THEN
+          REPEAT
+            AttendeeTemp.CreateAttendee(
+              AttendeeTemp,
+              "No.",10000,
+              AttendeeTemp."Attendance Type"::"To-do Organizer",
+              AttendeeTemp."Attendee Type"::Salesperson,
+              TeamSalesperson."Salesperson Code",
+              TRUE);
+            CreateSubTodo(AttendeeTemp,Rec);
+            AttendeeTemp.DELETEALL
+          UNTIL TeamSalesperson.NEXT = 0;
+      END;
+
+      MODIFY(TRUE)
+    END;
+
+    PROCEDURE GetMeetingOrganizerTodo@39(VAR Todo@1000 : Record 5080);
+    BEGIN
+      IF Type = Type::Meeting THEN
+        IF "Team Code" <> '' THEN BEGIN
+          Todo.SETCURRENTKEY("Organizer To-do No.","System To-do Type");
+          Todo.SETRANGE("Organizer To-do No.","Organizer To-do No.");
+          Todo.SETRANGE("System To-do Type","System To-do Type"::Organizer);
+          Todo.FIND('-')
+        END ELSE
+          Todo.GET("Organizer To-do No.")
+    END;
+
+    PROCEDURE ArrangeOrganizerAttendee@40();
+    VAR
+      Attendee@1000 : Record 5199;
+      FirstLineNo@1001 : Integer;
+      LastLineNo@1002 : Integer;
+      OrganizerLineNo@1003 : Integer;
+    BEGIN
+      Attendee.SETRANGE("To-do No.","No.");
+      IF NOT Attendee.FINDFIRST THEN
+        EXIT;
+      FirstLineNo := Attendee."Line No.";
+      Attendee.FINDLAST;
+      LastLineNo := Attendee."Line No.";
+
+      Attendee.SETCURRENTKEY("To-do No.","Attendance Type");
+      Attendee.SETRANGE("Attendance Type",Attendee."Attendance Type"::"To-do Organizer");
+      Attendee.FINDFIRST;
+      OrganizerLineNo := Attendee."Line No.";
+
+      IF FirstLineNo <> OrganizerLineNo THEN BEGIN
+        Attendee.RENAME("No.",LastLineNo + 1);
+        Attendee.GET("No.",FirstLineNo);
+        Attendee.RENAME("No.",OrganizerLineNo);
+        Attendee.GET("No.",LastLineNo + 1);
+        Attendee.RENAME("No.",FirstLineNo)
+      END
+    END;
+
+    LOCAL PROCEDURE StartWizard@48();
+    BEGIN
+      "Wizard Step" := "Wizard Step"::"1";
+
+      "Wizard Contact Name" := GetContactName;
+      IF Campaign.GET("Campaign No.") THEN
+        "Wizard Campaign Description" := Campaign.Description;
+      IF Opp.GET("Opportunity No.") THEN
+        "Wizard Opportunity Description" := Opp.Description;
+      IF SegHeader.GET(GETFILTER("Segment No.")) THEN
+        "Segment Description" := SegHeader.Description;
+      IF Team.GET(GETFILTER("Team Code")) THEN
+        "Team To-do" := TRUE;
+
+      Duration := 1440 * 1000 * 60;
+      Date := TODAY;
+      GetEndDateTime;
+
+      INSERT;
+      PAGE.RUNMODAL(PAGE::"Create To-do",Rec);
+    END;
+
+    PROCEDURE PerformNextWizardStatus@43();
+    BEGIN
+      CASE "Wizard Step" OF
+        "Wizard Step"::"1":
+          BEGIN
+            {
+            IF Type <> xRec.Type THEN
+              IF Type = Type::Meeting THEN BEGIN
+                AssignDefaultAttendeeInfo;
+                LoadTempAttachment;
+              END ELSE
+                ClearDefaultAttendeeInfo;
+            }
+            IF (Type = Type::Meeting) AND
+               (NOT "Team To-do" OR
+                (GETFILTER("Team Code") <> ''))
+            THEN
+              "Wizard Step" := "Wizard Step"::"3"
+            ELSE
+              "Wizard Step" := "Wizard Step"::"2";
+          END;
+        "Wizard Step"::"2":
+          IF Type <> Type::Meeting THEN
+            "Wizard Step" := "Wizard Step"::"4"
+          ELSE
+            "Wizard Step" := "Wizard Step"::"3";
+        ELSE
+          "Wizard Step" := "Wizard Step" + 1;
+      END;
+
+      IF "Wizard Step" = "Wizard Step"::"3" THEN
+        IF NOT "Team To-do" THEN
+          IF "Salesperson Code" = '' THEN BEGIN
+            IF Cont.GET("Contact No.") THEN
+              VALIDATE("Salesperson Code",Cont."Salesperson Code")
+            ELSE
+              IF Cont.GET("Contact Company No.") THEN
+                VALIDATE("Salesperson Code",Cont."Salesperson Code");
+            IF Campaign.GET(GETFILTER("Campaign No.")) THEN
+              VALIDATE("Salesperson Code",Campaign."Salesperson Code");
+            IF Opp.GET(GETFILTER("Opportunity No.")) THEN
+              VALIDATE("Salesperson Code",Opp."Salesperson Code");
+            IF SegHeader.GET(GETFILTER("Segment No.")) THEN
+              VALIDATE("Salesperson Code",SegHeader."Salesperson Code");
+            MODIFY;
+          END;
+    END;
+
+    PROCEDURE PerformPrevWizardStatus@52();
+    BEGIN
+      CASE "Wizard Step" OF
+        "Wizard Step"::"3":
+          BEGIN
+            IF (Type = Type::Meeting) AND
+               (NOT "Team To-do" OR
+                (GETFILTER("Team Code") <> ''))
+            THEN
+              "Wizard Step" := "Wizard Step"::"1"
+            ELSE
+              "Wizard Step" := "Wizard Step"::"2";
+          END;
+        "Wizard Step"::"4":
+          IF Type <> Type::Meeting THEN
+            "Wizard Step" := "Wizard Step"::"2"
+          ELSE
+            "Wizard Step" := "Wizard Step"::"3";
+        ELSE
+          "Wizard Step" := "Wizard Step" - 1;
+      END;
+    END;
+
+    PROCEDURE CheckStatus@42() : Boolean;
+    BEGIN
+      CASE "Wizard Step" OF
+        "Wizard Step"::"1":
+          BEGIN
+            IF Date = 0D THEN
+              ErrorMessage(FIELDCAPTION(Date));
+            IF Description = '' THEN
+              ErrorMessage(FIELDCAPTION(Description));
+            IF (Type = Type::Meeting) AND (NOT "All Day Event") THEN BEGIN
+              IF "Start Time" = 0T THEN
+                ErrorMessage(FIELDCAPTION("Start Time"));
+              IF Duration = 0 THEN
+                ErrorMessage(FIELDCAPTION(Duration));
+            END;
+          END;
+        "Wizard Step"::"2":
+          BEGIN
+            IF "Team To-do" AND ("Team Code" = '') THEN
+              ErrorMessage(FIELDCAPTION("Team Code"));
+            IF NOT "Team To-do" AND ("Salesperson Code" = '') THEN
+              ErrorMessage(FIELDCAPTION("Salesperson Code"));
+          END;
+        "Wizard Step"::"3":
+          BEGIN
+            IF ("Interaction Template Code" = '') AND "Send on finish" THEN
+              ErrorMessage(FIELDCAPTION("Interaction Template Code"));
+
+            AttendeeTemp.RESET;
+            // CurrForm.AttendeeSubform.PAGE.GetAttendee(AttendeeTemp);
+            AttendeeTemp.SETRANGE("Attendance Type",AttendeeTemp."Attendance Type"::"To-do Organizer");
+            IF AttendeeTemp.ISEMPTY THEN BEGIN
+              AttendeeTemp.RESET;
+              ERROR(Text065);
+            END;
+
+            IF AttendeeTemp.FIND('-') THEN
+              SalesPurchPerson.GET(AttendeeTemp."Attendee No.");
+            AttendeeTemp.RESET;
+            // CurrForm.AttendeeSubform.PAGE.GetAttendee(AttendeeTemp);
+            IF ("Attachment No." = 0) AND "Send on finish" THEN BEGIN
+              AttendeeTemp.SETRANGE("Send Invitation",TRUE);
+              AttendeeTemp.SETRANGE("Attendee Type",AttendeeTemp."Attendee Type"::Contact);
+              IF NOT AttendeeTemp.ISEMPTY THEN BEGIN
+                AttendeeTemp.RESET;
+                ERROR(Text067,TABLECAPTION,AttendeeTemp.TABLECAPTION);
+              END;
+              AttendeeTemp.RESET;
+            END;
+            AttendeeTemp.RESET;
+            // CurrForm.AttendeeSubform.PAGE.GetAttendee(AttendeeTemp);
+            IF "Send on finish" THEN BEGIN
+              AttendeeTemp.SETRANGE("Send Invitation",TRUE);
+              IF AttendeeTemp.ISEMPTY THEN BEGIN
+                AttendeeTemp.RESET;
+                ERROR(Text068,AttendeeTemp.FIELDCAPTION("Send Invitation"));
+              END;
+              AttendeeTemp.RESET;
+            END;
+          END;
+        "Wizard Step"::"4":
+          BEGIN
+            IF (Location = '') AND "Send on finish" THEN
+              ErrorMessage(FIELDCAPTION(Location));
+          END;
+      END;
+    END;
+
+    PROCEDURE FinishWizard@41() : Boolean;
+    VAR
+      SegLine@1000 : Record 5077;
+      SendOnFinish@1001 : Boolean;
+    BEGIN
+      IF Recurring THEN BEGIN
+        TESTFIELD("Recurring Date Interval");
+        TESTFIELD("Calc. Due Date From");
+      END;
+      IF Type = Type::Meeting THEN BEGIN
+        IF NOT "Team To-do" THEN BEGIN
+          AttendeeTemp.SETRANGE("Attendance Type",AttendeeTemp."Attendance Type"::"To-do Organizer");
+          AttendeeTemp.FIND('-');
+          VALIDATE("Salesperson Code",AttendeeTemp."Attendee No.");
+          AttendeeTemp.RESET;
+        END;
+        VALIDATE("Contact No.",'');
+      END ELSE BEGIN
+        IF Cont.GET("Contact No.") THEN
+          AttendeeTemp.CreateAttendee(
+            AttendeeTemp,
+            "No.",10000,AttendeeTemp."Attendance Type"::Required,
+            AttendeeTemp."Attendee Type"::Contact,
+            Cont."No.",Cont."E-Mail" <> '');
+        IF SegHeader.GET("Segment No.") THEN BEGIN
+          SegLine.SETRANGE("Segment No.","Segment No.");
+          SegLine.SETFILTER("Contact No.",'<>%1','');
+          IF SegLine.FIND('-') THEN
+            REPEAT
+              AttendeeTemp.CreateAttendee(
+                AttendeeTemp,
+                "No.",SegLine."Line No.",AttendeeTemp."Attendance Type"::Required,
+                AttendeeTemp."Attendee Type"::Contact,
+                SegLine."Contact No.",
+                (Cont.GET(SegLine."Contact No.") AND
+                 (Cont."E-Mail" <> '')));
+            UNTIL SegLine.NEXT = 0;
+        END;
+      END;
+
+      SendOnFinish := "Send on finish";
+      "Wizard Step" := "Wizard Step"::" ";
+      "Team To-do" := FALSE;
+      "Send on finish" := FALSE;
+      "Segment Description" := '';
+      "Team Meeting Organizer" := '';
+      "Activity Code" := '';
+      "Wizard Contact Name" := '';
+      "Wizard Campaign Description" := '';
+      "Wizard Opportunity Description" := '';
+      MODIFY;
+      InsertTodo(Rec,RMCommentLineTmp,AttendeeTemp,TodoInteractionLanguage,AttachmentTemp,'',SendOnFinish);
+      DELETE;
+    END;
+
+    LOCAL PROCEDURE GetContactName@65() : Text[50];
+    BEGIN
+      IF Cont.GET("Contact No.") THEN
+        EXIT(Cont.Name);
+      IF Cont.GET("Contact Company No.") THEN
+        EXIT(Cont.Name);
+    END;
+
+    LOCAL PROCEDURE ErrorMessage@47(FieldName@1000 : Text[1024]);
+    BEGIN
+      ERROR(Text043,FieldName);
+    END;
+
+    PROCEDURE AssignDefaultAttendeeInfo@46();
+    VAR
+      InteractionTemplate@1002 : Record 5064;
+      InteractionTemplateSetup@1001 : Record 5122;
+      SegLine@1003 : Record 5077;
+      TeamSalesperson@1004 : Record 5084;
+      AttendeeLineNo@1005 : Integer;
+    BEGIN
+      IF AttendeeTemp.FIND('+') THEN
+        AttendeeLineNo := AttendeeTemp."Line No." + 10000
+      ELSE
+        AttendeeLineNo := 10000;
+      CASE TRUE OF
+        (GETFILTER("Contact No.") <> '') AND (GETFILTER("Salesperson Code") <> ''):
+          BEGIN
+            IF SalesPurchPerson.GET(GETFILTER("Salesperson Code")) THEN BEGIN
+              AttendeeTemp.CreateAttendee(
+                AttendeeTemp,
+                "No.",AttendeeLineNo,
+                AttendeeTemp."Attendance Type"::"To-do Organizer",
+                AttendeeTemp."Attendee Type"::Salesperson,
+                SalesPurchPerson.Code,TRUE);
+              AttendeeLineNo := AttendeeLineNo + 10000;
+              SalespersonFilter := SalesPurchPerson.Code;
+            END;
+            IF Cont.GET(GETFILTER("Contact No.")) THEN BEGIN
+              AttendeeTemp.CreateAttendee(
+                AttendeeTemp,
+                "No.",AttendeeLineNo,
+                AttendeeTemp."Attendance Type"::Required,
+                AttendeeTemp."Attendee Type"::Contact,
+                Cont."No.",
+                Cont."E-Mail" <> '');
+              AttendeeLineNo := AttendeeLineNo + 10000;
+              ContactFilter := Cont."No.";
+            END;
+          END;
+        (GETFILTER("Contact No.") <> '') AND (GETFILTER("Campaign No.") <> ''):
+          BEGIN
+            IF Campaign.GET(GETFILTER("Campaign No.")) THEN
+              IF SalesPurchPerson.GET(Campaign."Salesperson Code") THEN BEGIN
+                AttendeeTemp.CreateAttendee(
+                  AttendeeTemp,
+                  "No.",AttendeeLineNo,
+                  AttendeeTemp."Attendance Type"::"To-do Organizer",
+                  AttendeeTemp."Attendee Type"::Salesperson,
+                  SalesPurchPerson.Code,TRUE);
+                AttendeeLineNo := AttendeeLineNo + 10000
+              END;
+            IF Cont.GET(GETFILTER("Contact No.")) THEN BEGIN
+              AttendeeTemp.CreateAttendee(
+                AttendeeTemp,
+                "No.",AttendeeLineNo,
+                AttendeeTemp."Attendance Type"::Required,
+                AttendeeTemp."Attendee Type"::Contact,
+                Cont."No.",Cont."E-Mail" <> '');
+              AttendeeLineNo := AttendeeLineNo + 10000;
+              ContactFilter := Cont."No.";
+            END;
+          END
+        ELSE BEGIN
+          IF Cont.GET(GETFILTER("Contact No.")) THEN BEGIN
+            IF Cont."Salesperson Code" <> '' THEN BEGIN
+              AttendeeTemp.CreateAttendee(
+                AttendeeTemp,
+                "No.",AttendeeLineNo,
+                AttendeeTemp."Attendance Type"::"To-do Organizer",
+                AttendeeTemp."Attendee Type"::Salesperson,
+                Cont."Salesperson Code",TRUE);
+              AttendeeLineNo := AttendeeLineNo + 10000
+            END;
+            AttendeeTemp.CreateAttendee(
+              AttendeeTemp,
+              "No.",AttendeeLineNo,
+              AttendeeTemp."Attendance Type"::Required,
+              AttendeeTemp."Attendee Type"::Contact,
+              Cont."No.",Cont."E-Mail" <> '');
+            AttendeeLineNo := AttendeeLineNo + 10000;
+            ContactFilter := Cont."No.";
+          END ELSE
+            IF Cont.GET(GETFILTER("Contact Company No.")) THEN BEGIN
+              IF Cont."Salesperson Code" <> '' THEN BEGIN
+                AttendeeTemp.CreateAttendee(
+                  AttendeeTemp,
+                  "No.",AttendeeLineNo,
+                  AttendeeTemp."Attendance Type"::"To-do Organizer",
+                  AttendeeTemp."Attendee Type"::Salesperson,
+                  Cont."Salesperson Code",TRUE);
+                AttendeeLineNo := AttendeeLineNo + 10000
+              END;
+              AttendeeTemp.CreateAttendee(
+                AttendeeTemp,
+                "No.",AttendeeLineNo,
+                AttendeeTemp."Attendance Type"::Required,
+                AttendeeTemp."Attendee Type"::Contact,
+                Cont."No.",Cont."E-Mail" <> '');
+              AttendeeLineNo := AttendeeLineNo + 10000;
+              ContactFilter := Cont."No.";
+            END;
+
+          IF SalesPurchPerson.GET(GETFILTER("Salesperson Code")) THEN BEGIN
+            AttendeeTemp.CreateAttendee(
+              AttendeeTemp,
+              "No.",AttendeeLineNo,
+              AttendeeTemp."Attendance Type"::"To-do Organizer",
+              AttendeeTemp."Attendee Type"::Salesperson,
+              SalesPurchPerson.Code,TRUE);
+            AttendeeLineNo := AttendeeLineNo + 10000;
+            SalespersonFilter := SalesPurchPerson.Code;
+          END;
+
+          IF Campaign.GET(GETFILTER("Campaign No.")) THEN
+            IF SalesPurchPerson.GET(Campaign."Salesperson Code") THEN BEGIN
+              AttendeeTemp.CreateAttendee(
+                AttendeeTemp,
+                "No.",AttendeeLineNo,
+                AttendeeTemp."Attendance Type"::"To-do Organizer",
+                AttendeeTemp."Attendee Type"::Salesperson,
+                SalesPurchPerson.Code,TRUE);
+              AttendeeLineNo := AttendeeLineNo + 10000
+            END;
+
+          IF Opp.GET(GETFILTER("Opportunity No.")) THEN BEGIN
+            IF SalesPurchPerson.GET(Opp."Salesperson Code") THEN BEGIN
+              AttendeeTemp.CreateAttendee(
+                AttendeeTemp,
+                "No.",AttendeeLineNo,
+                AttendeeTemp."Attendance Type"::"To-do Organizer",
+                AttendeeTemp."Attendee Type"::Salesperson,
+                SalesPurchPerson.Code,TRUE);
+              AttendeeLineNo := AttendeeLineNo + 10000
+            END;
+            IF Cont.GET(Opp."Contact No.") THEN BEGIN
+              AttendeeTemp.CreateAttendee(
+                AttendeeTemp,
+                "No.",AttendeeLineNo,
+                AttendeeTemp."Attendance Type"::Required,
+                AttendeeTemp."Attendee Type"::Contact,
+                Cont."No.",Cont."E-Mail" <> '');
+              AttendeeLineNo := AttendeeLineNo + 10000
+            END;
+          END;
+        END;
+      END;
+
+      IF SegHeader.GET(GETFILTER("Segment No.")) THEN BEGIN
+        IF SalesPurchPerson.GET(SegHeader."Salesperson Code") THEN BEGIN
+          AttendeeTemp.CreateAttendee(
+            AttendeeTemp,
+            "No.",AttendeeLineNo,
+            AttendeeTemp."Attendance Type"::"To-do Organizer",
+            AttendeeTemp."Attendee Type"::Salesperson,
+            SalesPurchPerson.Code,TRUE);
+          AttendeeLineNo := AttendeeLineNo + 10000
+        END;
+        SegLine.SETRANGE("Segment No.","Segment No.");
+        SegLine.SETFILTER("Contact No.",'<>%1','');
+        IF SegLine.FIND('-') THEN
+          REPEAT
+            AttendeeTemp.CreateAttendee(
+              AttendeeTemp,
+              "No.",AttendeeLineNo,
+              AttendeeTemp."Attendance Type"::Required,
+              AttendeeTemp."Attendee Type"::Contact,
+              SegLine."Contact No.",
+              (Cont.GET(SegLine."Contact No.") AND
+               (Cont."E-Mail" <> '')));
+            AttendeeLineNo := AttendeeLineNo + 10000
+          UNTIL SegLine.NEXT = 0;
+      END;
+      IF Team.GET("Team Code") THEN BEGIN
+        TeamSalesperson.SETRANGE("Team Code",Team.Code);
+        IF TeamSalesperson.FIND('-') THEN
+          REPEAT
+            AttendeeTemp.SETRANGE("Attendee Type",AttendeeTemp."Attendee Type"::Salesperson);
+            AttendeeTemp.SETRANGE("Attendee No.",TeamSalesperson."Salesperson Code");
+            IF NOT AttendeeTemp.FIND('-') THEN
+              IF SalesPurchPerson.GET(TeamSalesperson."Salesperson Code") THEN BEGIN
+                AttendeeTemp.RESET;
+                AttendeeTemp.CreateAttendee(
+                  AttendeeTemp,
+                  "No.",AttendeeLineNo,
+                  AttendeeTemp."Attendance Type"::Required,
+                  AttendeeTemp."Attendee Type"::Salesperson,
+                  TeamSalesperson."Salesperson Code",
+                  SalesPurchPerson."E-Mail" <> '');
+                AttendeeLineNo := AttendeeLineNo + 10000
+              END;
+            AttendeeTemp.RESET;
+          UNTIL TeamSalesperson.NEXT = 0;
+      END;
+
+      InteractionTemplateSetup.GET;
+      IF (InteractionTemplateSetup."Meeting Invitation" <> '') AND
+         InteractionTemplate.GET(InteractionTemplateSetup."Meeting Invitation")
+      THEN
+        UpdateInteractionTemplate(
+          Rec,TodoInteractionLanguage,AttachmentTemp,InteractionTemplate.Code,TRUE);
+    END;
+
+    PROCEDURE ValidateInteractionTemplCode@66();
+    BEGIN
+      UpdateInteractionTemplate(
+        Rec,TodoInteractionLanguage,AttachmentTemp,"Interaction Template Code",TRUE);
+      LoadTempAttachment;
+    END;
+
+    PROCEDURE AssistEditAttachment@58();
+    BEGIN
+      IF AttachmentTemp.GET("Attachment No.") THEN BEGIN
+        AttachmentTemp.OpenAttachment("Interaction Template Code" + ' ' + Description,TRUE,"Language Code");
+        AttachmentTemp.MODIFY;
+      END ELSE
+        ERROR(Text047);
+    END;
+
+    PROCEDURE ValidateLanguageCode@67();
+    BEGIN
+      IF "Language Code" = xRec."Language Code" THEN
+        EXIT;
+
+      IF NOT TodoInteractionLanguage.GET("No.","Language Code") THEN BEGIN
+        IF "No." = '' THEN
+          ERROR(Text009,TodoInteractionLanguage.TABLECAPTION);
+      END ELSE
+        "Attachment No." := TodoInteractionLanguage."Attachment No.";
+    END;
+
+    PROCEDURE LookupLanguageCode@68();
+    BEGIN
+      TodoInteractionLanguage.SETFILTER("To-do No.",'');
+      IF TodoInteractionLanguage.GET('',"Language Code") THEN
+        IF PAGE.RUNMODAL(0,TodoInteractionLanguage) = ACTION::LookupOK THEN BEGIN
+          "Language Code" := TodoInteractionLanguage."Language Code";
+          "Attachment No." := TodoInteractionLanguage."Attachment No.";
+        END;
+    END;
+
+    LOCAL PROCEDURE UpdInteractionTemplate@57();
+    BEGIN
+      UpdateInteractionTemplate(
+        Rec,TodoInteractionLanguage,AttachmentTemp,"Interaction Template Code",TRUE);
+    END;
+
+    PROCEDURE LoadTempAttachment@45();
+    VAR
+      Attachment@1000 : Record 5062;
+      AttachmentTemp2@1001 : TEMPORARY Record 5062;
+    BEGIN
+      IF AttachmentTemp.FIND('-') THEN
+        REPEAT
+          AttachmentTemp2 := AttachmentTemp;
+          AttachmentTemp2.INSERT;
+        UNTIL AttachmentTemp.NEXT = 0;
+
+      IF AttachmentTemp2.FIND('-') THEN
+        REPEAT
+          Attachment.GET(AttachmentTemp2."No.");
+          Attachment.CALCFIELDS(Attachment);
+          AttachmentTemp.GET(AttachmentTemp2."No.");
+          AttachmentTemp.WizEmbeddAttachment(Attachment);
+          AttachmentTemp."No." := AttachmentTemp2."No.";
+          AttachmentTemp.MODIFY;
+        UNTIL AttachmentTemp2.NEXT = 0;
+    END;
+
+    PROCEDURE ClearDefaultAttendeeInfo@44();
+    BEGIN
+      AttendeeTemp.DELETEALL;
+      // CurrForm.AttendeeSubform.PAGE.SetAttendee(AttendeeTemp);
+      // CurrForm.AttendeeSubform.PAGE.UpdateForm;
+      AttachmentTemp.DELETEALL;
+      TodoInteractionLanguage.DELETEALL;
+      "Interaction Template Code" := '';
+      "Language Code" := '';
+      "Attachment No." := 0;
+      Subject := '';
+      "Unit Cost (LCY)" := 0;
+      "Unit Duration (Min.)" := 0;
+      MODIFY;
+    END;
+
+    PROCEDURE GetAttendee@59(VAR Attendee@1000 : Record 5199);
+    BEGIN
+      Attendee.DELETEALL;
+      IF AttendeeTemp.FIND('-') THEN
+        REPEAT
+          Attendee := AttendeeTemp;
+          Attendee.INSERT;
+        UNTIL AttendeeTemp.NEXT = 0;
+    END;
+
+    PROCEDURE SetAttendee@49(VAR Attendee@1000 : Record 5199);
+    BEGIN
+      AttendeeTemp.DELETEALL;
+
+      IF Attendee.FINDSET THEN
+        REPEAT
+          AttendeeTemp := Attendee;
+          AttendeeTemp.INSERT;
+        UNTIL Attendee.NEXT = 0;
+    END;
+
+    LOCAL PROCEDURE HasComment@55() : Boolean;
+    BEGIN
+      EXIT(NOT RMCommentLineTmp.ISEMPTY)
+    END;
+
+    LOCAL PROCEDURE ShowComment@56();
+    BEGIN
+      RMCommentLineTmp.SETRANGE("Table Name",RMCommentLineTmp."Table Name"::"To-do");
+      RMCommentLineTmp.SETRANGE("No.","No.");
+      RMCommentLineTmp.SETRANGE("Sub No.",0);
+      PAGE.RUNMODAL(PAGE::"Rlshp. Mgt. Comment Sheet",RMCommentLineTmp);
+    END;
+
+    LOCAL PROCEDURE GetComments@64(VAR RMCommentLine@1001 : Record 5061);
+    BEGIN
+      RMCommentLine.DELETEALL;
+      IF RMCommentLineTmp.FIND('-') THEN
+        REPEAT
+          RMCommentLine := RMCommentLineTmp;
+          RMCommentLine.INSERT;
+        UNTIL RMCommentLineTmp.NEXT = 0;
+    END;
+
+    PROCEDURE SetComments@53(VAR RMCommentLine@1001 : Record 5061);
+    BEGIN
+      RMCommentLineTmp.DELETEALL;
+
+      IF RMCommentLine.FINDSET THEN
+        REPEAT
+          RMCommentLineTmp := RMCommentLine;
+          RMCommentLineTmp.INSERT;
+        UNTIL RMCommentLine.NEXT = 0;
+    END;
+
+    LOCAL PROCEDURE StartWizard2@63();
+    BEGIN
+      "Wizard Contact Name" := GetContactName;
+      IF Cont.GET(GETFILTER("Contact No.")) THEN
+        "Wizard Contact Name" := Cont.Name
+      ELSE
+        IF Cont.GET(GETFILTER("Contact Company No.")) THEN
+          "Wizard Contact Name" := Cont.Name;
+
+      IF Campaign.GET(GETFILTER("Campaign No.")) THEN
+        "Wizard Campaign Description" := Campaign.Description;
+
+      IF SegHeader.GET(GETFILTER("Segment No.")) THEN
+        "Segment Description" := SegHeader.Description;
+
+      "Wizard Step" := "Wizard Step"::"1";
+      Duration := 1440 * 1000 * 60;
+
+      INSERT;
+
+      PAGE.RUNMODAL(PAGE::"Assign Activity",Rec);
+    END;
+
+    PROCEDURE PerformNextWizardStatus2@62();
+    BEGIN
+      "Wizard Step" := "Wizard Step" + 1;
+    END;
+
+    PROCEDURE PerformPrevWizardStatus2@61();
+    BEGIN
+      "Wizard Step" := "Wizard Step" - 1;
+    END;
+
+    PROCEDURE CheckStatus2@60() : Boolean;
+    BEGIN
+      CASE "Wizard Step" OF
+        "Wizard Step"::"1":
+          BEGIN
+            IF "Activity Code" = '' THEN
+              ErrorMessage(Text051);
+            IF Date = 0D THEN
+              ErrorMessage(FIELDCAPTION(Date));
+            IF ("Team Code" = '') AND ("Salesperson Code" = '') THEN
+              ERROR(Text053,FIELDCAPTION("Salesperson Code"),FIELDCAPTION("Team Code"));
+            IF ("Team Code" <> '') AND
+               Activity.IncludesMeeting("Activity Code") AND
+               ("Team Meeting Organizer" = '')
+            THEN
+              ERROR(Text056,"Activity Code",Type::Meeting);
+          END;
+      END;
+    END;
+
+    PROCEDURE FinishWizard2@54() : Boolean;
+    VAR
+      RMCommentLine@1003 : TEMPORARY Record 5061;
+      AttendeeTemp@1002 : TEMPORARY Record 5199;
+      TodoInteractionLanguageTemp@1001 : TEMPORARY Record 5196;
+      AttachmentTemp@1000 : TEMPORARY Record 5062;
+    BEGIN
+      AttendeeTemp.DELETEALL;
+      IF "Team Meeting Organizer" <> '' THEN
+        AttendeeTemp.CreateAttendee(
+          AttendeeTemp,
+          "No.",10000,AttendeeTemp."Attendance Type"::"To-do Organizer",
+          AttendeeTemp."Attendee Type"::Salesperson,
+          "Team Meeting Organizer",
+          TRUE)
+      ELSE
+        IF "Salesperson Code" <> '' THEN
+          AttendeeTemp.CreateAttendee(
+            AttendeeTemp,
+            "No.",10000,AttendeeTemp."Attendance Type"::"To-do Organizer",
+            AttendeeTemp."Attendee Type"::Salesperson,
+            "Salesperson Code",
+            TRUE);
+      InsertTodo(
+        Rec,RMCommentLine,AttendeeTemp,
+        TodoInteractionLanguageTemp,AttachmentTemp,"Activity Code",FALSE);
+      DELETE;
+    END;
+
+    LOCAL PROCEDURE ValidateSalesPerson@71();
+    BEGIN
+      IF SalesPurchPerson.GET("Salesperson Code") THEN BEGIN
+        "Team Meeting Organizer" := '';
+        "Team Code" := ''
+      END
+    END;
+
+    LOCAL PROCEDURE TransformFromCode20ToCode10@5(Code20Input@1000 : Code[20]) : Code[10];
+    BEGIN
+      IF STRLEN(Code20Input) > 10 THEN
+        EXIT('');
+      EXIT(COPYSTR(Code20Input,1,10));
+    END;
+
+    LOCAL PROCEDURE FillSalesPersonContact@8(VAR ToDoParameter@1000 : Record 5080;AttendeeParameter@1001 : Record 5199);
+    BEGIN
+      CASE AttendeeParameter."Attendee Type" OF
+        AttendeeParameter."Attendee Type"::Contact:
+          ToDoParameter.VALIDATE("Contact No.",AttendeeParameter."Attendee No.");
+        AttendeeParameter."Attendee Type"::Salesperson:
+          ToDoParameter.VALIDATE("Salesperson Code",TransformFromCode20ToCode10(AttendeeParameter."Attendee No."));
+      END;
+    END;
+
+    PROCEDURE SetRunFromForm@11();
+    BEGIN
+      RunFormCode := TRUE;
+    END;
+
+    LOCAL PROCEDURE IsCalledFromForm@29() : Boolean;
+    BEGIN
+      EXIT((CurrFieldNo <> 0) OR RunFormCode);
+    END;
+
+    LOCAL PROCEDURE OneDayDuration@31() : Integer;
+    BEGIN
+      EXIT(86400000); // 24 * 60 * 60 * 1000 = 86,400,000 ms in 24 hours
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

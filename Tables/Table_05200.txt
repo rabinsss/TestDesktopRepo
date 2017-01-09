@@ -1,0 +1,469 @@
+OBJECT Table 5200 Employee
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/15/15;
+    Time=12:00:00 PM;
+    Version List=NAVW19.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=No.,First Name,Middle Name,Last Name;
+    OnInsert=BEGIN
+               IF "No." = '' THEN BEGIN
+                 HumanResSetup.GET;
+                 HumanResSetup.TESTFIELD("Employee Nos.");
+                 NoSeriesMgt.InitSeries(HumanResSetup."Employee Nos.",xRec."No. Series",0D,"No.","No. Series");
+               END;
+
+               DimMgt.UpdateDefaultDim(
+                 DATABASE::Employee,"No.",
+                 "Global Dimension 1 Code","Global Dimension 2 Code");
+             END;
+
+    OnModify=BEGIN
+               "Last Date Modified" := TODAY;
+               IF Res.READPERMISSION THEN
+                 EmployeeResUpdate.HumanResToRes(xRec,Rec);
+               IF SalespersonPurchaser.READPERMISSION THEN
+                 EmployeeSalespersonUpdate.HumanResToSalesPerson(xRec,Rec);
+             END;
+
+    OnDelete=BEGIN
+               AlternativeAddr.SETRANGE("Employee No.","No.");
+               AlternativeAddr.DELETEALL;
+
+               EmployeeQualification.SETRANGE("Employee No.","No.");
+               EmployeeQualification.DELETEALL;
+
+               Relative.SETRANGE("Employee No.","No.");
+               Relative.DELETEALL;
+
+               EmployeeAbsence.SETRANGE("Employee No.","No.");
+               EmployeeAbsence.DELETEALL;
+
+               MiscArticleInformation.SETRANGE("Employee No.","No.");
+               MiscArticleInformation.DELETEALL;
+
+               ConfidentialInformation.SETRANGE("Employee No.","No.");
+               ConfidentialInformation.DELETEALL;
+
+               HumanResComment.SETRANGE("No.","No.");
+               HumanResComment.DELETEALL;
+
+               DimMgt.DeleteDefaultDim(DATABASE::Employee,"No.");
+             END;
+
+    OnRename=BEGIN
+               "Last Date Modified" := TODAY;
+             END;
+
+    CaptionML=[ENU=Employee;
+               ESM=Empleado;
+               FRC=EmployÇ;
+               ENC=Employee];
+    LookupPageID=Page5201;
+    DrillDownPageID=Page5201;
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Code20        ;AltSearchField=Search Name;
+                                                   OnValidate=BEGIN
+                                                                IF "No." <> xRec."No." THEN BEGIN
+                                                                  HumanResSetup.GET;
+                                                                  NoSeriesMgt.TestManual(HumanResSetup."Employee Nos.");
+                                                                  "No. Series" := '';
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=No.;
+                                                              ESM=Nß;
+                                                              FRC=N¯;
+                                                              ENC=No.] }
+    { 2   ;   ;First Name          ;Text30        ;CaptionML=[ENU=First Name;
+                                                              ESM=Primer nombre;
+                                                              FRC=PrÇnom;
+                                                              ENC=First Name] }
+    { 3   ;   ;Middle Name         ;Text30        ;CaptionML=[ENU=Middle Name;
+                                                              ESM=Segundo nombre;
+                                                              FRC=Second prÇnom;
+                                                              ENC=Middle Name] }
+    { 4   ;   ;Last Name           ;Text30        ;CaptionML=[ENU=Last Name;
+                                                              ESM=Apellido;
+                                                              FRC=Nom;
+                                                              ENC=Last Name] }
+    { 5   ;   ;Initials            ;Text30        ;OnValidate=BEGIN
+                                                                IF ("Search Name" = UPPERCASE(xRec.Initials)) OR ("Search Name" = '') THEN
+                                                                  "Search Name" := Initials;
+                                                              END;
+
+                                                   CaptionML=[ENU=Initials;
+                                                              ESM=Iniciales;
+                                                              FRC=Initiales;
+                                                              ENC=Initials] }
+    { 6   ;   ;Job Title           ;Text30        ;CaptionML=[ENU=Job Title;
+                                                              ESM=Cargo;
+                                                              FRC=Fonction;
+                                                              ENC=Job Title] }
+    { 7   ;   ;Search Name         ;Code30        ;CaptionML=[ENU=Search Name;
+                                                              ESM=Alias;
+                                                              FRC=Rechercher un nom;
+                                                              ENC=Search Name] }
+    { 8   ;   ;Address             ;Text50        ;CaptionML=[ENU=Address;
+                                                              ESM=Direcci¢n;
+                                                              FRC=Adresse;
+                                                              ENC=Address] }
+    { 9   ;   ;Address 2           ;Text50        ;CaptionML=[ENU=Address 2;
+                                                              ESM=Colonia;
+                                                              FRC=Adresse 2;
+                                                              ENC=Address 2] }
+    { 10  ;   ;City                ;Text30        ;TableRelation=IF (Country/Region Code=CONST()) "Post Code".City
+                                                                 ELSE IF (Country/Region Code=FILTER(<>'')) "Post Code".City WHERE (Country/Region Code=FIELD(Country/Region Code));
+                                                   OnValidate=BEGIN
+                                                                PostCode.ValidateCity(City,"Post Code",County,"Country/Region Code",(CurrFieldNo <> 0) AND GUIALLOWED);
+                                                              END;
+
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=City;
+                                                              ESM=Municipio/Ciudad;
+                                                              FRC=Ville;
+                                                              ENC=City] }
+    { 11  ;   ;Post Code           ;Code20        ;TableRelation=IF (Country/Region Code=CONST()) "Post Code"
+                                                                 ELSE IF (Country/Region Code=FILTER(<>'')) "Post Code" WHERE (Country/Region Code=FIELD(Country/Region Code));
+                                                   OnValidate=BEGIN
+                                                                PostCode.ValidatePostCode(City,"Post Code",County,"Country/Region Code",(CurrFieldNo <> 0) AND GUIALLOWED);
+                                                              END;
+
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=ZIP Code;
+                                                              ESM=C.P.;
+                                                              FRC=Code postal;
+                                                              ENC=Postal/ZIP Code] }
+    { 12  ;   ;County              ;Text30        ;CaptionML=[ENU=State;
+                                                              ESM=Provincia;
+                                                              FRC=ComtÇ;
+                                                              ENC=Province/State] }
+    { 13  ;   ;Phone No.           ;Text30        ;ExtendedDatatype=Phone No.;
+                                                   CaptionML=[ENU=Phone No.;
+                                                              ESM=Nß telÇfono;
+                                                              FRC=N¯ tÇlÇphone;
+                                                              ENC=Phone No.] }
+    { 14  ;   ;Mobile Phone No.    ;Text30        ;ExtendedDatatype=Phone No.;
+                                                   CaptionML=[ENU=Mobile Phone No.;
+                                                              ESM=Nß celular;
+                                                              FRC=N¯ de cellulaire;
+                                                              ENC=Mobile Phone No.] }
+    { 15  ;   ;E-Mail              ;Text80        ;ExtendedDatatype=E-Mail;
+                                                   CaptionML=[ENU=E-Mail;
+                                                              ESM=Correo electr¢nico;
+                                                              FRC=Courriel;
+                                                              ENC=E-Mail] }
+    { 16  ;   ;Alt. Address Code   ;Code10        ;TableRelation="Alternative Address".Code WHERE (Employee No.=FIELD(No.));
+                                                   CaptionML=[ENU=Alt. Address Code;
+                                                              ESM=C¢d. direcci¢n alt.;
+                                                              FRC=Code adresse secondaire;
+                                                              ENC=Alt. Address Code] }
+    { 17  ;   ;Alt. Address Start Date;Date       ;CaptionML=[ENU=Alt. Address Start Date;
+                                                              ESM=Fecha inicio direc. alter.;
+                                                              FRC=Date dÇbut adresse secondaire;
+                                                              ENC=Alt. Address Start Date] }
+    { 18  ;   ;Alt. Address End Date;Date         ;CaptionML=[ENU=Alt. Address End Date;
+                                                              ESM=Fecha fin direc. alter.;
+                                                              FRC=Date fin adresse secondaire;
+                                                              ENC=Alt. Address End Date] }
+    { 19  ;   ;Picture             ;BLOB          ;CaptionML=[ENU=Picture;
+                                                              ESM=Imagen;
+                                                              FRC=Image;
+                                                              ENC=Picture];
+                                                   SubType=Bitmap }
+    { 20  ;   ;Birth Date          ;Date          ;CaptionML=[ENU=Birth Date;
+                                                              ESM=Fecha nacimiento;
+                                                              FRC=Date de naissance;
+                                                              ENC=Birth Date] }
+    { 21  ;   ;Social Security No. ;Text30        ;CaptionML=[ENU=Social Security No.;
+                                                              ESM=No. Seguro Social;
+                                                              FRC=N¯ sÇcuritÇ sociale;
+                                                              ENC=Social Security No.] }
+    { 22  ;   ;Union Code          ;Code10        ;TableRelation=Union;
+                                                   CaptionML=[ENU=Union Code;
+                                                              ESM=C¢d. sindicato;
+                                                              FRC=Code de syndicat;
+                                                              ENC=Union Code] }
+    { 23  ;   ;Union Membership No.;Text30        ;CaptionML=[ENU=Union Membership No.;
+                                                              ESM=Nß afiliado sindicato;
+                                                              FRC=N¯ membre syndicat;
+                                                              ENC=Union Membership No.] }
+    { 24  ;   ;Gender              ;Option        ;CaptionML=[ENU=Gender;
+                                                              ESM=GÇnero;
+                                                              FRC=Sexe;
+                                                              ENC=Gender];
+                                                   OptionCaptionML=[ENU=" ,Female,Male";
+                                                                    ESM=" ,Mujer,Var¢n";
+                                                                    FRC=" ,Femme,Homme";
+                                                                    ENC=" ,Female,Male"];
+                                                   OptionString=[ ,Female,Male] }
+    { 25  ;   ;Country/Region Code ;Code10        ;TableRelation=Country/Region;
+                                                   CaptionML=[ENU=Country/Region Code;
+                                                              ESM=C¢d. pa°s/regi¢n;
+                                                              FRC=Code pays/rÇgion;
+                                                              ENC=Country/Region Code] }
+    { 26  ;   ;Manager No.         ;Code20        ;TableRelation=Employee;
+                                                   CaptionML=[ENU=Manager No.;
+                                                              ESM=Nß director;
+                                                              FRC=N¯ supÇrieur hiÇrarchique;
+                                                              ENC=Manager No.] }
+    { 27  ;   ;Emplymt. Contract Code;Code10      ;TableRelation="Employment Contract";
+                                                   CaptionML=[ENU=Emplymt. Contract Code;
+                                                              ESM=C¢d. contrato laboral;
+                                                              FRC=Code contrat de travail;
+                                                              ENC=Emplymt. Contract Code] }
+    { 28  ;   ;Statistics Group Code;Code10       ;TableRelation="Employee Statistics Group";
+                                                   CaptionML=[ENU=Statistics Group Code;
+                                                              ESM=C¢d. grupo estad°stico;
+                                                              FRC=Code de groupe de statistiques;
+                                                              ENC=Statistics Group Code] }
+    { 29  ;   ;Employment Date     ;Date          ;CaptionML=[ENU=Employment Date;
+                                                              ESM=Fecha contrataci¢n;
+                                                              FRC=Date d'embauche;
+                                                              ENC=Employment Date] }
+    { 31  ;   ;Status              ;Option        ;OnValidate=BEGIN
+                                                                EmployeeQualification.SETRANGE("Employee No.","No.");
+                                                                EmployeeQualification.MODIFYALL("Employee Status",Status);
+                                                                MODIFY;
+                                                              END;
+
+                                                   CaptionML=[ENU=Status;
+                                                              ESM=Estado;
+                                                              FRC=êtat;
+                                                              ENC=Status];
+                                                   OptionCaptionML=[ENU=Active,Inactive,Terminated;
+                                                                    ESM=Activo,Inactivo,Terminado;
+                                                                    FRC=Actif,Inactif,TerminÇ;
+                                                                    ENC=Active,Inactive,Terminated];
+                                                   OptionString=Active,Inactive,Terminated }
+    { 32  ;   ;Inactive Date       ;Date          ;CaptionML=[ENU=Inactive Date;
+                                                              ESM=Fecha inactividad;
+                                                              FRC=Date d'inactivitÇ;
+                                                              ENC=Inactive Date] }
+    { 33  ;   ;Cause of Inactivity Code;Code10    ;TableRelation="Cause of Inactivity";
+                                                   CaptionML=[ENU=Cause of Inactivity Code;
+                                                              ESM=C¢d. causa inactividad;
+                                                              FRC=Code motif d'inactivitÇ;
+                                                              ENC=Cause of Inactivity Code] }
+    { 34  ;   ;Termination Date    ;Date          ;CaptionML=[ENU=Termination Date;
+                                                              ESM=Fecha terminaci¢n;
+                                                              FRC=Date fin de contrat;
+                                                              ENC=Termination Date] }
+    { 35  ;   ;Grounds for Term. Code;Code10      ;TableRelation="Grounds for Termination";
+                                                   CaptionML=[ENU=Grounds for Term. Code;
+                                                              ESM=C¢d. motivo terminaci¢n;
+                                                              FRC=Code motif fin d'emploi;
+                                                              ENC=Grounds for Term. Code] }
+    { 36  ;   ;Global Dimension 1 Code;Code20     ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(1));
+                                                   OnValidate=BEGIN
+                                                                ValidateShortcutDimCode(1,"Global Dimension 1 Code");
+                                                              END;
+
+                                                   CaptionML=[ENU=Global Dimension 1 Code;
+                                                              ESM=C¢d. dimensi¢n global 1;
+                                                              FRC=Code de dimension principal 1;
+                                                              ENC=Global Dimension 1 Code];
+                                                   CaptionClass='1,1,1' }
+    { 37  ;   ;Global Dimension 2 Code;Code20     ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(2));
+                                                   OnValidate=BEGIN
+                                                                ValidateShortcutDimCode(2,"Global Dimension 2 Code");
+                                                              END;
+
+                                                   CaptionML=[ENU=Global Dimension 2 Code;
+                                                              ESM=C¢d. dimensi¢n global 2;
+                                                              FRC=Code de dimension principal 2;
+                                                              ENC=Global Dimension 2 Code];
+                                                   CaptionClass='1,1,2' }
+    { 38  ;   ;Resource No.        ;Code20        ;TableRelation=Resource WHERE (Type=CONST(Person));
+                                                   OnValidate=BEGIN
+                                                                IF ("Resource No." <> '') AND Res.WRITEPERMISSION THEN
+                                                                  EmployeeResUpdate.ResUpdate(Rec)
+                                                              END;
+
+                                                   CaptionML=[ENU=Resource No.;
+                                                              ESM=Nß recurso;
+                                                              FRC=N¯ de ressource;
+                                                              ENC=Resource No.] }
+    { 39  ;   ;Comment             ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Human Resource Comment Line" WHERE (Table Name=CONST(Employee),
+                                                                                                          No.=FIELD(No.)));
+                                                   CaptionML=[ENU=Comment;
+                                                              ESM=Comentario;
+                                                              FRC=Commentaire;
+                                                              ENC=Comment];
+                                                   Editable=No }
+    { 40  ;   ;Last Date Modified  ;Date          ;CaptionML=[ENU=Last Date Modified;
+                                                              ESM=Fecha £lt. modificaci¢n;
+                                                              FRC=Date derniäre modification;
+                                                              ENC=Last Date Modified];
+                                                   Editable=No }
+    { 41  ;   ;Date Filter         ;Date          ;FieldClass=FlowFilter;
+                                                   CaptionML=[ENU=Date Filter;
+                                                              ESM=Filtro fecha;
+                                                              FRC=Filtre date;
+                                                              ENC=Date Filter] }
+    { 42  ;   ;Global Dimension 1 Filter;Code20   ;FieldClass=FlowFilter;
+                                                   TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(1));
+                                                   CaptionML=[ENU=Global Dimension 1 Filter;
+                                                              ESM=Filtro dimensi¢n global 1;
+                                                              FRC=Filtre dimension principale 1;
+                                                              ENC=Global Dimension 1 Filter];
+                                                   CaptionClass='1,3,1' }
+    { 43  ;   ;Global Dimension 2 Filter;Code20   ;FieldClass=FlowFilter;
+                                                   TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(2));
+                                                   CaptionML=[ENU=Global Dimension 2 Filter;
+                                                              ESM=Filtro dimensi¢n global  2;
+                                                              FRC=Filtre dimension principale 2;
+                                                              ENC=Global Dimension 2 Filter];
+                                                   CaptionClass='1,3,2' }
+    { 44  ;   ;Cause of Absence Filter;Code10     ;FieldClass=FlowFilter;
+                                                   TableRelation="Cause of Absence";
+                                                   CaptionML=[ENU=Cause of Absence Filter;
+                                                              ESM=Filtro causa ausencia;
+                                                              FRC=Filtre motif absence;
+                                                              ENC=Cause of Absence Filter] }
+    { 45  ;   ;Total Absence (Base);Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Employee Absence"."Quantity (Base)" WHERE (Employee No.=FIELD(No.),
+                                                                                                               Cause of Absence Code=FIELD(Cause of Absence Filter),
+                                                                                                               From Date=FIELD(Date Filter)));
+                                                   CaptionML=[ENU=Total Absence (Base);
+                                                              ESM=Ausencia total (base);
+                                                              FRC=Absences totales;
+                                                              ENC=Total Absence (Base)];
+                                                   DecimalPlaces=0:5;
+                                                   Editable=No }
+    { 46  ;   ;Extension           ;Text30        ;CaptionML=[ENU=Extension;
+                                                              ESM=Extensi¢n;
+                                                              FRC=N¯ poste;
+                                                              ENC=Extension] }
+    { 47  ;   ;Employee No. Filter ;Code20        ;FieldClass=FlowFilter;
+                                                   TableRelation=Employee;
+                                                   CaptionML=[ENU=Employee No. Filter;
+                                                              ESM=Filtro nß empleado;
+                                                              FRC=Filtre n¯ employÇ;
+                                                              ENC=Employee No. Filter] }
+    { 48  ;   ;Pager               ;Text30        ;CaptionML=[ENU=Pager;
+                                                              ESM=Nß beeper;
+                                                              FRC=TÇlÇavertisseur;
+                                                              ENC=Pager] }
+    { 49  ;   ;Fax No.             ;Text30        ;CaptionML=[ENU=Fax No.;
+                                                              ESM=Nß fax;
+                                                              FRC=N¯ tÇlÇcopieur;
+                                                              ENC=Fax No.] }
+    { 50  ;   ;Company E-Mail      ;Text80        ;CaptionML=[ENU=Company E-Mail;
+                                                              ESM=Correo electr¢nico empresa;
+                                                              FRC=Courriel compagnie;
+                                                              ENC=Company E-Mail] }
+    { 51  ;   ;Title               ;Text30        ;CaptionML=[ENU=Title;
+                                                              ESM=T°tulo;
+                                                              FRC=Titre;
+                                                              ENC=Title] }
+    { 52  ;   ;Salespers./Purch. Code;Code10      ;TableRelation=Salesperson/Purchaser;
+                                                   CaptionML=[ENU=Salespers./Purch. Code;
+                                                              ESM=C¢d. vendedor/comprador;
+                                                              FRC=Code de reprÇsentant/d'achat;
+                                                              ENC=Salespers./Purch. Code] }
+    { 53  ;   ;No. Series          ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=No. Series;
+                                                              ESM=Nos. serie;
+                                                              FRC=SÇries de n¯;
+                                                              ENC=No. Series];
+                                                   Editable=No }
+    { 1100;   ;Cost Center Code    ;Code20        ;TableRelation="Cost Center";
+                                                   CaptionML=[ENU=Cost Center Code;
+                                                              ESM=C¢digo centro costo;
+                                                              FRC=Code centre de coñts;
+                                                              ENC=Cost Centre Code] }
+    { 1101;   ;Cost Object Code    ;Code20        ;TableRelation="Cost Object";
+                                                   CaptionML=[ENU=Cost Object Code;
+                                                              ESM=C¢digo objeto costo;
+                                                              FRC=Code objet de coñts;
+                                                              ENC=Cost Object Code] }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+    {    ;Search Name                              }
+    {    ;Status,Union Code                        }
+    {    ;Status,Emplymt. Contract Code            }
+    {    ;Last Name,First Name,Middle Name         }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;No.,First Name,Last Name,Initials,Job Title }
+  }
+  CODE
+  {
+    VAR
+      HumanResSetup@1000 : Record 5218;
+      Employee@1001 : Record 5200;
+      Res@1002 : Record 156;
+      PostCode@1003 : Record 225;
+      AlternativeAddr@1004 : Record 5201;
+      EmployeeQualification@1005 : Record 5203;
+      Relative@1006 : Record 5205;
+      EmployeeAbsence@1007 : Record 5207;
+      MiscArticleInformation@1008 : Record 5214;
+      ConfidentialInformation@1009 : Record 5216;
+      HumanResComment@1010 : Record 5208;
+      SalespersonPurchaser@1011 : Record 13;
+      NoSeriesMgt@1012 : Codeunit 396;
+      EmployeeResUpdate@1013 : Codeunit 5200;
+      EmployeeSalespersonUpdate@1014 : Codeunit 5201;
+      DimMgt@1015 : Codeunit 408;
+      Text000@1016 : TextConst 'ENU=Before you can use Online Map, you must fill in the Online Map Setup window.\See Setting Up Online Map in Help.;ESM=Para poder usar Online Map, primero debe rellenar la ventana Configuraci¢n Online Map.\Consulte Configuraci¢n de Online Map en la Ayuda.;FRC=Avant de pouvoir utiliser Online Map, vous devez complÇter la fenàtre Configuration Online Map.\Consultez la section Configuration d''Online Map dans l''Aide.;ENC=Before you can use Online Map, you must fill in the Online Map Setup window.\See Setting Up Online Map in Help.';
+
+    PROCEDURE AssistEdit@2(OldEmployee@1000 : Record 5200) : Boolean;
+    BEGIN
+      WITH Employee DO BEGIN
+        Employee := Rec;
+        HumanResSetup.GET;
+        HumanResSetup.TESTFIELD("Employee Nos.");
+        IF NoSeriesMgt.SelectSeries(HumanResSetup."Employee Nos.",OldEmployee."No. Series","No. Series") THEN BEGIN
+          HumanResSetup.GET;
+          HumanResSetup.TESTFIELD("Employee Nos.");
+          NoSeriesMgt.SetSeries("No.");
+          Rec := Employee;
+          EXIT(TRUE);
+        END;
+      END;
+    END;
+
+    PROCEDURE FullName@1() : Text[100];
+    BEGIN
+      IF "Middle Name" = '' THEN
+        EXIT("First Name" + ' ' + "Last Name");
+
+      EXIT("First Name" + ' ' + "Middle Name" + ' ' + "Last Name");
+    END;
+
+    LOCAL PROCEDURE ValidateShortcutDimCode@29(FieldNumber@1000 : Integer;VAR ShortcutDimCode@1001 : Code[20]);
+    BEGIN
+      DimMgt.ValidateDimValueCode(FieldNumber,ShortcutDimCode);
+      DimMgt.SaveDefaultDim(DATABASE::Employee,"No.",FieldNumber,ShortcutDimCode);
+      MODIFY;
+    END;
+
+    PROCEDURE DisplayMap@7();
+    VAR
+      MapPoint@1001 : Record 800;
+      MapMgt@1000 : Codeunit 802;
+    BEGIN
+      IF MapPoint.FINDFIRST THEN
+        MapMgt.MakeSelection(DATABASE::Employee,GETPOSITION)
+      ELSE
+        MESSAGE(Text000);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

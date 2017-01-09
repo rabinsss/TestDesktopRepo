@@ -1,0 +1,414 @@
+OBJECT Table 383 Detailed CV Ledg. Entry Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=09/09/14;
+    Time=12:00:00 PM;
+    Version List=NAVW18.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Detailed CV Ledg. Entry Buffer;
+               ESM=Mem. inter. mov. CV detallado;
+               FRC=Tampon Çcriture CF dÇtaillÇe;
+               ENC=Detailed CV Ledg. Entry Buffer];
+    LookupPageID=Page573;
+    DrillDownPageID=Page573;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;CaptionML=[ENU=Entry No.;
+                                                              ESM=Nß mov.;
+                                                              FRC=N¯ Çcriture;
+                                                              ENC=Entry No.] }
+    { 2   ;   ;CV Ledger Entry No. ;Integer       ;CaptionML=[ENU=CV Ledger Entry No.;
+                                                              ESM=Nß mov. CV;
+                                                              FRC=N¯ Çcriture CF;
+                                                              ENC=CV Ledger Entry No.] }
+    { 3   ;   ;Entry Type          ;Option        ;CaptionML=[ENU=Entry Type;
+                                                              ESM=Tipo movimiento;
+                                                              FRC=Type d'Çcriture;
+                                                              ENC=Entry Type];
+                                                   OptionCaptionML=[ENU=,Initial Entry,Application,Unrealized Loss,Unrealized Gain,Realized Loss,Realized Gain,Payment Discount,Payment Discount (VAT Excl.),Payment Discount (VAT Adjustment),Appln. Rounding,Correction of Remaining Amount,Payment Tolerance,Payment Discount Tolerance,Payment Tolerance (VAT Excl.),Payment Tolerance (VAT Adjustment),Payment Discount Tolerance (VAT Excl.),Payment Discount Tolerance (VAT Adjustment);
+                                                                    ESM=,Mov. inicial,Liquidaci¢n,Dif. neg. no realizadas,Dif. pos. no realizadas,Dif. neg. realizadas,Dif. pos. realizadas,Dto. P.P,Dto. P.P (IVA excluido),Dto. P.P (ajuste IVA),Redondeo liquidaci¢n,Correcci¢n importe pendiente,Tolerancia pago,Tolerancia dto. P.P.,Tolerancia pago (IVA excl.),Tolerancia pago (ajuste IVA),Tolerancia dto. P.P. (IVA excl.),Tolerancia dto. P.P. (ajuste IVA);
+                                                                    FRC=,êcriture origine,Affectation,Pertes non rÇalisÇes,Gains non rÇalisÇs,Pertes rÇalisÇes,Gains rÇalisÇs,Escompte,Escompte (HT),Escompte (ajust. TVA),Arrondi affectation,Correction de montant ouvert,êcart räglement,TolÇrance d'escompte de paiement,êcart räglement (HT),êcart räglement (ajust.TVA),TolÇrance d'escompte de paiement (HT),TolÇrance d'escompte de paiement (ajust.TVA);
+                                                                    ENC=,Initial Entry,Application,Unrealized Loss,Unrealized Gain,Realized Loss,Realized Gain,Payment Discount,Payment Discount (VAT Excl.),Payment Discount (VAT Adjustment),Appln. Rounding,Correction of Remaining Amount,Payment Tolerance,Payment Discount Tolerance,Payment Tolerance (VAT Excl.),Payment Tolerance (VAT Adjustment),Payment Discount Tolerance (VAT Excl.),Payment Discount Tolerance (VAT Adjustment)];
+                                                   OptionString=,Initial Entry,Application,Unrealized Loss,Unrealized Gain,Realized Loss,Realized Gain,Payment Discount,Payment Discount (VAT Excl.),Payment Discount (VAT Adjustment),Appln. Rounding,Correction of Remaining Amount,Payment Tolerance,Payment Discount Tolerance,Payment Tolerance (VAT Excl.),Payment Tolerance (VAT Adjustment),Payment Discount Tolerance (VAT Excl.),Payment Discount Tolerance (VAT Adjustment) }
+    { 4   ;   ;Posting Date        ;Date          ;CaptionML=[ENU=Posting Date;
+                                                              ESM=Fecha registro;
+                                                              FRC=Date de report;
+                                                              ENC=Posting Date] }
+    { 5   ;   ;Document Type       ;Option        ;CaptionML=[ENU=Document Type;
+                                                              ESM=Tipo documento;
+                                                              FRC=Type de document;
+                                                              ENC=Document Type];
+                                                   OptionCaptionML=[ENU=" ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund";
+                                                                    ESM=" ,Pago,Factura,Nota crÇdito,Docs. interÇs,Recordatorio,Reembolso";
+                                                                    FRC=" ,Paiement,Facture,Note de crÇdit,Note de frais financiers,Rappel,Remboursement";
+                                                                    ENC=" ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund"];
+                                                   OptionString=[ ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund] }
+    { 6   ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ESM=Nß documento;
+                                                              FRC=N¯ de document;
+                                                              ENC=Document No.] }
+    { 7   ;   ;Amount              ;Decimal       ;CaptionML=[ENU=Amount;
+                                                              ESM=Importe;
+                                                              FRC=Montant;
+                                                              ENC=Amount];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr="Currency Code" }
+    { 8   ;   ;Amount (LCY)        ;Decimal       ;CaptionML=[ENU=Amount ($);
+                                                              ESM=Importe ($);
+                                                              FRC=Montant ($);
+                                                              ENC=Amount ($)];
+                                                   AutoFormatType=1 }
+    { 9   ;   ;CV No.              ;Code20        ;CaptionML=[ENU=CV No.;
+                                                              ESM=Nß CV;
+                                                              FRC=N¯ CF;
+                                                              ENC=CV No.] }
+    { 10  ;   ;Currency Code       ;Code10        ;TableRelation=Currency;
+                                                   CaptionML=[ENU=Currency Code;
+                                                              ESM=C¢d. divisa;
+                                                              FRC=Code devise;
+                                                              ENC=Currency Code] }
+    { 11  ;   ;User ID             ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=VAR
+                                                              UserMgt@1000 : Codeunit 418;
+                                                            BEGIN
+                                                              UserMgt.LookupUserID("User ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User ID;
+                                                              ESM=Id. usuario;
+                                                              FRC=Code utilisateur;
+                                                              ENC=User ID] }
+    { 12  ;   ;Source Code         ;Code10        ;TableRelation="Source Code";
+                                                   CaptionML=[ENU=Source Code;
+                                                              ESM=C¢d. origen;
+                                                              FRC=Code d'origine;
+                                                              ENC=Source Code] }
+    { 13  ;   ;Transaction No.     ;Integer       ;CaptionML=[ENU=Transaction No.;
+                                                              ESM=Nß asiento;
+                                                              FRC=N¯ transaction;
+                                                              ENC=Transaction No.] }
+    { 14  ;   ;Journal Batch Name  ;Code10        ;TestTableRelation=No;
+                                                   CaptionML=[ENU=Journal Batch Name;
+                                                              ESM=Nombre secci¢n diario;
+                                                              FRC=Nom lot de journal;
+                                                              ENC=Journal Batch Name] }
+    { 15  ;   ;Reason Code         ;Code10        ;TableRelation="Reason Code";
+                                                   CaptionML=[ENU=Reason Code;
+                                                              ESM=C¢d. auditor°a;
+                                                              FRC=Code motif;
+                                                              ENC=Reason Code] }
+    { 16  ;   ;Debit Amount        ;Decimal       ;CaptionML=[ENU=Debit Amount;
+                                                              ESM=Importe debe;
+                                                              FRC=Montant de dÇbit;
+                                                              ENC=Debit Amount];
+                                                   BlankZero=Yes;
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr="Currency Code" }
+    { 17  ;   ;Credit Amount       ;Decimal       ;CaptionML=[ENU=Credit Amount;
+                                                              ESM=Importe haber;
+                                                              FRC=Montant de crÇdit;
+                                                              ENC=Credit Amount];
+                                                   BlankZero=Yes;
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr="Currency Code" }
+    { 18  ;   ;Debit Amount (LCY)  ;Decimal       ;CaptionML=[ENU=Debit Amount ($);
+                                                              ESM=Importe debe ($);
+                                                              FRC=Montant de dÇbit ($);
+                                                              ENC=Debit Amount ($)];
+                                                   BlankZero=Yes;
+                                                   AutoFormatType=1 }
+    { 19  ;   ;Credit Amount (LCY) ;Decimal       ;CaptionML=[ENU=Credit Amount ($);
+                                                              ESM=Importe haber ($);
+                                                              FRC=Montant de crÇdit ($);
+                                                              ENC=Credit Amount ($)];
+                                                   BlankZero=Yes;
+                                                   AutoFormatType=1 }
+    { 20  ;   ;Initial Entry Due Date;Date        ;CaptionML=[ENU=Initial Entry Due Date;
+                                                              ESM=Fecha vto. mov. inicial;
+                                                              FRC=Date d'ÇchÇance Çcr. initiale;
+                                                              ENC=Initial Entry Due Date] }
+    { 21  ;   ;Initial Entry Global Dim. 1;Code20 ;CaptionML=[ENU=Initial Entry Global Dim. 1;
+                                                              ESM=Dim. global mov. inicial 1;
+                                                              FRC=Axe principal 1 Çcr. initiale;
+                                                              ENC=Initial Entry Global Dim. 1] }
+    { 22  ;   ;Initial Entry Global Dim. 2;Code20 ;CaptionML=[ENU=Initial Entry Global Dim. 2;
+                                                              ESM=Dim. global mov. inicial 2;
+                                                              FRC=Axe principal 2 Çcr. initiale;
+                                                              ENC=Initial Entry Global Dim. 2] }
+    { 23  ;   ;Gen. Posting Type   ;Option        ;CaptionML=[ENU=Gen. Posting Type;
+                                                              ESM=Tipo IVA;
+                                                              FRC=Type de report gÇnÇral;
+                                                              ENC=Gen. Posting Type];
+                                                   OptionCaptionML=[ENU=" ,Purchase,Sale,Settlement";
+                                                                    ESM=" ,Compra,Venta,Liquidaci¢n";
+                                                                    FRC=" ,Achat,Vente,Räglement";
+                                                                    ENC=" ,Purchase,Sale,Settlement"];
+                                                   OptionString=[ ,Purchase,Sale,Settlement] }
+    { 24  ;   ;Gen. Bus. Posting Group;Code10     ;TableRelation="Gen. Business Posting Group";
+                                                   CaptionML=[ENU=Gen. Bus. Posting Group;
+                                                              ESM=Grupo contable negocio;
+                                                              FRC=Groupe de report de marchÇ;
+                                                              ENC=Gen. Bus. Posting Group] }
+    { 25  ;   ;Gen. Prod. Posting Group;Code10    ;TableRelation="Gen. Product Posting Group";
+                                                   CaptionML=[ENU=Gen. Prod. Posting Group;
+                                                              ESM=Grupo contable producto;
+                                                              FRC=Groupe de report de produit;
+                                                              ENC=Gen. Prod. Posting Group] }
+    { 26  ;   ;Tax Area Code       ;Code20        ;TableRelation="Tax Area";
+                                                   CaptionML=[ENU=Tax Area Code;
+                                                              ESM=C¢d. †rea impuesto;
+                                                              FRC=Code de rÇgion fiscale;
+                                                              ENC=Tax Area Code] }
+    { 27  ;   ;Tax Liable          ;Boolean       ;CaptionML=[ENU=Tax Liable;
+                                                              ESM=Sujeto a impuesto;
+                                                              FRC=Imposable;
+                                                              ENC=Tax Liable] }
+    { 28  ;   ;Tax Group Code      ;Code10        ;TableRelation="Tax Group";
+                                                   CaptionML=[ENU=Tax Group Code;
+                                                              ESM=C¢d. grupo impuesto;
+                                                              FRC=Code groupe fiscal;
+                                                              ENC=Tax Group Code] }
+    { 29  ;   ;Use Tax             ;Boolean       ;CaptionML=[ENU=Use Tax;
+                                                              ESM=Impuesto de importaci¢n;
+                                                              FRC=Taxe de service;
+                                                              ENC=Use Tax] }
+    { 30  ;   ;VAT Bus. Posting Group;Code10      ;TableRelation="VAT Business Posting Group";
+                                                   CaptionML=[ENU=Tax Bus. Posting Group;
+                                                              ESM=Grupo registro IVA neg.;
+                                                              FRC=Groupe de reports de taxe sur la valeur ajoutÇe de l'entreprise;
+                                                              ENC=Tax Bus. Posting Group] }
+    { 31  ;   ;VAT Prod. Posting Group;Code10     ;TableRelation="VAT Product Posting Group";
+                                                   CaptionML=[ENU=Tax Prod. Posting Group;
+                                                              ESM=Grupo registro IVA prod.;
+                                                              FRC=Groupe de report de produit taxe;
+                                                              ENC=Tax Prod. Posting Group] }
+    { 32  ;   ;Additional-Currency Amount;Decimal ;CaptionML=[ENU=Additional-Currency Amount;
+                                                              ESM=Importe divisa-adicional;
+                                                              FRC=Montant devise add.;
+                                                              ENC=Additional-Currency Amount];
+                                                   AutoFormatType=1 }
+    { 33  ;   ;VAT Amount (LCY)    ;Decimal       ;CaptionML=[ENU=Tax Amount ($);
+                                                              ESM=Importe IVA ($);
+                                                              FRC=Montant de la taxe ($);
+                                                              ENC=Tax Amount ($)];
+                                                   AutoFormatType=1 }
+    { 34  ;   ;Use Additional-Currency Amount;Boolean;
+                                                   CaptionML=[ENU=Use Additional-Currency Amount;
+                                                              ESM=Usar importe divisa adicional;
+                                                              FRC=Utiliser montant DR;
+                                                              ENC=Use Additional-Currency Amount] }
+    { 35  ;   ;Initial Document Type;Option       ;CaptionML=[ENU=Initial Document Type;
+                                                              ESM=Tipo documento inicial;
+                                                              FRC=Type document initial;
+                                                              ENC=Initial Document Type];
+                                                   OptionCaptionML=[ENU=" ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund";
+                                                                    ESM=" ,Pago,Factura,Nota crÇdito,Docs. interÇs,Recordatorio,Reembolso";
+                                                                    FRC=" ,Paiement,Facture,Note de crÇdit,Note de frais financiers,Rappel,Remboursement";
+                                                                    ENC=" ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund"];
+                                                   OptionString=[ ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund] }
+    { 36  ;   ;Applied CV Ledger Entry No.;Integer;CaptionML=[ENU=Applied CV Ledger Entry No.;
+                                                              ESM=Nß mov. CV liquidado;
+                                                              FRC=N¯ Çcriture CF affectÇe;
+                                                              ENC=Applied CV Ledger Entry No.] }
+    { 39  ;   ;Remaining Pmt. Disc. Possible;Decimal;
+                                                   CaptionML=[ENU=Remaining Pmt. Disc. Possible;
+                                                              ESM=Dto. P.P realizable pendiente;
+                                                              FRC=Escompte paiem. rÇsiduel poss.;
+                                                              ENC=Remaining Pmt. Disc. Possible];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr="Currency Code" }
+    { 40  ;   ;Max. Payment Tolerance;Decimal     ;CaptionML=[ENU=Max. Payment Tolerance;
+                                                              ESM=M†x. tolerancia pagos;
+                                                              FRC=TolÇrance de paiement maximale;
+                                                              ENC=Max. Payment Tolerance];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr="Currency Code" }
+    { 41  ;   ;Tax Jurisdiction Code;Code10       ;TableRelation="Tax Jurisdiction";
+                                                   CaptionML=[ENU=Tax Jurisdiction Code;
+                                                              ESM=C¢d. jurisdicci¢n fiscal;
+                                                              FRC=Code de juridiction fiscale;
+                                                              ENC=Tax Jurisdiction Code];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;Clustered=Yes }
+    {    ;CV Ledger Entry No.,Entry Type          ;SumIndexFields=Amount,Amount (LCY),Debit Amount,Credit Amount,Debit Amount (LCY),Credit Amount (LCY) }
+    {    ;CV No.,Initial Entry Due Date,Posting Date,Currency Code;
+                                                   SumIndexFields=Amount,Amount (LCY),Debit Amount,Credit Amount,Debit Amount (LCY),Credit Amount (LCY) }
+    {    ;CV No.,Posting Date,Entry Type,Currency Code;
+                                                   SumIndexFields=Amount,Amount (LCY) }
+    {    ;CV No.,Initial Document Type,Document Type;
+                                                   SumIndexFields=Amount,Amount (LCY) }
+    {    ;Document Type,Document No.,Posting Date  }
+    {    ;Initial Document Type,CV No.,Posting Date,Currency Code,Entry Type;
+                                                   SumIndexFields=Amount,Amount (LCY) }
+    { No ;CV No.,Initial Entry Due Date,Posting Date,Initial Entry Global Dim. 1,Initial Entry Global Dim. 2,Currency Code;
+                                                   SumIndexFields=Amount,Amount (LCY),Debit Amount,Credit Amount,Debit Amount (LCY),Credit Amount (LCY) }
+    { No ;CV No.,Posting Date,Entry Type,Initial Entry Global Dim. 1,Initial Entry Global Dim. 2,Currency Code;
+                                                   SumIndexFields=Amount,Amount (LCY) }
+    { No ;CV No.,Initial Document Type,Document Type,Initial Entry Global Dim. 1,Initial Entry Global Dim. 2;
+                                                   SumIndexFields=Amount,Amount (LCY) }
+    { No ;Initial Document Type,CV No.,Posting Date,Currency Code,Entry Type,Initial Entry Global Dim. 1,Initial Entry Global Dim. 2;
+                                                   SumIndexFields=Amount,Amount (LCY) }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE InsertDtldCVLedgEntry@53(VAR DtldCVLedgEntryBuf@1000 : Record 383;VAR CVLedgEntryBuf@1001 : Record 382;InsertZeroAmout@1004 : Boolean);
+    VAR
+      NewDtldCVLedgEntryBuf@1002 : Record 383;
+      NextDtldBufferEntryNo@1003 : Integer;
+    BEGIN
+      IF (DtldCVLedgEntryBuf.Amount = 0) AND
+         (DtldCVLedgEntryBuf."Amount (LCY)" = 0) AND
+         (DtldCVLedgEntryBuf."Additional-Currency Amount" = 0) AND
+         (NOT InsertZeroAmout)
+      THEN
+        EXIT;
+
+      DtldCVLedgEntryBuf.TESTFIELD("Entry Type" );
+
+      NewDtldCVLedgEntryBuf.INIT;
+      NewDtldCVLedgEntryBuf := DtldCVLedgEntryBuf;
+
+      IF NextDtldBufferEntryNo = 0 THEN BEGIN
+        DtldCVLedgEntryBuf.RESET;
+        IF DtldCVLedgEntryBuf.FINDLAST THEN
+          NextDtldBufferEntryNo := DtldCVLedgEntryBuf."Entry No." + 1
+        ELSE
+          NextDtldBufferEntryNo := 1;
+      END;
+
+      DtldCVLedgEntryBuf.RESET;
+      DtldCVLedgEntryBuf.SETRANGE("CV Ledger Entry No.",CVLedgEntryBuf."Entry No.");
+      DtldCVLedgEntryBuf.SETRANGE("Entry Type",NewDtldCVLedgEntryBuf."Entry Type");
+      DtldCVLedgEntryBuf.SETRANGE("Posting Date",NewDtldCVLedgEntryBuf."Posting Date");
+      DtldCVLedgEntryBuf.SETRANGE("Document Type",NewDtldCVLedgEntryBuf."Document Type");
+      DtldCVLedgEntryBuf.SETRANGE("Document No.",NewDtldCVLedgEntryBuf."Document No.");
+      DtldCVLedgEntryBuf.SETRANGE("CV No.",NewDtldCVLedgEntryBuf."CV No.");
+      DtldCVLedgEntryBuf.SETRANGE("Gen. Posting Type",NewDtldCVLedgEntryBuf."Gen. Posting Type");
+      DtldCVLedgEntryBuf.SETRANGE(
+        "Gen. Bus. Posting Group",NewDtldCVLedgEntryBuf."Gen. Bus. Posting Group");
+      DtldCVLedgEntryBuf.SETRANGE(
+        "Gen. Prod. Posting Group",NewDtldCVLedgEntryBuf."Gen. Prod. Posting Group");
+      DtldCVLedgEntryBuf.SETRANGE(
+        "VAT Bus. Posting Group",NewDtldCVLedgEntryBuf."VAT Bus. Posting Group");
+      DtldCVLedgEntryBuf.SETRANGE(
+        "VAT Prod. Posting Group",NewDtldCVLedgEntryBuf."VAT Prod. Posting Group");
+      DtldCVLedgEntryBuf.SETRANGE("Tax Area Code",NewDtldCVLedgEntryBuf."Tax Area Code");
+      DtldCVLedgEntryBuf.SETRANGE("Tax Liable",NewDtldCVLedgEntryBuf."Tax Liable");
+      DtldCVLedgEntryBuf.SETRANGE("Tax Group Code",NewDtldCVLedgEntryBuf."Tax Group Code");
+      DtldCVLedgEntryBuf.SETRANGE("Use Tax",NewDtldCVLedgEntryBuf."Use Tax");
+      DtldCVLedgEntryBuf.SETRANGE(
+        "Tax Jurisdiction Code",NewDtldCVLedgEntryBuf."Tax Jurisdiction Code");
+
+      IF DtldCVLedgEntryBuf.FINDFIRST THEN BEGIN
+        DtldCVLedgEntryBuf.Amount := DtldCVLedgEntryBuf.Amount + NewDtldCVLedgEntryBuf.Amount;
+        DtldCVLedgEntryBuf."Amount (LCY)" :=
+          DtldCVLedgEntryBuf."Amount (LCY)" + NewDtldCVLedgEntryBuf."Amount (LCY)";
+        DtldCVLedgEntryBuf."VAT Amount (LCY)" :=
+          DtldCVLedgEntryBuf."VAT Amount (LCY)" + NewDtldCVLedgEntryBuf."VAT Amount (LCY)";
+        DtldCVLedgEntryBuf."Additional-Currency Amount" :=
+          DtldCVLedgEntryBuf."Additional-Currency Amount" +
+          NewDtldCVLedgEntryBuf."Additional-Currency Amount";
+        DtldCVLedgEntryBuf.MODIFY;
+      END ELSE BEGIN
+        NewDtldCVLedgEntryBuf."Entry No." := NextDtldBufferEntryNo;
+        NextDtldBufferEntryNo := NextDtldBufferEntryNo + 1;
+        DtldCVLedgEntryBuf := NewDtldCVLedgEntryBuf;
+        DtldCVLedgEntryBuf.INSERT;
+      END;
+
+      CVLedgEntryBuf."Amount to Apply" := NewDtldCVLedgEntryBuf.Amount + CVLedgEntryBuf."Amount to Apply";
+      CVLedgEntryBuf."Remaining Amount" := NewDtldCVLedgEntryBuf.Amount + CVLedgEntryBuf."Remaining Amount";
+      CVLedgEntryBuf."Remaining Amt. (LCY)" :=
+        NewDtldCVLedgEntryBuf."Amount (LCY)" + CVLedgEntryBuf."Remaining Amt. (LCY)";
+
+      IF DtldCVLedgEntryBuf."Entry Type" = DtldCVLedgEntryBuf."Entry Type"::"Initial Entry" THEN BEGIN
+        CVLedgEntryBuf."Original Amount" := NewDtldCVLedgEntryBuf.Amount;
+        CVLedgEntryBuf."Original Amt. (LCY)" := NewDtldCVLedgEntryBuf."Amount (LCY)";
+      END;
+      DtldCVLedgEntryBuf.RESET;
+    END;
+
+    PROCEDURE CopyPostingGroupsFromVATEntry@1(VATEntry@1000 : Record 254);
+    BEGIN
+      "Gen. Posting Type" := VATEntry.Type;
+      "Gen. Bus. Posting Group" := VATEntry."Gen. Bus. Posting Group";
+      "Gen. Prod. Posting Group" := VATEntry."Gen. Prod. Posting Group";
+      "VAT Bus. Posting Group" := VATEntry."VAT Bus. Posting Group";
+      "VAT Prod. Posting Group" := VATEntry."VAT Prod. Posting Group";
+      "Tax Area Code" := VATEntry."Tax Area Code";
+      "Tax Liable" := VATEntry."Tax Liable";
+      "Tax Group Code" := VATEntry."Tax Group Code";
+      "Use Tax" := VATEntry."Use Tax";
+    END;
+
+    PROCEDURE CopyFromGenJnlLine@2(GenJnlLine@1000 : Record 81);
+    BEGIN
+      "Entry Type" := "Entry Type"::"Initial Entry";
+      "Posting Date" := GenJnlLine."Posting Date";
+      "Document Type" := GenJnlLine."Document Type";
+      "Document No." := GenJnlLine."Document No.";
+      Amount := GenJnlLine.Amount;
+      "Amount (LCY)" := GenJnlLine."Amount (LCY)";
+      "Additional-Currency Amount" := GenJnlLine.Amount;
+      "CV No." := GenJnlLine."Account No.";
+      "Currency Code" := GenJnlLine."Currency Code";
+      "User ID" := USERID;
+      "Initial Entry Due Date" := GenJnlLine."Due Date";
+      "Initial Entry Global Dim. 1" := GenJnlLine."Shortcut Dimension 1 Code";
+      "Initial Entry Global Dim. 2" := GenJnlLine."Shortcut Dimension 2 Code";
+      "Initial Document Type" := GenJnlLine."Document Type";
+    END;
+
+    PROCEDURE InitFromGenJnlLine@7(GenJnlLine@1001 : Record 81);
+    BEGIN
+      INIT;
+      "Posting Date" := GenJnlLine."Posting Date";
+      "Document Type" := GenJnlLine."Document Type";
+      "Document No." := GenJnlLine."Document No.";
+      "User ID" := USERID;
+    END;
+
+    PROCEDURE CopyFromCVLedgEntryBuf@20(CVLedgEntryBuf@1001 : Record 382);
+    BEGIN
+      "CV Ledger Entry No." := CVLedgEntryBuf."Entry No.";
+      "CV No." := CVLedgEntryBuf."CV No.";
+      "Currency Code" := CVLedgEntryBuf."Currency Code";
+      "Initial Entry Due Date" := CVLedgEntryBuf."Due Date";
+      "Initial Entry Global Dim. 1" := CVLedgEntryBuf."Global Dimension 1 Code";
+      "Initial Entry Global Dim. 2" := CVLedgEntryBuf."Global Dimension 2 Code";
+      "Initial Document Type" := CVLedgEntryBuf."Document Type";
+    END;
+
+    PROCEDURE InitDtldCVLedgEntryBuf@26(GenJnlLine@1000 : Record 81;VAR CVLedgEntryBuf@1001 : Record 382;VAR DtldCVLedgEntryBuf@1002 : Record 383;EntryType@1009 : Option;AmountFCY@1003 : Decimal;AmountLCY@1004 : Decimal;AmountAddCurr@1005 : Decimal;AppliedEntryNo@1006 : Integer;RemainingPmtDiscPossible@1007 : Decimal;MaxPaymentTolerance@1008 : Decimal);
+    BEGIN
+      WITH DtldCVLedgEntryBuf DO BEGIN
+        InitFromGenJnlLine(GenJnlLine);
+        CopyFromCVLedgEntryBuf(CVLedgEntryBuf);
+        "Entry Type" := EntryType;
+        Amount := AmountFCY;
+        "Amount (LCY)" := AmountLCY;
+        "Additional-Currency Amount" := AmountAddCurr;
+        "Applied CV Ledger Entry No." := AppliedEntryNo;
+        "Remaining Pmt. Disc. Possible" := RemainingPmtDiscPossible;
+        "Max. Payment Tolerance" := MaxPaymentTolerance;
+        InsertDtldCVLedgEntry(DtldCVLedgEntryBuf,CVLedgEntryBuf,FALSE);
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+
