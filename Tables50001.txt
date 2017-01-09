@@ -1,9 +1,9 @@
-OBJECT Table 50000 New Table
+OBJECT Table 50001 Second Table
 {
   OBJECT-PROPERTIES
   {
     Date=01/09/17;
-    Time=[ 3:08:29 PM];
+    Time=[ 3:20:27 PM];
     Modified=Yes;
     Version List=;
   }
@@ -13,10 +13,7 @@ OBJECT Table 50000 New Table
   FIELDS
   {
     { 1   ;   ;No.                 ;Integer        }
-    { 2   ;   ;Description         ;Text30         }
-    { 3   ;   ;Value               ;Decimal        }
-    { 4   ;   ;Additional Field    ;Code10         }
-    { 5   ;   ;Additional Field 2  ;Code10        ;Description=Added By Anjani 1/1/2017 }
+    { 2   ;   ;NAme                ;Integer        }
   }
   KEYS
   {
