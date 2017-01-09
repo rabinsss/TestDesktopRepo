@@ -3,9 +3,9 @@ OBJECT Table 50000 New Table
   OBJECT-PROPERTIES
   {
     Date=01/09/17;
-    Time=[ 3:08:29 PM];
+    Time=[ 5:16:53 PM];
     Modified=Yes;
-    Version List=;
+    Version List=NAV_RBN.00;
   }
   PROPERTIES
   {
@@ -16,7 +16,8 @@ OBJECT Table 50000 New Table
     { 2   ;   ;Description         ;Text30         }
     { 3   ;   ;Value               ;Decimal        }
     { 4   ;   ;Additional Field    ;Code10         }
-    { 5   ;   ;Additional Field 2  ;Code10        ;Description=Added By Anjani 1/1/2017 }
+    { 5   ;   ;Additional Field 2  ;Code10         }
+    { 6   ;   ;Additional Field 3  ;Code10        ;Description=Added By Anjani 1/1/2017 }
   }
   KEYS
   {
