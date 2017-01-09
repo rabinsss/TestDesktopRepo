@@ -3,7 +3,7 @@ OBJECT Table 50000 New Table
   OBJECT-PROPERTIES
   {
     Date=01/09/17;
-    Time=[ 2:30:23 PM];
+    Time=[ 2:55:59 PM];
     Modified=Yes;
     Version List=;
   }
@@ -15,6 +15,7 @@ OBJECT Table 50000 New Table
     { 1   ;   ;No.                 ;Integer        }
     { 2   ;   ;Description         ;Text30         }
     { 3   ;   ;Value               ;Decimal        }
+    { 4   ;   ;Additional Field    ;Code10         }
   }
   KEYS
   {
