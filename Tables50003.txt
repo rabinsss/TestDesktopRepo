@@ -1,0 +1,32 @@
+OBJECT Table 50003 Third Table
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/09/17;
+    Time=[ 3:20:58 PM];
+    Modified=Yes;
+    Version List=;
+  }
+  PROPERTIES
+  {
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Integer        }
+    { 2   ;   ;NAme                ;Integer        }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+
