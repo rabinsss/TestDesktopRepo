@@ -1,0 +1,33 @@
+OBJECT Table 50000 New Table
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/09/17;
+    Time=[ 2:30:23 PM];
+    Modified=Yes;
+    Version List=;
+  }
+  PROPERTIES
+  {
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Integer        }
+    { 2   ;   ;Description         ;Text30         }
+    { 3   ;   ;Value               ;Decimal        }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+
